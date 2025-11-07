@@ -31,27 +31,38 @@ export async function retrieveContext(
     minSimilarity?: number
   }
 ): Promise<RAGResult["sources"]> {
-  const queryEmbedding = await generateEmbedding(query)
-  const limit = options?.limit || 5
-  const minSimilarity = options?.minSimilarity || 0.5
+  try {
+    const queryEmbedding = await generateEmbedding(query)
+    const limit = options?.limit || 5
+    const minSimilarity = options?.minSimilarity || 0.5
 
-  const similarEmbeddings = await findSimilarEmbeddings(
-    queryEmbedding,
-    options?.entityType,
-    limit
-  )
+    const similarEmbeddings = await findSimilarEmbeddings(
+      queryEmbedding,
+      options?.entityType,
+      limit
+    )
 
-  const sources = similarEmbeddings
-    .filter((item) => item.similarity >= minSimilarity)
-    .map((item) => ({
-      type: item.entityType,
-      id: item.entityId,
-      title: item.metadata?.title || `${item.entityType} ${item.entityId}`,
-      content: item.content,
-      similarity: item.similarity,
-    }))
+    const sources = similarEmbeddings
+      .filter((item) => item.similarity >= minSimilarity)
+      .map((item) => ({
+        type: item.entityType,
+        id: item.entityId,
+        title: item.metadata?.title || `${item.entityType} ${item.entityId}`,
+        content: item.content,
+        similarity: item.similarity,
+      }))
 
-  return sources
+    return sources
+  } catch (error) {
+    console.error("Error in retrieveContext:", error)
+    // If embeddings table doesn't exist or has issues, return empty sources
+    // The fallback answer generator will handle this gracefully
+    if (error instanceof Error && (error.message.includes("relation") || error.message.includes("does not exist"))) {
+      console.warn("Embeddings table not found, returning empty sources")
+      return []
+    }
+    throw error
+  }
 }
 
 /**
@@ -244,42 +255,47 @@ export async function ragPipeline(
     userContext?: RAGContext
   }
 ): Promise<RAGResult> {
-  const sources = await retrieveContext(query, {
-    entityType: options?.entityType,
-    limit: options?.limit,
-    minSimilarity: options?.minSimilarity,
-  })
+  try {
+    const sources = await retrieveContext(query, {
+      entityType: options?.entityType,
+      limit: options?.limit,
+      minSimilarity: options?.minSimilarity,
+    })
 
-  const answer = await generateAnswer(query, sources, options?.userContext)
+    const answer = await generateAnswer(query, sources, options?.userContext)
 
-  const context: RAGContext = {}
+    const context: RAGContext = {}
 
-  if (sources.length > 0) {
-    const institutionIds = sources
-      .filter((s) => s.type === "institution")
-      .map((s) => s.id)
-    const programIds = sources.filter((s) => s.type === "program").map((s) => s.id)
+    if (sources.length > 0) {
+      const institutionIds = sources
+        .filter((s) => s.type === "institution")
+        .map((s) => s.id)
+      const programIds = sources.filter((s) => s.type === "program").map((s) => s.id)
 
-    if (institutionIds.length > 0) {
-      context.institutions = await prisma.institution.findMany({
-        where: { id: { in: institutionIds } },
-        take: 5,
-      })
+      if (institutionIds.length > 0) {
+        context.institutions = await prisma.institution.findMany({
+          where: { id: { in: institutionIds } },
+          take: 5,
+        })
+      }
+
+      if (programIds.length > 0) {
+        context.programs = await prisma.program.findMany({
+          where: { id: { in: programIds } },
+          include: { institution: true },
+          take: 5,
+        })
+      }
     }
 
-    if (programIds.length > 0) {
-      context.programs = await prisma.program.findMany({
-        where: { id: { in: programIds } },
-        include: { institution: true },
-        take: 5,
-      })
+    return {
+      answer,
+      sources,
+      context,
     }
-  }
-
-  return {
-    answer,
-    sources,
-    context,
+  } catch (error) {
+    console.error("Error in ragPipeline:", error)
+    throw error
   }
 }
 

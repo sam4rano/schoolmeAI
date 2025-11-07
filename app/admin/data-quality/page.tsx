@@ -40,6 +40,23 @@ interface Issue {
   metadata: any
 }
 
+function useCoverageStats() {
+  return useQuery<{
+    data: {
+      cutoff: { total: number; withData: number; withoutData: number; coverage: number; percentage: string }
+      fees: { total: number; withData: number; withoutData: number; coverage: number; percentage: string }
+      descriptions: { total: number; withData: number; withoutData: number; coverage: number; percentage: string }
+    }
+  }>({
+    queryKey: ["admin-data-coverage"],
+    queryFn: async () => {
+      const response = await fetch("/api/admin/data-quality/coverage")
+      if (!response.ok) throw new Error("Failed to fetch coverage stats")
+      return response.json()
+    },
+  })
+}
+
 function useDataQuality(issueType?: string) {
   return useQuery<{
     metrics: DataQualityMetrics
@@ -64,11 +81,13 @@ export default function DataQualityPage() {
   const { data: websiteData, isLoading: websiteLoading } = useDataQuality("missingWebsite")
   const { data: cutoffData, isLoading: cutoffLoading } = useDataQuality("missingCutoff")
   const { data: descriptionData, isLoading: descriptionLoading } = useDataQuality("missingDescription")
+  const { data: coverageData, isLoading: coverageLoading } = useCoverageStats()
 
   const metrics = overviewData?.metrics
   const websiteIssues = websiteData?.issues || []
   const cutoffIssues = cutoffData?.issues || []
   const descriptionIssues = descriptionData?.issues || []
+  const coverage = coverageData?.data
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return "text-green-600"
@@ -145,16 +164,21 @@ export default function DataQualityPage() {
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {overviewLoading ? (
+            {overviewLoading || coverageLoading ? (
               <Skeleton className="h-8 w-20" />
             ) : (
               <>
-                <div className={`text-2xl font-bold ${getScoreColor(metrics?.cutoffScore || 0)}`}>
-                  {metrics?.cutoffScore || 0}%
+                <div className={`text-2xl font-bold ${getScoreColor(coverage?.cutoff.coverage || metrics?.cutoffScore || 0)}`}>
+                  {coverage?.cutoff.coverage || metrics?.cutoffScore || 0}%
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {metrics?.programsWithoutCutoff || 0} programs missing cutoff data
+                  {coverage?.cutoff.withData || 0} / {coverage?.cutoff.total || 0} programs have cutoff data
                 </p>
+                {coverage?.cutoff.withoutData > 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    {coverage.cutoff.withoutData} programs missing cutoff data
+                  </p>
+                )}
               </>
             )}
           </CardContent>
@@ -166,21 +190,93 @@ export default function DataQualityPage() {
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {overviewLoading ? (
+            {overviewLoading || coverageLoading ? (
               <Skeleton className="h-8 w-20" />
             ) : (
               <>
-                <div className={`text-2xl font-bold ${getScoreColor(metrics?.descriptionScore || 0)}`}>
-                  {metrics?.descriptionScore || 0}%
+                <div className={`text-2xl font-bold ${getScoreColor(coverage?.descriptions.coverage || metrics?.descriptionScore || 0)}`}>
+                  {coverage?.descriptions.coverage || metrics?.descriptionScore || 0}%
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {metrics?.programsWithoutDescription || 0} programs missing descriptions
+                  {coverage?.descriptions.withData || 0} / {coverage?.descriptions.total || 0} programs have descriptions
                 </p>
+                {coverage?.descriptions.withoutData > 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    {coverage.descriptions.withoutData} programs missing descriptions
+                  </p>
+                )}
               </>
             )}
           </CardContent>
         </Card>
       </div>
+
+      {/* Coverage Stats */}
+      {coverage && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Data Coverage Statistics</CardTitle>
+            <CardDescription>
+              Detailed coverage metrics for cutoff data, fees, and descriptions
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Cutoff Coverage</span>
+                  <Badge variant={coverage.cutoff.coverage >= 80 ? "default" : coverage.cutoff.coverage >= 60 ? "secondary" : "destructive"}>
+                    {coverage.cutoff.percentage}
+                  </Badge>
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {coverage.cutoff.withData} of {coverage.cutoff.total} programs
+                </div>
+                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-primary transition-all"
+                    style={{ width: `${coverage.cutoff.coverage}%` }}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Fee Coverage</span>
+                  <Badge variant={coverage.fees.coverage >= 80 ? "default" : coverage.fees.coverage >= 60 ? "secondary" : "destructive"}>
+                    {coverage.fees.percentage}
+                  </Badge>
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {coverage.fees.withData} of {coverage.fees.total} entities
+                </div>
+                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-primary transition-all"
+                    style={{ width: `${coverage.fees.coverage}%` }}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Description Coverage</span>
+                  <Badge variant={coverage.descriptions.coverage >= 80 ? "default" : coverage.descriptions.coverage >= 60 ? "secondary" : "destructive"}>
+                    {coverage.descriptions.percentage}
+                  </Badge>
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {coverage.descriptions.withData} of {coverage.descriptions.total} programs
+                </div>
+                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-primary transition-all"
+                    style={{ width: `${coverage.descriptions.coverage}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Issues Tabs */}
       <Card>

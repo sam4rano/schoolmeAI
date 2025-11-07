@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { Prisma } from "@prisma/client"
 import { requireAdmin } from "@/lib/middleware/admin"
+import { handleApiError } from "@/lib/utils/api-error-handler"
 
 export async function GET(request: NextRequest) {
   try {
@@ -181,15 +182,7 @@ export async function GET(request: NextRequest) {
       issues,
     })
   } catch (error) {
-    if (error instanceof Error && error.message.includes("Unauthorized")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-    
-    console.error("Error fetching data quality:", error)
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    )
+    return handleApiError(error)
   }
 }
 

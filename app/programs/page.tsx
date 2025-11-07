@@ -49,8 +49,8 @@ function ProgramCard({ program }: { program: any }) {
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <CardTitle className="text-sm font-semibold mb-1.5 line-clamp-2 leading-tight">{program.name}</CardTitle>
-            <CardDescription className="flex items-center gap-1.5 flex-wrap text-xs">
-              <span className="font-medium text-muted-foreground">{program.institution?.name}</span>
+            <div className="flex items-center gap-1.5 flex-wrap text-xs text-muted-foreground mt-1">
+              <span className="font-medium">{program.institution?.name}</span>
               <Badge variant="outline" className="text-xs px-1.5 py-0">
                 {program.institution?.type}
               </Badge>
@@ -58,7 +58,7 @@ function ProgramCard({ program }: { program: any }) {
                 {program.institution?.state}
               </Badge>
               {getDifficultyBadge(program.institutionDifficulty)}
-            </CardDescription>
+            </div>
           </div>
         </div>
       </CardHeader>

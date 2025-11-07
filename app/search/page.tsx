@@ -102,11 +102,11 @@ export default function SearchPage() {
                       <div className="flex items-start justify-between">
                         <div>
                           <CardTitle>{institution.name}</CardTitle>
-                          <CardDescription className="mt-2 flex flex-wrap gap-2">
+                          <div className="mt-2 flex flex-wrap gap-2 text-sm text-muted-foreground">
                             <Badge variant="outline">{institution.type}</Badge>
                             <Badge variant="outline">{institution.ownership}</Badge>
                             <Badge variant="outline">{institution.state}</Badge>
-                          </CardDescription>
+                          </div>
                         </div>
                       </div>
                     </CardHeader>

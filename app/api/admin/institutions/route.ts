@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/middleware/admin"
 import { z } from "zod"
+import { buildInstitutionQuery } from "@/lib/queries/institutions"
+import { handleApiError } from "@/lib/utils/api-error-handler"
 
 const createInstitutionSchema = z.object({
   name: z.string().min(1),
@@ -21,52 +23,24 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const page = parseInt(searchParams.get("page") || "1")
     const limit = parseInt(searchParams.get("limit") || "20")
-    const search = searchParams.get("search") || ""
-    const type = searchParams.get("type")
-    const ownership = searchParams.get("ownership")
-    const missingWebsite = searchParams.get("missingWebsite") === "true"
 
-    const where: any = {}
-    
-    if (search) {
-      where.name = {
-        contains: search,
-        mode: "insensitive",
-      }
-    }
-    
-    if (type) {
-      where.type = type
-    }
-    
-    if (ownership) {
-      where.ownership = ownership
-    }
-    
-    if (missingWebsite) {
-      where.OR = [
-        { website: null },
-        { website: "" },
-      ]
+    const filters = {
+      search: searchParams.get("search") || undefined,
+      type: searchParams.get("type") as any,
+      ownership: searchParams.get("ownership") as any,
+      missingWebsite: searchParams.get("missingWebsite") === "true",
     }
 
     const skip = (page - 1) * limit
+    const query = buildInstitutionQuery(filters, {
+      includeCount: true,
+      skip,
+      take: limit,
+    })
 
     const [institutions, total] = await Promise.all([
-      prisma.institution.findMany({
-        where,
-        skip,
-        take: limit,
-        include: {
-          _count: {
-            select: { programs: true },
-          },
-        },
-        orderBy: {
-          name: "asc",
-        },
-      }),
-      prisma.institution.count({ where }),
+      prisma.institution.findMany(query),
+      prisma.institution.count({ where: query.where }),
     ])
 
     return NextResponse.json({
@@ -79,15 +53,7 @@ export async function GET(request: NextRequest) {
       },
     })
   } catch (error) {
-    if (error instanceof Error && error.message.includes("Unauthorized")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-    
-    console.error("Error fetching institutions:", error)
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    )
+    return handleApiError(error)
   }
 }
 
@@ -111,34 +77,18 @@ export async function POST(request: NextRequest) {
     })
 
     // Log audit event
-    await prisma.auditEvent.create({
-      data: {
-        entityType: "institution",
-        entityId: institution.id,
-        action: "create",
-        userId: session.user.id,
-        institutionId: institution.id,
-      },
+    const { logAuditEvent } = await import("@/lib/utils/audit-logger")
+    await logAuditEvent({
+      userId: session.user.id,
+      entityType: "institution",
+      entityId: institution.id,
+      action: "create",
+      institutionId: institution.id,
     })
 
     return NextResponse.json({ data: institution }, { status: 201 })
   } catch (error) {
-    if (error instanceof Error && error.message.includes("Unauthorized")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-    
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: "Invalid data", details: error.errors },
-        { status: 400 }
-      )
-    }
-
-    console.error("Error creating institution:", error)
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    )
+    return handleApiError(error)
   }
 }
 

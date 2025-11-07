@@ -342,7 +342,7 @@ export default function NewProgramPage() {
           </CardHeader>
           <CardContent>
             <CutoffHistoryEditor
-              cutoffHistory={formData.cutoffHistory}
+              value={formData.cutoffHistory}
               onChange={(history) => setFormData({ ...formData, cutoffHistory: history })}
             />
           </CardContent>

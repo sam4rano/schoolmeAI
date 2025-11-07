@@ -16,6 +16,8 @@ import {
   Menu,
   X,
   Upload,
+  MessageSquare,
+  Sparkles,
 } from "lucide-react"
 
 const navItems = [
@@ -35,6 +37,21 @@ const navItems = [
     icon: GraduationCap,
   },
   {
+    title: "Bulk Cutoff Entry",
+    href: "/admin/programs/bulk-cutoff",
+    icon: FileText,
+  },
+  {
+    title: "Bulk Fee Entry",
+    href: "/admin/programs/bulk-fees",
+    icon: FileText,
+  },
+  {
+    title: "Bulk Descriptions",
+    href: "/admin/programs/bulk-descriptions",
+    icon: FileText,
+  },
+  {
     title: "Data Quality",
     href: "/admin/data-quality",
     icon: BarChart3,
@@ -50,6 +67,16 @@ const navItems = [
     icon: Upload,
   },
   {
+    title: "Review Moderation",
+    href: "/admin/reviews",
+    icon: MessageSquare,
+  },
+  {
+    title: "AI Embeddings",
+    href: "/admin/embeddings",
+    icon: Sparkles,
+  },
+  {
     title: "Settings",
     href: "/admin/settings",
     icon: Settings,
@@ -62,8 +89,8 @@ export function AdminSidebar() {
 
   return (
     <>
-      {/* Mobile menu button */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-background border-b p-4 flex items-center justify-between">
+      {/* Mobile menu button - positioned below navbar */}
+      <div className="lg:hidden fixed top-16 left-0 right-0 z-40 bg-background border-b p-4 flex items-center justify-between">
         <Link href="/admin" className="flex items-center gap-2">
           <LayoutDashboard className="h-5 w-5 text-primary" />
           <span className="font-bold text-base">Admin Panel</span>
@@ -87,10 +114,12 @@ export function AdminSidebar() {
       )}
 
       {/* Sidebar */}
-      <div
+      <aside
         className={cn(
-          "fixed lg:static inset-y-0 left-0 z-40 w-64 flex-col border-r bg-background transition-transform duration-300 lg:flex",
-          isMobileOpen ? "flex translate-x-0" : "-translate-x-full lg:translate-x-0"
+          "fixed lg:static top-16 lg:top-0 h-[calc(100vh-4rem)] lg:h-screen left-0 z-30 w-64 flex-col border-r bg-background",
+          "lg:flex lg:translate-x-0", // Always visible on desktop
+          isMobileOpen ? "flex translate-x-0" : "-translate-x-full", // Mobile only transition
+          "transition-transform duration-300" // Smooth transition for mobile
         )}
       >
         <div className="flex h-16 items-center border-b px-6 pt-16 lg:pt-0">
@@ -134,7 +163,7 @@ export function AdminSidebar() {
             Back to Site
           </Link>
         </div>
-      </div>
+      </aside>
     </>
   )
 }

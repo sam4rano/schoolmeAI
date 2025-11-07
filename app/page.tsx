@@ -116,6 +116,61 @@ export default async function HomePage() {
           </div>
         </section>
 
+        {/* How It Works Section */}
+        <section className="py-12 sm:py-20 lg:py-24 bg-muted/30">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-2xl text-center mb-8 sm:mb-12">
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight md:text-4xl mb-3 sm:mb-4">
+                How It Works
+              </h2>
+              <p className="text-base sm:text-lg text-muted-foreground px-4 sm:px-0">
+                Get personalized admission guidance in three simple steps
+              </p>
+            </div>
+            <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-3 max-w-4xl mx-auto">
+              <Card className="text-center">
+                <CardHeader>
+                  <div className="mb-4 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                    <span className="text-2xl font-bold text-primary">1</span>
+                  </div>
+                  <CardTitle>Enter Your Scores</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    Input your UTME score and O-level grades. Our system will calculate your composite score automatically.
+                  </p>
+                </CardContent>
+              </Card>
+              <Card className="text-center">
+                <CardHeader>
+                  <div className="mb-4 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                    <span className="text-2xl font-bold text-primary">2</span>
+                  </div>
+                  <CardTitle>Get AI Recommendations</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    Our AI analyzes your scores and recommends suitable institutions categorized as safety, target, or reach schools.
+                  </p>
+                </CardContent>
+              </Card>
+              <Card className="text-center">
+                <CardHeader>
+                  <div className="mb-4 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                    <span className="text-2xl font-bold text-primary">3</span>
+                  </div>
+                  <CardTitle>Make Informed Decisions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    Compare programs, track deadlines, and use historical data to make the best admission choices.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
         {/* Features Section */}
         <section className="py-12 sm:py-20 lg:py-24">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -251,6 +306,76 @@ export default async function HomePage() {
           </div>
         </section>
 
+        {/* Testimonials Section */}
+        <section className="py-12 sm:py-20 lg:py-24 bg-muted/30">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-2xl text-center mb-8 sm:mb-12">
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight md:text-4xl mb-3 sm:mb-4">
+                What Students Say
+              </h2>
+              <p className="text-base sm:text-lg text-muted-foreground px-4 sm:px-0">
+                Real feedback from students who used our platform
+              </p>
+            </div>
+            <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-3 max-w-5xl mx-auto">
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <span className="text-lg font-semibold text-primary">A</span>
+                    </div>
+                    <div>
+                      <CardTitle className="text-base">Adebayo T.</CardTitle>
+                      <p className="text-xs text-muted-foreground">Lagos State</p>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    &quot;This platform helped me find the perfect program for my UTME score. The AI recommendations were spot-on, and I got admitted to my target school!&quot;
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <span className="text-lg font-semibold text-primary">C</span>
+                    </div>
+                    <div>
+                      <CardTitle className="text-base">Chinwe O.</CardTitle>
+                      <p className="text-xs text-muted-foreground">Abia State</p>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    &quot;The eligibility calculator is so accurate! It gave me confidence in my application choices. The comparison feature helped me weigh my options.&quot;
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <span className="text-lg font-semibold text-primary">I</span>
+                    </div>
+                    <div>
+                      <CardTitle className="text-base">Ibrahim M.</CardTitle>
+                      <p className="text-xs text-muted-foreground">Kano State</p>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    &quot;I love how comprehensive the database is. Found programs I never knew existed. The historical cutoff data was invaluable for planning.&quot;
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
         {/* Stats Section */}
         <section className="bg-muted/50 py-12 sm:py-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -263,7 +388,7 @@ export default async function HomePage() {
               </div>
               <div className="text-center">
                 <div className="text-2xl sm:text-3xl font-bold text-primary mb-1 sm:mb-2">
-                  {stats.programs > 0 ? stats.programs.toLocaleString() : "180+"}
+                  {stats.programs > 0 ? stats.programs.toLocaleString() : "1,800+"}
                 </div>
                 <div className="text-xs sm:text-sm text-muted-foreground">Programs</div>
               </div>

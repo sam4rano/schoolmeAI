@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/middleware/admin"
 import { z } from "zod"
+import { buildProgramQuery } from "@/lib/queries/programs"
+import { logAuditEvent } from "@/lib/utils/audit-logger"
+import { handleApiError } from "@/lib/utils/api-error-handler"
 
 const createProgramSchema = z.object({
   institutionId: z.string().uuid(),
@@ -26,85 +29,31 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const page = parseInt(searchParams.get("page") || "1")
     const limit = parseInt(searchParams.get("limit") || "20")
-    const search = searchParams.get("search") || ""
-    const institutionId = searchParams.get("institutionId")
-    const degreeType = searchParams.get("degreeType")
-    const missingCutoff = searchParams.get("missingCutoff") === "true"
-    const missingDescription = searchParams.get("missingDescription") === "true"
 
-    const where: any = {}
-    
-    if (institutionId) {
-      where.institutionId = institutionId
-    }
-    
-    if (degreeType && degreeType !== "all") {
-      where.degreeType = degreeType
-    }
-    
-    if (missingCutoff) {
-      where.cutoffHistory = null as any
-    }
-    
-    if (missingDescription) {
-      where.OR = [
-        { description: null } as any,
-        { description: "" } as any,
-      ]
-    }
-    
-    if (search) {
-      const searchConditions = [
-        {
-          name: {
-            contains: search,
-            mode: "insensitive",
-          },
-        },
-        {
-          institution: {
-            name: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
-        },
-      ]
-      
-      if (where.OR) {
-        // Combine with existing OR conditions
-        where.AND = [
-          { OR: where.OR },
-          { OR: searchConditions },
-        ]
-        delete where.OR
-      } else {
-        where.OR = searchConditions
-      }
+    const filters = {
+      search: searchParams.get("search") || undefined,
+      institutionId: searchParams.get("institutionId") || undefined,
+      degreeType: searchParams.get("degreeType") || undefined,
+      missingCutoff: searchParams.get("missingCutoff") === "true",
+      missingDescription: searchParams.get("missingDescription") === "true",
     }
 
     const skip = (page - 1) * limit
+    const query = buildProgramQuery(filters, {
+      includeInstitution: true,
+      institutionSelect: {
+        id: true,
+        name: true,
+        type: true,
+        state: true,
+      },
+      skip,
+      take: limit,
+    })
 
     const [programs, total] = await Promise.all([
-      prisma.program.findMany({
-        where,
-        skip,
-        take: limit,
-        include: {
-          institution: {
-            select: {
-              id: true,
-              name: true,
-              type: true,
-              state: true,
-            },
-          },
-        },
-        orderBy: {
-          name: "asc",
-        },
-      }),
-      prisma.program.count({ where }),
+      prisma.program.findMany(query),
+      prisma.program.count({ where: query.where }),
     ])
 
     return NextResponse.json({
@@ -117,15 +66,7 @@ export async function GET(request: NextRequest) {
       },
     })
   } catch (error) {
-    if (error instanceof Error && error.message.includes("Unauthorized")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-    
-    console.error("Error fetching programs:", error)
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    )
+    return handleApiError(error)
   }
 }
 
@@ -153,34 +94,17 @@ export async function POST(request: NextRequest) {
     })
 
     // Log audit event
-    await prisma.auditEvent.create({
-      data: {
-        entityType: "program",
-        entityId: program.id,
-        action: "create",
-        userId: session.user.id,
-        programId: program.id,
-      },
+    await logAuditEvent({
+      userId: session.user.id,
+      entityType: "program",
+      entityId: program.id,
+      action: "create",
+      programId: program.id,
     })
 
     return NextResponse.json({ data: program }, { status: 201 })
   } catch (error) {
-    if (error instanceof Error && error.message.includes("Unauthorized")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-    
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: "Invalid data", details: error.errors },
-        { status: 400 }
-      )
-    }
-
-    console.error("Error creating program:", error)
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    )
+    return handleApiError(error)
   }
 }
 

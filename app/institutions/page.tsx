@@ -239,10 +239,10 @@ export default function InstitutionsPage() {
                           <Building2 className="h-4 w-4 text-primary flex-shrink-0" />
                           <span className="line-clamp-2">{institution.name}</span>
                         </CardTitle>
-                        <CardDescription className="mt-1.5 flex flex-wrap gap-1.5">
+                        <div className="mt-1.5 flex flex-wrap gap-1.5 text-sm text-muted-foreground">
                           <Badge variant="outline" className="text-xs px-1.5 py-0">{institution.type}</Badge>
                           <Badge variant="outline" className="text-xs px-1.5 py-0">{institution.ownership}</Badge>
-                        </CardDescription>
+                        </div>
                       </div>
                     </div>
                   </CardHeader>

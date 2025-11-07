@@ -1,26 +1,19 @@
 "use client"
 
 import { StudentSidebar } from "./student-sidebar"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import { useEffect } from "react"
 import { Loader2 } from "lucide-react"
+import { useAuthGuard } from "@/lib/hooks/use-auth-guard"
 
 interface StudentLayoutProps {
   children: React.ReactNode
 }
 
 export function StudentLayout({ children }: StudentLayoutProps) {
-  const { data: session, status } = useSession()
-  const router = useRouter()
+  const { isLoading, isAuthenticated } = useAuthGuard({
+    requireAuth: true,
+  })
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/signin?callbackUrl=/dashboard")
-    }
-  }, [status, router])
-
-  if (status === "loading") {
+  if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -28,7 +21,7 @@ export function StudentLayout({ children }: StudentLayoutProps) {
     )
   }
 
-  if (status === "unauthenticated") {
+  if (!isAuthenticated) {
     return null
   }
 

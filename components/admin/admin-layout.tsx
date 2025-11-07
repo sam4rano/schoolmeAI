@@ -1,16 +1,23 @@
 "use client"
 
-import { useSession } from "next-auth/react"
 import { AdminSidebar } from "./admin-sidebar"
+import { Navbar } from "@/components/ui/navbar"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Loader2, ShieldX } from "lucide-react"
+import { useAuthGuard } from "@/lib/hooks/use-auth-guard"
+import { usePathname } from "next/navigation"
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { data: session, status } = useSession()
+  const pathname = usePathname()
+  const { isLoading, isAuthenticated, isAdmin, isAuthorized } = useAuthGuard({
+    requireAuth: true,
+    requireAdmin: true,
+  })
 
-  if (status === "loading") {
+  // Show loading only if no cached session exists
+  if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -18,7 +25,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     )
   }
 
-  if (status === "unauthenticated") {
+  if (!isAuthenticated) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Card className="w-full max-w-md">
@@ -31,7 +38,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                   Please sign in to access the admin panel
                 </p>
               </div>
-              <Link href="/auth/signin">
+              <Link href={`/auth/signin?callbackUrl=${encodeURIComponent(pathname || "/admin")}`}>
                 <Button>Sign In</Button>
               </Link>
             </div>
@@ -41,9 +48,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     )
   }
 
-  const isAdmin = session?.user?.roles?.includes("admin")
-
-  if (!isAdmin) {
+  if (!isAuthorized) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Card className="w-full max-w-md">
@@ -67,13 +72,16 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <AdminSidebar />
-      <main className="flex-1 overflow-y-auto pt-16 lg:pt-0">
-        <div className="container mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
-          {children}
-        </div>
-      </main>
+    <div className="flex min-h-screen flex-col">
+      <Navbar />
+      <div className="flex flex-1 overflow-hidden">
+        <AdminSidebar />
+        <main className="flex-1 overflow-y-auto pt-16 lg:pt-0 lg:ml-64">
+          <div className="container mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   )
 }

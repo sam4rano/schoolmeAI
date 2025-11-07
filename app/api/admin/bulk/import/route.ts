@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/middleware/admin"
 import { z } from "zod"
+import { logAuditEvent } from "@/lib/utils/audit-logger"
+import { handleApiError } from "@/lib/utils/api-error-handler"
 
 export async function POST(request: NextRequest) {
   try {
@@ -112,16 +114,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Log audit event
-    await prisma.auditEvent.create({
-      data: {
-        entityType: entityType,
-        entityId: "bulk",
-        action: "create",
-        userId: session.user.id,
-        metadata: {
-          count,
-          errors: errors.length > 0 ? errors : undefined,
-        },
+    await logAuditEvent({
+      userId: session.user.id,
+      entityType: entityType as "institution" | "program",
+      entityId: "bulk",
+      action: "create",
+      metadata: {
+        count,
+        errors: errors.length > 0 ? errors : undefined,
       },
     })
 
@@ -132,15 +132,7 @@ export async function POST(request: NextRequest) {
       },
     })
   } catch (error) {
-    if (error instanceof Error && error.message.includes("Unauthorized")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-    
-    console.error("Error in bulk import:", error)
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    )
+    return handleApiError(error)
   }
 }
 

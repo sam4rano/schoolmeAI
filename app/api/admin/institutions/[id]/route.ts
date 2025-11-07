@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/middleware/admin"
 import { z } from "zod"
+import { logAuditEvent } from "@/lib/utils/audit-logger"
+import { handleApiError } from "@/lib/utils/api-error-handler"
 
 const updateInstitutionSchema = z.object({
   name: z.string().min(1).optional(),
@@ -50,15 +52,7 @@ export async function GET(
 
     return NextResponse.json({ data: institution })
   } catch (error) {
-    if (error instanceof Error && error.message.includes("Unauthorized")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-    
-    console.error("Error fetching institution:", error)
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    )
+    return handleApiError(error)
   }
 }
 
@@ -109,35 +103,18 @@ export async function PUT(
     })
 
     // Log audit event
-    await prisma.auditEvent.create({
-      data: {
-        entityType: "institution",
-        entityId: institution.id,
-        action: "update",
-        userId: session.user.id,
-        institutionId: institution.id,
-        metadata: { changes },
-      },
+    await logAuditEvent({
+      userId: session.user.id,
+      entityType: "institution",
+      entityId: institution.id,
+      action: "update",
+      institutionId: institution.id,
+      metadata: { changes },
     })
 
     return NextResponse.json({ data: institution })
   } catch (error) {
-    if (error instanceof Error && error.message.includes("Unauthorized")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-    
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: "Invalid data", details: error.errors },
-        { status: 400 }
-      )
-    }
-
-    console.error("Error updating institution:", error)
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    )
+    return handleApiError(error)
   }
 }
 
@@ -164,27 +141,17 @@ export async function DELETE(
     })
 
     // Log audit event
-    await prisma.auditEvent.create({
-      data: {
-        entityType: "institution",
-        entityId: params.id,
-        action: "delete",
-        userId: session.user.id,
-        institutionId: params.id,
-      },
+    await logAuditEvent({
+      userId: session.user.id,
+      entityType: "institution",
+      entityId: params.id,
+      action: "delete",
+      institutionId: params.id,
     })
 
     return NextResponse.json({ message: "Institution deleted successfully" })
   } catch (error) {
-    if (error instanceof Error && error.message.includes("Unauthorized")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-    
-    console.error("Error deleting institution:", error)
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    )
+    return handleApiError(error)
   }
 }
 

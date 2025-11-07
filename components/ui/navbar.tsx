@@ -3,10 +3,11 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { usePathname } from "next/navigation"
-import { Menu, X, User, LogOut, Shield, LayoutDashboard, ChevronDown, Building2, GraduationCap, Calculator, Sparkles, MessageSquare, BarChart3 } from "lucide-react"
+import { Menu, X, User, LogOut, Shield, LayoutDashboard, ChevronDown, Building2, GraduationCap, Calculator, Sparkles, MessageSquare, BarChart3, DollarSign, TrendingUp } from "lucide-react"
 import { useState } from "react"
 import { useSession, signOut } from "next-auth/react"
 import { SearchAutocomplete } from "@/components/search-autocomplete"
+import { NotificationBell } from "@/components/notifications/notification-bell"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,7 +32,9 @@ const navItems = [
   {
     label: "Tools",
     items: [
-      { href: "/calculator", label: "Calculator", icon: Calculator },
+      { href: "/calculator", label: "Eligibility Calculator", icon: Calculator },
+      { href: "/calculator/fees", label: "Fee Calculator", icon: DollarSign },
+      { href: "/calculator/post-utme", label: "Post-UTME Calculator", icon: TrendingUp },
       { href: "/recommendations", label: "Recommendations", icon: Sparkles },
       { href: "/ai", label: "AI Assistant", icon: MessageSquare },
     ],
@@ -61,7 +64,7 @@ export function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
             {navItems.map((item) => {
-              if ("href" in item) {
+              if ("href" in item && item.href) {
                 // Direct link
                 const active = isActive(item.href)
                 return (
@@ -82,9 +85,9 @@ export function Navbar() {
                     )}
                   </Link>
                 )
-              } else {
+              } else if ("items" in item && item.items) {
                 // Dropdown menu
-                const hasActiveItem = item.items.some((subItem) => isActive(subItem.href))
+                const hasActiveItem = item.items.some((subItem) => subItem.href && isActive(subItem.href))
                 return (
                   <DropdownMenu key={item.label}>
                     <DropdownMenuTrigger asChild>
@@ -140,6 +143,7 @@ export function Navbar() {
             
             {status === "authenticated" && session?.user ? (
               <>
+                <NotificationBell />
                 <Link href={isAdmin ? "/admin" : "/dashboard"} className="hidden sm:block">
                   <Button size="sm" variant="outline" className="gap-2">
                     <LayoutDashboard className="h-4 w-4" />
@@ -244,10 +248,10 @@ export function Navbar() {
                     return (
                       <Link
                         key={item.href}
-                        href={item.href}
+                        href={item.href || "#"}
                         onClick={() => setMobileMenuOpen(false)}
                         className={`block px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                          isActive(item.href)
+                          item.href && isActive(item.href)
                             ? "bg-primary text-primary-foreground"
                             : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                         }`}

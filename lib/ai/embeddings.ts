@@ -69,24 +69,52 @@ export async function storeEmbedding(data: EmbeddingData, embedding: number[]): 
   const embeddingVector = `[${embedding.join(",")}]`
   const metadataJson = data.metadata ? JSON.stringify(data.metadata) : null
 
-  await prisma.$executeRawUnsafe(`
-    INSERT INTO embeddings (id, entity_type, entity_id, content, content_hash, embedding, metadata, created_at, updated_at)
-    VALUES (
-      gen_random_uuid()::text,
-      $1,
-      $2,
-      $3,
-      $4,
-      $5::vector,
-      $6::jsonb,
-      NOW(),
-      NOW()
-    )
-    ON CONFLICT (entity_type, entity_id, content_hash) 
-    DO UPDATE SET
-      embedding = EXCLUDED.embedding,
-      updated_at = NOW()
-  `, data.entityType, data.entityId, data.content, contentHash, embeddingVector, metadataJson)
+  // Use raw SQL since Prisma doesn't support vector type natively
+  // Try snake_case first (from migration), fallback to camelCase if needed
+  try {
+    await prisma.$executeRawUnsafe(`
+      INSERT INTO embeddings (id, entity_type, entity_id, content, content_hash, embedding, metadata, created_at, updated_at)
+      VALUES (
+        gen_random_uuid()::text,
+        $1,
+        $2,
+        $3,
+        $4,
+        $5::vector,
+        $6::jsonb,
+        NOW(),
+        NOW()
+      )
+      ON CONFLICT (entity_type, entity_id, content_hash) 
+      DO UPDATE SET
+        embedding = EXCLUDED.embedding,
+        updated_at = NOW()
+    `, data.entityType, data.entityId, data.content, contentHash, embeddingVector, metadataJson)
+  } catch (error) {
+    // Fallback to camelCase if snake_case doesn't work
+    if (error instanceof Error && error.message.includes("does not exist")) {
+      await prisma.$executeRawUnsafe(`
+        INSERT INTO embeddings (id, "entityType", "entityId", content, "contentHash", embedding, metadata, "createdAt", "updatedAt")
+        VALUES (
+          gen_random_uuid()::text,
+          $1,
+          $2,
+          $3,
+          $4,
+          $5::vector,
+          $6::jsonb,
+          NOW(),
+          NOW()
+        )
+        ON CONFLICT ("entityType", "entityId", "contentHash") 
+        DO UPDATE SET
+          embedding = EXCLUDED.embedding,
+          "updatedAt" = NOW()
+      `, data.entityType, data.entityId, data.content, contentHash, embeddingVector, metadataJson)
+    } else {
+      throw error
+    }
+  }
 }
 
 /**
@@ -97,40 +125,50 @@ export async function findSimilarEmbeddings(
   entityType?: string,
   limit: number = 5
 ): Promise<Array<{ id: string; entityType: string; entityId: string; content: string; metadata: any; similarity: number }>> {
-  const embeddingVector = `[${queryEmbedding.join(",")}]`
+  try {
+    const embeddingVector = `[${queryEmbedding.join(",")}]`
 
-  let query = `
-    SELECT 
-      id,
-      entity_type as "entityType",
-      entity_id as "entityId",
-      content,
-      metadata,
-      1 - (embedding <=> $1::vector) as similarity
-    FROM embeddings
-    WHERE 1 - (embedding <=> $1::vector) > 0.5
-  `
+    let query = `
+      SELECT 
+        id,
+        entity_type as "entityType",
+        entity_id as "entityId",
+        content,
+        metadata,
+        1 - (embedding <=> $1::vector) as similarity
+      FROM embeddings
+      WHERE 1 - (embedding <=> $1::vector) > 0.5
+    `
 
-  const params: any[] = [embeddingVector]
+    const params: any[] = [embeddingVector]
 
-  if (entityType) {
-    query += ` AND entity_type = $2`
-    params.push(entityType)
+    if (entityType) {
+      query += ` AND entity_type = $2`
+      params.push(entityType)
+    }
+
+    query += ` ORDER BY similarity DESC LIMIT $${params.length + 1}`
+    params.push(limit)
+
+    const results = await prisma.$queryRawUnsafe(query, ...params)
+
+    return results as Array<{
+      id: string
+      entityType: string
+      entityId: string
+      content: string
+      metadata: any
+      similarity: number
+    }>
+  } catch (error) {
+    console.error("Error in findSimilarEmbeddings:", error)
+    // If embeddings table doesn't exist, return empty array
+    if (error instanceof Error && (error.message.includes("relation") || error.message.includes("does not exist"))) {
+      console.warn("Embeddings table not found, returning empty results")
+      return []
+    }
+    throw error
   }
-
-  query += ` ORDER BY similarity DESC LIMIT $${params.length + 1}`
-  params.push(limit)
-
-  const results = await prisma.$queryRawUnsafe(query, ...params)
-
-  return results as Array<{
-    id: string
-    entityType: string
-    entityId: string
-    content: string
-    metadata: any
-    similarity: number
-  }>
 }
 
 /**

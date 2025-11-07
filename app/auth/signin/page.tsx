@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { signIn, useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,28 +15,35 @@ import { Loader2 } from "lucide-react"
 
 export default function SignInPage() {
   const router = useRouter()
+  const pathname = usePathname()
   const { data: session, status } = useSession()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const hasRedirected = useRef(false)
+  const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Redirect if already logged in
+  // Redirect if already logged in (only once)
   useEffect(() => {
-    if (status === "authenticated" && session?.user) {
+    // Only redirect if authenticated and not already redirected
+    if (status === "authenticated" && session?.user && !hasRedirected.current) {
+      hasRedirected.current = true
       const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl")
-      if (callbackUrl) {
-        router.push(callbackUrl)
-      } else {
-        // Redirect based on role
-        if (session.user.roles?.includes("admin")) {
-          router.push("/admin")
-        } else {
-          router.push("/dashboard")
-        }
+      const targetUrl = callbackUrl || (session.user.roles?.includes("admin") ? "/admin" : "/dashboard")
+      
+      // Only redirect if we're not already on the target page
+      if (pathname !== targetUrl && !pathname?.startsWith(targetUrl)) {
+        // Redirect immediately without delay
+        router.replace(targetUrl)
       }
     }
-  }, [status, session, router])
+
+    // Reset redirect flag if status changes back to unauthenticated
+    if (status === "unauthenticated") {
+      hasRedirected.current = false
+    }
+  }, [status, session, router, pathname])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -52,37 +59,21 @@ export default function SignInPage() {
 
       if (result?.error) {
         setError("Invalid email or password")
+        setLoading(false)
       } else {
-        // Check callback URL first
-        const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl")
-        if (callbackUrl) {
-          router.push(callbackUrl)
-        } else {
-          // Check user role from session
-          try {
-            const sessionRes = await fetch("/api/auth/session")
-            const session = await sessionRes.json()
-            if (session?.user?.roles?.includes("admin")) {
-              router.push("/admin")
-            } else {
-              router.push("/dashboard")
-            }
-          } catch {
-            // Fallback to dashboard if session check fails
-            router.push("/dashboard")
-          }
-        }
-        router.refresh()
+        // Success - the useEffect will handle redirect when status becomes "authenticated"
+        // Don't set loading to false here - let the redirect happen
+        // The useEffect will redirect immediately when status changes
       }
     } catch (err) {
       setError("An error occurred. Please try again.")
-    } finally {
       setLoading(false)
     }
   }
 
-  // Show loading while checking session
-  if (status === "loading") {
+  // Show loading only briefly while checking session (if no cached session)
+  const hasSession = session && session.user
+  if (status === "loading" && !hasSession) {
     return (
       <div className="flex min-h-screen flex-col">
         <Navbar />
@@ -94,7 +85,8 @@ export default function SignInPage() {
     )
   }
 
-  // Don't show sign-in form if already authenticated (redirecting)
+  // If authenticated, show minimal loading while redirect happens
+  // The useEffect will redirect immediately
   if (status === "authenticated" && session?.user) {
     return (
       <div className="flex min-h-screen flex-col">

@@ -8,8 +8,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Navbar } from "@/components/ui/navbar"
 import { Footer } from "@/components/ui/footer"
 import { usePrograms } from "@/lib/hooks/use-programs"
-import { Search, GraduationCap, Building2, X, Trash2 } from "lucide-react"
+import { Search, GraduationCap, Building2, X, Trash2, History, GitCompare, Clock, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
+import { Badge } from "@/components/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
 interface EligibilityResult {
   compositeScore: number
@@ -22,6 +25,17 @@ interface EligibilityResult {
     historicalDataYears?: number
     lastUpdated?: string
   }
+}
+
+interface CalculationHistory {
+  id: string
+  timestamp: number
+  utme: number
+  olevels: Record<string, string>
+  programId: string
+  programName: string
+  institutionName: string
+  result: EligibilityResult
 }
 
 const COMMON_OLEVEL_SUBJECTS = [
@@ -64,7 +78,32 @@ export default function CalculatorPage() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<EligibilityResult | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [history, setHistory] = useState<CalculationHistory[]>([])
+  const [selectedForComparison, setSelectedForComparison] = useState<Set<string>>(new Set())
+  const [showHistory, setShowHistory] = useState(false)
+  const [showComparison, setShowComparison] = useState(false)
   const programDropdownRef = useRef<HTMLDivElement>(null)
+
+  // Load history from localStorage on mount
+  useEffect(() => {
+    const savedHistory = localStorage.getItem("calculator-history")
+    if (savedHistory) {
+      try {
+        setHistory(JSON.parse(savedHistory))
+      } catch (e) {
+        console.error("Failed to load calculation history", e)
+      }
+    }
+  }, [])
+
+  // Save history to localStorage whenever it changes
+  useEffect(() => {
+    if (history.length > 0) {
+      // Keep only last 50 calculations
+      const recentHistory = history.slice(0, 50)
+      localStorage.setItem("calculator-history", JSON.stringify(recentHistory))
+    }
+  }, [history])
 
   // Debounce program search
   useEffect(() => {
@@ -154,7 +193,25 @@ export default function CalculatorPage() {
       }
 
       const data = await response.json()
-      setResult(data.data)
+      const calculationResult = data.data
+      setResult(calculationResult)
+
+      // Save to history
+      if (selectedProgram) {
+        const historyEntry: CalculationHistory = {
+          id: Date.now().toString(),
+          timestamp: Date.now(),
+          utme: parseInt(utme),
+          olevels: Object.fromEntries(
+            Object.entries(olevels).filter(([_, value]) => value !== "" && value !== "none")
+          ),
+          programId,
+          programName: selectedProgram.name,
+          institutionName: selectedProgram.institution?.name || "Unknown",
+          result: calculationResult,
+        }
+        setHistory((prev) => [historyEntry, ...prev])
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
     } finally {
@@ -162,15 +219,178 @@ export default function CalculatorPage() {
     }
   }
 
+  const loadFromHistory = (entry: CalculationHistory) => {
+    setUtme(entry.utme.toString())
+    setOlevels(entry.olevels)
+    setProgramId(entry.programId)
+    setResult(entry.result)
+    setShowHistory(false)
+  }
+
+  const clearHistory = () => {
+    setHistory([])
+    localStorage.removeItem("calculator-history")
+  }
+
+  const toggleComparison = (id: string) => {
+    setSelectedForComparison((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(id)) {
+        newSet.delete(id)
+      } else {
+        newSet.add(id)
+      }
+      return newSet
+    })
+  }
+
+  const comparedCalculations = history.filter((entry) => selectedForComparison.has(entry.id))
+
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
       <main className="flex-1 container mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8 max-w-2xl">
              <div className="mb-6 sm:mb-8">
-               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">Eligibility Calculator</h1>
-               <p className="text-xs sm:text-sm text-muted-foreground">
-                 Calculate your admission probability based on JAMB and O-level scores
-               </p>
+               <div className="flex items-center justify-between mb-3 sm:mb-4">
+                 <div>
+                   <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">Eligibility Calculator</h1>
+                   <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+                     Calculate your admission probability based on JAMB and O-level scores
+                   </p>
+                 </div>
+                 <div className="flex gap-2">
+                   <Dialog open={showHistory} onOpenChange={setShowHistory}>
+                     <DialogTrigger asChild>
+                       <Button variant="outline" size="sm">
+                         <History className="h-4 w-4 mr-2" />
+                         History ({history.length})
+                       </Button>
+                     </DialogTrigger>
+                     <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                       <DialogHeader>
+                         <DialogTitle>Calculation History</DialogTitle>
+                         <DialogDescription>
+                           View and reload your previous calculations
+                         </DialogDescription>
+                       </DialogHeader>
+                       {history.length === 0 ? (
+                         <div className="text-center py-8 text-muted-foreground">
+                           No calculation history yet
+                         </div>
+                       ) : (
+                         <div className="space-y-2">
+                           <div className="flex justify-end">
+                             <Button variant="outline" size="sm" onClick={clearHistory}>
+                               Clear History
+                             </Button>
+                           </div>
+                           {history.map((entry) => (
+                             <Card key={entry.id} className="p-4">
+                               <div className="flex items-start justify-between">
+                                 <div className="flex-1">
+                                   <div className="flex items-center gap-2 mb-2">
+                                     <Badge variant="outline">{entry.programName}</Badge>
+                                     <span className="text-xs text-muted-foreground">
+                                       {entry.institutionName}
+                                     </span>
+                                   </div>
+                                   <div className="flex items-center gap-4 text-sm">
+                                     <span>UTME: {entry.utme}</span>
+                                     <span>Score: {entry.result.compositeScore.toFixed(1)}</span>
+                                     {entry.result.probability && (
+                                       <span>{(entry.result.probability * 100).toFixed(0)}%</span>
+                                     )}
+                                     <Badge variant={entry.result.category === "safe" ? "default" : entry.result.category === "target" ? "secondary" : "destructive"}>
+                                       {entry.result.category}
+                                     </Badge>
+                                   </div>
+                                   <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
+                                     <Clock className="h-3 w-3" />
+                                     {new Date(entry.timestamp).toLocaleString()}
+                                   </div>
+                                 </div>
+                                 <div className="flex gap-2">
+                                   <Button
+                                     variant="outline"
+                                     size="sm"
+                                     onClick={() => loadFromHistory(entry)}
+                                   >
+                                     Load
+                                   </Button>
+                                   <Button
+                                     variant={selectedForComparison.has(entry.id) ? "default" : "outline"}
+                                     size="sm"
+                                     onClick={() => toggleComparison(entry.id)}
+                                   >
+                                     <GitCompare className="h-3 w-3" />
+                                   </Button>
+                                 </div>
+                               </div>
+                             </Card>
+                           ))}
+                         </div>
+                       )}
+                     </DialogContent>
+                   </Dialog>
+                   {comparedCalculations.length > 0 && (
+                     <Dialog open={showComparison} onOpenChange={setShowComparison}>
+                       <DialogTrigger asChild>
+                         <Button variant="outline" size="sm">
+                           <GitCompare className="h-4 w-4 mr-2" />
+                           Compare ({comparedCalculations.length})
+                         </Button>
+                       </DialogTrigger>
+                       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                         <DialogHeader>
+                           <DialogTitle>Compare Calculations</DialogTitle>
+                           <DialogDescription>
+                             Compare multiple program calculations side by side
+                           </DialogDescription>
+                         </DialogHeader>
+                         <div className="grid gap-4 md:grid-cols-2">
+                           {comparedCalculations.map((entry) => (
+                             <Card key={entry.id} className="p-4">
+                               <div className="space-y-2">
+                                 <div>
+                                   <h4 className="font-semibold">{entry.programName}</h4>
+                                   <p className="text-xs text-muted-foreground">{entry.institutionName}</p>
+                                 </div>
+                                 <div className="grid grid-cols-2 gap-2 text-sm">
+                                   <div>
+                                     <span className="text-muted-foreground">UTME:</span> {entry.utme}
+                                   </div>
+                                   <div>
+                                     <span className="text-muted-foreground">Score:</span> {entry.result.compositeScore.toFixed(1)}
+                                   </div>
+                                   {entry.result.probability && (
+                                     <div className="col-span-2">
+                                       <span className="text-muted-foreground">Probability: </span>
+                                       {(entry.result.probability * 100).toFixed(0)}%
+                                     </div>
+                                   )}
+                                   <div className="col-span-2">
+                                     <Badge variant={entry.result.category === "safe" ? "default" : entry.result.category === "target" ? "secondary" : "destructive"}>
+                                       {entry.result.category}
+                                     </Badge>
+                                   </div>
+                                 </div>
+                                 <Button
+                                   variant="ghost"
+                                   size="sm"
+                                   onClick={() => toggleComparison(entry.id)}
+                                   className="w-full"
+                                 >
+                                   Remove from Comparison
+                                 </Button>
+                               </div>
+                             </Card>
+                           ))}
+                         </div>
+                       </DialogContent>
+                     </Dialog>
+                   )}
+                 </div>
+               </div>
              </div>
 
       <Card>
@@ -180,7 +400,30 @@ export default function CalculatorPage() {
             Fill in your UTME score and O-level grades
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
+          {/* Step Indicator */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className={`flex items-center justify-center w-8 h-8 rounded-full ${utme ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                1
+              </div>
+              <span className="text-sm font-medium">Scores</span>
+            </div>
+            <div className="flex-1 h-px bg-muted mx-2" />
+            <div className="flex items-center gap-2">
+              <div className={`flex items-center justify-center w-8 h-8 rounded-full ${programId ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                2
+              </div>
+              <span className="text-sm font-medium">Program</span>
+            </div>
+            <div className="flex-1 h-px bg-muted mx-2" />
+            <div className="flex items-center gap-2">
+              <div className={`flex items-center justify-center w-8 h-8 rounded-full ${result ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                3
+              </div>
+              <span className="text-sm font-medium">Result</span>
+            </div>
+          </div>
           <div>
             <label className="block text-sm font-medium mb-2">
               UTME Score (0-400)
@@ -277,9 +520,17 @@ export default function CalculatorPage() {
           </div>
 
           <div className="relative" ref={programDropdownRef}>
-            <label className="block text-sm font-medium mb-2">
-              Select Program
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium">
+                Select Program <span className="text-destructive">*</span>
+              </label>
+              {selectedProgram && (
+                <Badge variant="outline" className="text-xs">
+                  <CheckCircle2 className="h-3 w-3 mr-1" />
+                  Selected
+                </Badge>
+              )}
+            </div>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -349,19 +600,30 @@ export default function CalculatorPage() {
             )}
 
             {selectedProgram && (
-              <div className="mt-2 p-3 bg-muted/50 rounded-md border">
+              <div className="mt-3 p-4 bg-primary/5 border-2 border-primary/20 rounded-lg">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <p className="font-medium text-sm">{selectedProgram.name}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {selectedProgram.institution?.name} • {selectedProgram.institution?.state}
-                    </p>
+                    <div className="flex items-center gap-2 mb-1">
+                      <GraduationCap className="h-4 w-4 text-primary" />
+                      <p className="font-semibold text-sm">{selectedProgram.name}</p>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Building2 className="h-3 w-3" />
+                      <span>{selectedProgram.institution?.name}</span>
+                      <span>•</span>
+                      <span>{selectedProgram.institution?.state}</span>
+                    </div>
+                    {selectedProgram.faculty && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Faculty: {selectedProgram.faculty}
+                      </p>
+                    )}
                   </div>
                   <Link
                     href={`/programs/${selectedProgram.id}`}
-                    className="text-xs text-primary hover:underline"
+                    className="text-xs text-primary hover:underline flex-shrink-0 ml-2"
                   >
-                    View Details
+                    View Details →
                   </Link>
                 </div>
               </div>

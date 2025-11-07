@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { WatchlistButton } from "@/components/watchlist-button"
+import { ReviewForm } from "@/components/reviews/review-form"
+import { ReviewList } from "@/components/reviews/review-list"
 import Link from "next/link"
 import {
   GraduationCap,
@@ -74,11 +76,11 @@ export default async function ProgramDetailPage({
                 <div className="flex items-start justify-between">
                   <div>
                     <CardTitle className="text-3xl mb-2">{program.name}</CardTitle>
-                    <CardDescription className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-2 flex-wrap text-sm text-muted-foreground mt-1">
                       <span>{program.institution?.name}</span>
                       <Badge variant="outline">{program.institution?.type}</Badge>
                       <Badge variant="secondary">{program.institution?.state}</Badge>
-                    </CardDescription>
+                    </div>
                   </div>
                 </div>
               </CardHeader>
@@ -390,6 +392,34 @@ export default async function ProgramDetailPage({
               </Card>
             )}
           </div>
+        </div>
+
+        {/* Reviews Section */}
+        <div className="mt-8 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Write a Review</CardTitle>
+              <CardDescription>
+                Share your experience with this program
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ReviewForm
+                entityType="program"
+                entityId={program.id}
+                onSuccess={() => {
+                  // Refresh reviews list
+                  window.location.reload()
+                }}
+              />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-6">
+              <ReviewList entityType="program" entityId={program.id} />
+            </CardContent>
+          </Card>
         </div>
       </main>
       <Footer />

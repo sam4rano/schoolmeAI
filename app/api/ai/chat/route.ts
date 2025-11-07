@@ -31,19 +31,19 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized. Please sign in to use the AI assistant." },
-        { status: 401 }
-      )
-    }
+    // Allow guest access with limited features
+    // Guest users can use the AI assistant but with rate limiting
+    const isGuest = !session?.user?.id
 
     const body = await request.json()
     const validatedData = chatSchema.parse(body)
 
+    // For guest users, limit the number of results and context
+    const limit = isGuest ? Math.min(validatedData.limit || 3, 3) : (validatedData.limit || 5)
+
     const result = await ragPipeline(validatedData.message, {
       entityType: validatedData.entityType === "all" ? undefined : validatedData.entityType,
-      limit: validatedData.limit || 5,
+      limit,
       minSimilarity: 0.5,
       userContext: validatedData.userContext
         ? {
@@ -68,8 +68,39 @@ export async function POST(request: NextRequest) {
     }
 
     console.error("Error in AI chat:", error)
+    
+    // Provide more specific error messages
+    const errorMessage = error instanceof Error ? error.message : "Unknown error"
+    
+    // Check for common issues
+    if (errorMessage.includes("API_KEY") || errorMessage.includes("not set")) {
+      return NextResponse.json(
+        { 
+          error: "AI service configuration error. Please configure GEMINI_API_KEY or OPENAI_API_KEY in your environment variables.",
+          details: errorMessage
+        },
+        { status: 500 }
+      )
+    }
+    
+    if (errorMessage.includes("embeddings") || errorMessage.includes("relation") || errorMessage.includes("does not exist")) {
+      return NextResponse.json(
+        { 
+          error: "Database configuration error. The embeddings table may not exist. Please run database migrations.",
+          details: errorMessage
+        },
+        { status: 500 }
+      )
+    }
+    
+    // Return error with details in development, generic message in production
     return NextResponse.json(
-      { error: "Internal server error" },
+      { 
+        error: process.env.NODE_ENV === "development" 
+          ? `Internal server error: ${errorMessage}` 
+          : "Internal server error. Please try again later.",
+        ...(process.env.NODE_ENV === "development" && { details: errorMessage })
+      },
       { status: 500 }
     )
   }
