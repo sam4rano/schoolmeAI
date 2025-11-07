@@ -10,8 +10,10 @@ import {
   BarChart3,
   Download,
   Code,
-  Menu,
-  X,
+  TrendingUp,
+  Clock,
+  Award,
+  ArrowRight,
 } from "lucide-react"
 
 async function getStats() {
@@ -48,6 +50,37 @@ export default async function HomePage() {
       <Navbar />
 
       <main className="flex-1">
+        {/* Highlights/Important Information Section */}
+        <section className="border-b bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 py-4">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3 flex-wrap justify-center md:justify-start">
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/20 border border-primary/30">
+                  <TrendingUp className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-semibold text-primary">2025/2026 Admission Season</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/20 border border-green-500/30">
+                  <Award className="h-4 w-4 text-green-600" />
+                  <span className="text-sm font-medium text-green-700 dark:text-green-400">
+                    {stats.institutions > 0 ? `${stats.institutions.toLocaleString()}+` : "800+"} Institutions Available
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/20 border border-blue-500/30">
+                  <Clock className="h-4 w-4 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-700 dark:text-blue-400">Check Application Deadlines</span>
+                </div>
+              </div>
+              <Link href="/recommendations">
+                <Button size="sm" variant="default" className="gap-2">
+                  <Sparkles className="h-4 w-4" />
+                  Get AI Recommendations
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* Hero Section */}
         <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-primary/5 py-20 sm:py-32">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">

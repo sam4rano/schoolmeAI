@@ -4,23 +4,47 @@ import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Navbar } from "@/components/ui/navbar"
 import { Footer } from "@/components/ui/footer"
 import { useRecommendations } from "@/lib/hooks/use-recommendations"
-import { GraduationCap, Building2, TrendingUp, Sparkles, Loader2, Calculator } from "lucide-react"
+import { GraduationCap, Building2, TrendingUp, Sparkles, Loader2, Calculator, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { Skeleton } from "@/components/ui/skeleton"
 
+const COMMON_OLEVEL_SUBJECTS = [
+  "English Language",
+  "Mathematics",
+  "Physics",
+  "Chemistry",
+  "Biology",
+  "Economics",
+  "Government",
+  "Literature in English",
+  "Geography",
+  "History",
+  "Commerce",
+  "Accounting",
+  "Agricultural Science",
+  "Christian Religious Studies (CRS)",
+  "Islamic Religious Studies (IRS)",
+  "Further Mathematics",
+  "Technical Drawing",
+  "Food and Nutrition",
+  "Home Economics",
+  "French",
+  "Yoruba",
+  "Igbo",
+  "Hausa",
+]
+
 export default function RecommendationsPage() {
   const [utme, setUtme] = useState("")
-  const [olevels, setOlevels] = useState({
-    maths: "",
-    english: "",
-    biology: "",
-    chemistry: "",
-    physics: "",
+  const [olevels, setOlevels] = useState<Record<string, string>>({
+    "English Language": "none",
   })
+  const availableSubjects = COMMON_OLEVEL_SUBJECTS.filter((s) => s !== "English Language")
   const [showResults, setShowResults] = useState(false)
 
   const { data, isLoading, error } = useRecommendations(
@@ -28,7 +52,7 @@ export default function RecommendationsPage() {
       ? {
           utme: parseInt(utme),
           olevels: Object.fromEntries(
-            Object.entries(olevels).filter(([_, value]) => value !== "")
+            Object.entries(olevels).filter(([_, value]) => value !== "" && value !== "none")
           ),
           limit: 20,
         }
@@ -36,7 +60,7 @@ export default function RecommendationsPage() {
   )
 
   const handleGetRecommendations = () => {
-    if (utme && Object.values(olevels).some((v) => v)) {
+    if (utme && Object.values(olevels).some((v) => v && v !== "none")) {
       setShowResults(true)
     }
   }
@@ -81,31 +105,89 @@ export default function RecommendationsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">
-                O-level Grades
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium">
+                  O-level Grades
+                </label>
+                {availableSubjects.filter((s) => !olevels[s]).length > 0 && (
+                  <Select
+                    onValueChange={(value) => {
+                      if (value && !olevels[value]) {
+                        setOlevels({ ...olevels, [value]: "none" })
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="w-[200px]">
+                      <SelectValue placeholder="Add subject" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableSubjects
+                        .filter((s) => !olevels[s])
+                        .map((subject) => (
+                          <SelectItem key={subject} value={subject}>
+                            {subject}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 {Object.entries(olevels).map(([subject, grade]) => (
-                  <div key={subject}>
-                    <label className="block text-xs text-muted-foreground mb-1 capitalize">
-                      {subject}
-                    </label>
-                    <Input
-                      type="text"
-                      placeholder="A1, B2, C4..."
-                      value={grade}
-                      onChange={(e) =>
-                        setOlevels({ ...olevels, [subject]: e.target.value.toUpperCase() })
-                      }
-                    />
+                  <div key={subject} className="flex gap-2">
+                    <div className="flex-1">
+                      <label className="block text-xs text-muted-foreground mb-1">
+                        {subject}
+                      </label>
+                      <Select
+                        value={grade}
+                        onValueChange={(value) =>
+                          setOlevels({ ...olevels, [subject]: value })
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select grade" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">None</SelectItem>
+                          <SelectItem value="A1">A1</SelectItem>
+                          <SelectItem value="B2">B2</SelectItem>
+                          <SelectItem value="B3">B3</SelectItem>
+                          <SelectItem value="C4">C4</SelectItem>
+                          <SelectItem value="C5">C5</SelectItem>
+                          <SelectItem value="C6">C6</SelectItem>
+                          <SelectItem value="D7">D7</SelectItem>
+                          <SelectItem value="E8">E8</SelectItem>
+                          <SelectItem value="F9">F9</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    {subject !== "English Language" && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="mt-6"
+                        onClick={() => {
+                          const newOlevels = { ...olevels }
+                          delete newOlevels[subject]
+                          setOlevels(newOlevels)
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    )}
                   </div>
                 ))}
               </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Add subjects you have grades for. English Language is required.
+              </p>
             </div>
 
             <Button
               onClick={handleGetRecommendations}
-              disabled={!utme || !Object.values(olevels).some((v) => v)}
+              disabled={!utme || !Object.values(olevels).some((v) => v && v !== "none")}
               className="w-full"
             >
               <Calculator className="mr-2 h-4 w-4" />

@@ -26,6 +26,20 @@ export interface ProbabilityModelResult {
 }
 
 /**
+ * Normalize cutoff from 0-400 scale to 0-100 scale
+ * Cutoffs stored in database are typically in UTME scale (0-400)
+ * Composite scores are in normalized scale (0-100)
+ */
+function normalizeCutoff(cutoff: number): number {
+  // If cutoff is > 100, assume it's in 0-400 scale and normalize
+  if (cutoff > 100) {
+    return (cutoff / 400) * 100
+  }
+  // Otherwise, assume it's already normalized
+  return cutoff
+}
+
+/**
  * Simple logistic regression for probability estimation
  * P(admission) = 1 / (1 + e^(-(score - cutoff) / scale))
  */
@@ -47,7 +61,8 @@ export function logisticRegression(
     return 0.5
   }
 
-  const latestCutoff = sortedCutoffs[0].cutoff
+  // Normalize cutoff before comparison
+  const latestCutoff = normalizeCutoff(sortedCutoffs[0].cutoff)
   const difference = compositeScore - latestCutoff
 
   // Logistic function
@@ -113,11 +128,17 @@ export function estimateProbabilityWithModel(
     }
   }
 
-  const latestCutoff = sortedCutoffs[0].cutoff
-  const trend = calculateTrend(sortedCutoffs)
+  // Normalize cutoffs for comparison
+  const normalizedCutoffs = sortedCutoffs.map((c) => ({
+    ...c,
+    cutoff: normalizeCutoff(c.cutoff),
+  }))
 
-  // Use logistic regression
-  const probability = logisticRegression(compositeScore, sortedCutoffs)
+  const latestCutoff = normalizedCutoffs[0].cutoff
+  const trend = calculateTrend(normalizedCutoffs)
+
+  // Use logistic regression with normalized cutoffs
+  const probability = logisticRegression(compositeScore, normalizedCutoffs)
 
   // Calculate confidence interval (±15% for logistic, ±20% for rule-based)
   const margin = 0.15
@@ -140,10 +161,10 @@ export function estimateProbabilityWithModel(
     probability: Math.round(probability * 100) / 100,
     confidenceInterval,
     category,
-    modelType: sortedCutoffs.length >= 3 ? "logistic" : "rule-based",
+    modelType: normalizedCutoffs.length >= 3 ? "logistic" : "rule-based",
     features: {
       compositeScore,
-      yearsOfData: sortedCutoffs.length,
+      yearsOfData: normalizedCutoffs.length,
       latestCutoff,
       trend,
     },

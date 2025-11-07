@@ -20,14 +20,6 @@ export function WatchlistButton({ programId, className }: WatchlistButtonProps) 
   const [checking, setChecking] = useState(true)
 
   // Check if program is in watchlist
-  useEffect(() => {
-    if (status === "authenticated" && session) {
-      checkWatchlist()
-    } else {
-      setChecking(false)
-    }
-  }, [session, status, programId])
-
   const checkWatchlist = async () => {
     try {
       const response = await fetch("/api/watchlist")
@@ -44,6 +36,15 @@ export function WatchlistButton({ programId, className }: WatchlistButtonProps) 
       setChecking(false)
     }
   }
+
+  useEffect(() => {
+    if (status === "authenticated" && session) {
+      checkWatchlist()
+    } else {
+      setChecking(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, status, programId])
 
   const handleToggleWatchlist = async () => {
     if (status !== "authenticated") {

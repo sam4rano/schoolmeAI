@@ -55,29 +55,94 @@ export async function retrieveContext(
 }
 
 /**
- * Generate answer using LLM with retrieved context
+ * Generate answer using Gemini API
  */
-export async function generateAnswer(
+async function generateAnswerWithGemini(
+  query: string,
+  sources: RAGResult["sources"],
+  userContext?: RAGContext
+): Promise<string> {
+  const apiKey = process.env.GEMINI_API_KEY
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY not set")
+  }
+
+  const contextText = sources
+    .map((source, idx) => `[${idx + 1}] ${source.title}\n${source.content}`)
+    .join("\n\n")
+
+  const userContextText = userContext
+    ? `\n\nUser Context:\n- UTME Score: ${userContext.userProfile?.utme || "Not provided"}\n- O-Level Results: ${userContext.userProfile?.olevels ? "Available" : "Not provided"}\n- State of Origin: ${userContext.userProfile?.stateOfOrigin || "Not provided"}`
+    : ""
+
+  const prompt = `You are an AI assistant helping Nigerian students with university admission guidance. 
+Use the provided context to answer questions accurately. If the context doesn't contain enough information, 
+say so honestly. Always cite sources using [1], [2], etc. when referencing the context.
+
+Context:
+${contextText}
+${userContextText}
+
+User Question: ${query}`
+
+  const model = process.env.GEMINI_MODEL || "gemini-1.5-flash"
+
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                text: prompt,
+              },
+            ],
+          },
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 1000,
+        },
+      }),
+    }
+  )
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(`Gemini API error: ${error.error?.message || "Unknown error"}`)
+  }
+
+  const data = await response.json()
+  return data.candidates[0].content.parts[0].text
+}
+
+/**
+ * Generate answer using OpenAI API
+ */
+async function generateAnswerWithOpenAI(
   query: string,
   sources: RAGResult["sources"],
   userContext?: RAGContext
 ): Promise<string> {
   const apiKey = process.env.OPENAI_API_KEY
-
   if (!apiKey) {
-    return generateFallbackAnswer(query, sources, userContext)
+    throw new Error("OPENAI_API_KEY not set")
   }
 
-  try {
-    const contextText = sources
-      .map((source, idx) => `[${idx + 1}] ${source.title}\n${source.content}`)
-      .join("\n\n")
+  const contextText = sources
+    .map((source, idx) => `[${idx + 1}] ${source.title}\n${source.content}`)
+    .join("\n\n")
 
-    const userContextText = userContext
-      ? `\n\nUser Context:\n- UTME Score: ${userContext.userProfile?.utme || "Not provided"}\n- O-Level Results: ${userContext.userProfile?.olevels ? "Available" : "Not provided"}\n- State of Origin: ${userContext.userProfile?.stateOfOrigin || "Not provided"}`
-      : ""
+  const userContextText = userContext
+    ? `\n\nUser Context:\n- UTME Score: ${userContext.userProfile?.utme || "Not provided"}\n- O-Level Results: ${userContext.userProfile?.olevels ? "Available" : "Not provided"}\n- State of Origin: ${userContext.userProfile?.stateOfOrigin || "Not provided"}`
+    : ""
 
-    const systemPrompt = `You are an AI assistant helping Nigerian students with university admission guidance. 
+  const systemPrompt = `You are an AI assistant helping Nigerian students with university admission guidance. 
 Use the provided context to answer questions accurately. If the context doesn't contain enough information, 
 say so honestly. Always cite sources using [1], [2], etc. when referencing the context.
 
@@ -85,34 +150,63 @@ Context:
 ${contextText}
 ${userContextText}`
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || "gpt-3.5-turbo",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: query },
-        ],
-        temperature: 0.7,
-        max_tokens: 1000,
-      }),
-    })
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: process.env.OPENAI_MODEL || "gpt-3.5-turbo",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: query },
+      ],
+      temperature: 0.7,
+      max_tokens: 1000,
+    }),
+  })
 
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(`OpenAI API error: ${error.error?.message || "Unknown error"}`)
-    }
-
-    const data = await response.json()
-    return data.choices[0].message.content
-  } catch (error) {
-    console.error("Error generating answer:", error)
-    return generateFallbackAnswer(query, sources, userContext)
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(`OpenAI API error: ${error.error?.message || "Unknown error"}`)
   }
+
+  const data = await response.json()
+  return data.choices[0].message.content
+}
+
+/**
+ * Generate answer using LLM with retrieved context
+ * Tries Gemini first, then OpenAI, then fallback
+ */
+export async function generateAnswer(
+  query: string,
+  sources: RAGResult["sources"],
+  userContext?: RAGContext
+): Promise<string> {
+  // Try Gemini first (most cost-effective)
+  if (process.env.GEMINI_API_KEY) {
+    try {
+      return await generateAnswerWithGemini(query, sources, userContext)
+    } catch (error) {
+      console.error("Error with Gemini API:", error)
+      // Fall through to OpenAI
+    }
+  }
+
+  // Try OpenAI as fallback
+  if (process.env.OPENAI_API_KEY) {
+    try {
+      return await generateAnswerWithOpenAI(query, sources, userContext)
+    } catch (error) {
+      console.error("Error with OpenAI API:", error)
+      // Fall through to fallback
+    }
+  }
+
+  // Fallback to rule-based answer
+  return generateFallbackAnswer(query, sources, userContext)
 }
 
 /**
@@ -133,7 +227,7 @@ function generateFallbackAnswer(
     answer += `[${idx + 1}] ${source.title}\n${source.content.substring(0, 200)}...\n\n`
   })
 
-  answer += `\nNote: This is a simplified response. For more detailed AI-powered answers, please configure an OpenAI API key.`
+  answer += `\nNote: This is a simplified response. For more detailed AI-powered answers, please configure a GEMINI_API_KEY or OPENAI_API_KEY.`
 
   return answer
 }

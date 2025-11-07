@@ -14,6 +14,7 @@ import { usePrograms } from "@/lib/hooks/use-programs"
 import Link from "next/link"
 import { Building2, GraduationCap } from "lucide-react"
 import { useSearchParams } from "next/navigation"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function SearchPage() {
   const searchParams = useSearchParams()

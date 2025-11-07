@@ -183,11 +183,27 @@ export function generateRationale(
   let rationale = `Your composite score (${compositeScore}) is based on UTME score of ${utme} and O-level points of ${olevelPoints}. `
 
   if (latestCutoff) {
-    const difference = compositeScore - latestCutoff
+    // Normalize cutoff if it's in 0-400 scale (UTME scale)
+    // Composite score is in 0-100 normalized scale
+    const normalizedCutoff = latestCutoff > 100 ? (latestCutoff / 400) * 100 : latestCutoff
+    const difference = compositeScore - normalizedCutoff
+    const cutoffYear = cutoffHistory[0].year
+    const currentYear = new Date().getFullYear()
+    const isHistorical = cutoffYear < currentYear
+    
+    // Show both raw and normalized cutoff for clarity
+    const cutoffDisplay = latestCutoff > 100 
+      ? `${latestCutoff} (normalized: ${normalizedCutoff.toFixed(1)})`
+      : latestCutoff.toString()
+    
     if (difference > 0) {
-      rationale += `This is ${Math.abs(difference).toFixed(1)} points above the ${cutoffHistory[0].year} cutoff (${latestCutoff}) for ${programName} at ${institutionName}. `
+      rationale += `This is ${Math.abs(difference).toFixed(1)} points above the ${cutoffYear} cutoff (${cutoffDisplay}) for ${programName} at ${institutionName}. `
     } else {
-      rationale += `This is ${Math.abs(difference).toFixed(1)} points below the ${cutoffHistory[0].year} cutoff (${latestCutoff}) for ${programName} at ${institutionName}. `
+      rationale += `This is ${Math.abs(difference).toFixed(1)} points below the ${cutoffYear} cutoff (${cutoffDisplay}) for ${programName} at ${institutionName}. `
+    }
+    
+    if (isHistorical) {
+      rationale += `Note: This cutoff is from ${cutoffYear} (historical data). For the 2025/2026 admission season, cutoffs may vary. `
     }
   }
 

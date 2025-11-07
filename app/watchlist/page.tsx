@@ -1,7 +1,5 @@
 "use client"
 
-export const dynamic = "force-dynamic"
-
 import { useState, useEffect, useRef } from "react"
 import { useSession } from "next-auth/react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -169,7 +167,7 @@ export default function WatchlistPage() {
       institution: item.program.institution.name,
       location: item.program.institution.state,
       priority: item.priority || "medium",
-      deadline: item.program.applicationDeadline || "N/A",
+      deadline: (item.program as any).applicationDeadline || "N/A",
       added: item.createdAt,
     }))
 
@@ -347,6 +345,7 @@ export default function WatchlistPage() {
                 </div>
               </DialogContent>
             </Dialog>
+            </div>
           </div>
 
           {loading ? (
@@ -400,7 +399,7 @@ export default function WatchlistPage() {
                   </TableHeader>
                   <TableBody>
                     {watchlist.map((item) => {
-                      const deadline = item.program.applicationDeadline
+                      const deadline = (item.program as any).applicationDeadline
                       const daysRemaining = deadline
                         ? Math.ceil(
                             (new Date(deadline).getTime() - new Date().getTime()) /

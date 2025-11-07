@@ -125,8 +125,14 @@ DATABASE_URL="postgresql://postgres:password@localhost:5432/edurepo?schema=publi
 NEXTAUTH_URL="http://localhost:3000"
 NEXTAUTH_SECRET="your-secret-key-here"
 
-# OpenAI (optional, for LLM)
+# AI API (optional, for LLM - Gemini is recommended for cost-effectiveness)
+# Gemini API (recommended - most cost-effective)
+GEMINI_API_KEY="AIzaSy..."
+GEMINI_MODEL="gemini-1.5-flash"  # or "gemini-1.5-pro" for better quality
+
+# OpenAI API (fallback option)
 OPENAI_API_KEY="sk-..."
+OPENAI_MODEL="gpt-3.5-turbo"  # or "gpt-4o-mini" for better quality
 
 # Vercel KV (optional, for caching - free tier available)
 KV_URL="redis://localhost:6379"

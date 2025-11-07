@@ -9,14 +9,39 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Link from "next/link"
-import { Search, GraduationCap, Clock, BookOpen, TrendingUp, Loader2, Calendar } from "lucide-react"
+import { Search, GraduationCap, Clock, BookOpen, TrendingUp, Loader2, Calendar, ChevronLeft, ChevronRight, Award, TrendingDown } from "lucide-react"
 import { usePrograms } from "@/lib/hooks/use-programs"
 import { useInstitutions } from "@/lib/hooks/use-institutions"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useQuery } from "@tanstack/react-query"
 
 function ProgramCard({ program }: { program: any }) {
   const cutoffHistory = Array.isArray(program.cutoffHistory) ? program.cutoffHistory : []
   const latestCutoff = cutoffHistory.length > 0 ? cutoffHistory[0] : null
+  
+  // Get difficulty badge info
+  const getDifficultyBadge = (difficulty?: string) => {
+    if (!difficulty) return null
+    
+    const configs: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline"; icon: any }> = {
+      very_competitive: { label: "Very Competitive", variant: "destructive", icon: TrendingUp },
+      competitive: { label: "Competitive", variant: "default", icon: TrendingUp },
+      moderate: { label: "Moderate", variant: "secondary", icon: Award },
+      less_competitive: { label: "Less Competitive", variant: "outline", icon: TrendingDown },
+    }
+    
+    const config = configs[difficulty]
+    if (!config) return null
+    
+    const Icon = config.icon
+    
+    return (
+      <Badge variant={config.variant} className="text-xs flex items-center gap-1">
+        <Icon className="h-3 w-3" />
+        {config.label}
+      </Badge>
+    )
+  }
 
   return (
     <Card className="hover:shadow-lg transition-shadow">
@@ -32,6 +57,7 @@ function ProgramCard({ program }: { program: any }) {
               <Badge variant="secondary" className="text-xs px-1.5 py-0">
                 {program.institution?.state}
               </Badge>
+              {getDifficultyBadge(program.institutionDifficulty)}
             </CardDescription>
           </div>
         </div>
@@ -147,8 +173,10 @@ function ProgramCard({ program }: { program: any }) {
 
 export default function ProgramsPage() {
   const [searchQuery, setSearchQuery] = useState("")
+  const [selectedCourse, setSelectedCourse] = useState("all")
   const [degreeType, setDegreeType] = useState("all")
   const [institutionId, setInstitutionId] = useState("all")
+  const [currentPage, setCurrentPage] = useState(1)
   const [debouncedQuery, setDebouncedQuery] = useState("")
 
   // Debounce search query
@@ -159,16 +187,36 @@ export default function ProgramsPage() {
     return () => clearTimeout(timer)
   }, [searchQuery])
 
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [selectedCourse, degreeType, institutionId, debouncedQuery])
+
   // Fetch institutions for filter
   const { data: institutionsData } = useInstitutions({ limit: 1000 })
   const institutions = institutionsData?.data || []
 
+  // Fetch available courses for dropdown
+  const { data: coursesData } = useQuery<string[]>({
+    queryKey: ["courses"],
+    queryFn: async () => {
+      const response = await fetch("/api/programs/courses")
+      if (!response.ok) throw new Error("Failed to fetch courses")
+      const data = await response.json()
+      return data.data || []
+    },
+  })
+  const courses = coursesData || []
+
   // Fetch programs with filters
   const { data: programsData, isLoading } = usePrograms({
-    query: debouncedQuery || undefined,
+    query: selectedCourse === "all" ? (debouncedQuery || undefined) : undefined,
+    course: selectedCourse !== "all" ? selectedCourse : undefined,
     degreeType: degreeType !== "all" ? degreeType : undefined,
     institution_id: institutionId !== "all" ? institutionId : undefined,
-    limit: 50,
+    page: currentPage,
+    limit: 18, // Show 18 per page (3 columns x 6 rows)
+    rankByDifficulty: selectedCourse !== "all", // Rank by difficulty when course is selected
   })
 
   const programs = programsData?.data || []
@@ -191,16 +239,30 @@ export default function ProgramsPage() {
         {/* Search and Filters */}
         <Card className="mb-6">
           <CardContent className="pt-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search by course (e.g., Computer Science) or institution (e.g., unilag, ui, oau)..."
+                  placeholder="Search by institution (e.g., unilag, ui, oau)..."
                   className="pl-10"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  disabled={selectedCourse !== "all"}
                 />
               </div>
+              <Select value={selectedCourse} onValueChange={setSelectedCourse}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Course" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Courses</SelectItem>
+                  {courses.map((course: string) => (
+                    <SelectItem key={course} value={course}>
+                      {course}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <Select value={degreeType} onValueChange={setDegreeType}>
                 <SelectTrigger>
                   <SelectValue placeholder="All Degree Types" />
@@ -237,6 +299,16 @@ export default function ProgramsPage() {
                 </SelectContent>
               </Select>
             </div>
+            {selectedCourse !== "all" && (
+              <div className="mt-4 p-3 bg-primary/5 rounded-md border border-primary/20">
+                <p className="text-sm font-medium text-primary">
+                  Showing institutions offering <span className="font-bold">{selectedCourse}</span>, ranked by admission difficulty
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Institutions are ranked from most competitive (highest cutoffs) to less competitive
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -290,9 +362,54 @@ export default function ProgramsPage() {
             </div>
 
             {pagination && pagination.totalPages > 1 && (
-              <div className="mt-8 text-center">
+              <div className="mt-8 flex flex-col items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Previous
+                  </Button>
+                  <div className="flex items-center gap-2">
+                    {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                      let pageNum: number
+                      if (pagination.totalPages <= 5) {
+                        pageNum = i + 1
+                      } else if (currentPage <= 3) {
+                        pageNum = i + 1
+                      } else if (currentPage >= pagination.totalPages - 2) {
+                        pageNum = pagination.totalPages - 4 + i
+                      } else {
+                        pageNum = currentPage - 2 + i
+                      }
+                      return (
+                        <Button
+                          key={pageNum}
+                          variant={currentPage === pageNum ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setCurrentPage(pageNum)}
+                          className="min-w-[40px]"
+                        >
+                          {pageNum}
+                        </Button>
+                      )
+                    })}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((p) => Math.min(pagination.totalPages, p + 1))}
+                    disabled={currentPage === pagination.totalPages}
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
                 <p className="text-sm text-muted-foreground">
-                  Showing page {pagination.page} of {pagination.totalPages} ({pagination.total} total programs)
+                  Page {pagination.page} of {pagination.totalPages} • {pagination.total} total programs
                 </p>
               </div>
             )}
