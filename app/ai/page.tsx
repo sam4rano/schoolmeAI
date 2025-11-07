@@ -1,7 +1,5 @@
 "use client"
 
-export const dynamic = "force-dynamic"
-
 import { useState, useRef, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -20,6 +18,7 @@ interface Message {
   role: "user" | "assistant"
   content: string
   timestamp: Date
+  isError?: boolean
 }
 
 export default function AIPage() {
@@ -48,6 +47,22 @@ export default function AIPage() {
   const handleSend = async () => {
     if (!input.trim() || loading) return
 
+    // Check if user is authenticated
+    if (status !== "authenticated" || !session) {
+      const errorMessage: Message = {
+        id: Date.now().toString(),
+        role: "assistant",
+        content: "Please sign in to use the AI assistant. Redirecting to sign in page...",
+        timestamp: new Date(),
+        isError: true,
+      }
+      setMessages((prev) => [...prev, errorMessage])
+      setTimeout(() => {
+        window.location.href = "/auth/signin?callbackUrl=/ai"
+      }, 2000)
+      return
+    }
+
     const userMessage: Message = {
       id: Date.now().toString(),
       role: "user",
@@ -66,6 +81,7 @@ export default function AIPage() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           message: userInput,
           entityType: "all",
@@ -74,7 +90,11 @@ export default function AIPage() {
       })
 
       if (!response.ok) {
-        throw new Error("Failed to get AI response")
+        const errorData = await response.json().catch(() => ({}))
+        if (response.status === 401) {
+          throw new Error("Session expired. Please sign in again.")
+        }
+        throw new Error(errorData.error || "Failed to get AI response. Please try again.")
       }
 
       const data = await response.json()
@@ -91,10 +111,20 @@ export default function AIPage() {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "Sorry, I encountered an error. Please try again later.",
+        content: error instanceof Error 
+          ? error.message
+          : "Sorry, I encountered an error. Please try again or sign in if you haven't already.",
         timestamp: new Date(),
+        isError: true,
       }
       setMessages((prev) => [...prev, errorMessage])
+      
+      // Redirect to sign in if unauthorized
+      if (error instanceof Error && (error.message.includes("sign in") || error.message.includes("Session expired"))) {
+        setTimeout(() => {
+          window.location.href = "/auth/signin?callbackUrl=/ai"
+        }, 2000)
+      }
     } finally {
       setLoading(false)
     }
@@ -115,8 +145,8 @@ export default function AIPage() {
             </p>
           </div>
 
-          <Card className="h-[600px] flex flex-col">
-            <CardHeader className="border-b">
+          <Card className="h-[600px] flex flex-col shadow-lg">
+            <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-primary/10">
               <CardTitle className="flex items-center gap-2">
                 <Bot className="h-5 w-5 text-primary" />
                 Chat with AI
@@ -125,67 +155,76 @@ export default function AIPage() {
                 Ask questions about institutions, programs, or admission requirements
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col p-0">
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <CardContent className="flex-1 flex flex-col p-0 bg-gradient-to-b from-background to-muted/20">
+              <div className="flex-1 overflow-y-auto p-6 space-y-4">
                 {messages.map((message) => (
                   <div
                     key={message.id}
-                    className={`flex gap-3 ${
+                    className={`flex gap-3 items-start ${
                       message.role === "user" ? "justify-end" : "justify-start"
                     }`}
                   >
                     {message.role === "assistant" && (
-                      <Avatar className="h-8 w-8">
+                      <Avatar className="h-9 w-9 flex-shrink-0 border-2 border-primary/20">
                         <AvatarFallback className="bg-primary text-primary-foreground">
-                          <Bot className="h-4 w-4" />
+                          <Bot className="h-5 w-5" />
                         </AvatarFallback>
                       </Avatar>
                     )}
                     <div
-                      className={`max-w-[80%] rounded-lg p-3 ${
+                      className={`max-w-[75%] rounded-2xl px-4 py-3 shadow-sm ${
                         message.role === "user"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted"
+                          ? "bg-primary text-primary-foreground rounded-br-sm"
+                          : message.isError
+                          ? "bg-destructive/10 border-2 border-destructive/30 text-destructive rounded-bl-sm"
+                          : "bg-background border border-border rounded-bl-sm"
                       }`}
                     >
-                      <p className="text-sm">{message.content}</p>
+                      <p className={`text-sm leading-relaxed ${message.isError ? "font-medium" : ""}`}>
+                        {message.content}
+                      </p>
                       <p
-                        className={`text-xs mt-1 ${
+                        className={`text-xs mt-2 ${
                           message.role === "user"
-                            ? "text-primary-foreground/70"
+                            ? "text-primary-foreground/60"
+                            : message.isError
+                            ? "text-destructive/60"
                             : "text-muted-foreground"
                         }`}
                       >
-                        {message.timestamp.toLocaleTimeString()}
+                        {message.timestamp.toLocaleTimeString("en-US", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
                       </p>
                     </div>
                     {message.role === "user" && (
-                      <Avatar className="h-8 w-8">
-                        <AvatarFallback className="bg-secondary text-secondary-foreground">
-                          <User className="h-4 w-4" />
+                      <Avatar className="h-9 w-9 flex-shrink-0 border-2 border-primary/20">
+                        <AvatarFallback className="bg-primary text-primary-foreground">
+                          <User className="h-5 w-5" />
                         </AvatarFallback>
                       </Avatar>
                     )}
                   </div>
                 ))}
                 {loading && (
-                  <div className="flex gap-3 justify-start">
-                    <Avatar className="h-8 w-8">
+                  <div className="flex gap-3 justify-start items-start">
+                    <Avatar className="h-9 w-9 flex-shrink-0 border-2 border-primary/20">
                       <AvatarFallback className="bg-primary text-primary-foreground">
-                        <Bot className="h-4 w-4" />
+                        <Bot className="h-5 w-5" />
                       </AvatarFallback>
                     </Avatar>
-                    <div className="bg-muted rounded-lg p-3">
+                    <div className="bg-background border border-border rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
                       <div className="flex items-center gap-2">
                         <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                        <span className="text-sm text-muted-foreground">Thinking...</span>
+                        <span className="text-sm text-muted-foreground">AI is thinking...</span>
                       </div>
                     </div>
                   </div>
                 )}
                 <div ref={messagesEndRef} />
               </div>
-              <div className="border-t p-4">
+              <div className="border-t bg-background p-4">
                 <form
                   onSubmit={(e) => {
                     e.preventDefault()
@@ -196,14 +235,34 @@ export default function AIPage() {
                   <Input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask me anything about admissions..."
+                    placeholder="Ask me anything about admissions, programs, or institutions..."
                     disabled={loading}
-                    className="flex-1"
+                    className="flex-1 h-11"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey && !loading && input.trim()) {
+                        e.preventDefault()
+                        handleSend()
+                      }
+                    }}
                   />
-                  <Button type="submit" disabled={loading || !input.trim()}>
-                    <Send className="h-4 w-4" />
+                  <Button 
+                    type="submit" 
+                    disabled={loading || !input.trim()}
+                    size="default"
+                    className="h-11 px-6"
+                  >
+                    {loading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Send className="h-4 w-4" />
+                    )}
                   </Button>
                 </form>
+                {status === "authenticated" && (
+                  <p className="text-xs text-muted-foreground mt-2 text-center">
+                    Signed in as {session?.user?.email}
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>

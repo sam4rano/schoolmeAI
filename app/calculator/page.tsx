@@ -165,13 +165,13 @@ export default function CalculatorPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
-      <main className="flex-1 container mx-auto py-8 px-4 sm:px-6 lg:px-8 max-w-2xl">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-4">Eligibility Calculator</h1>
-        <p className="text-muted-foreground">
-          Calculate your admission probability based on JAMB and O-level scores
-        </p>
-      </div>
+      <main className="flex-1 container mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8 max-w-2xl">
+             <div className="mb-6 sm:mb-8">
+               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">Eligibility Calculator</h1>
+               <p className="text-xs sm:text-sm text-muted-foreground">
+                 Calculate your admission probability based on JAMB and O-level scores
+               </p>
+             </div>
 
       <Card>
         <CardHeader>
@@ -223,13 +223,13 @@ export default function CalculatorPage() {
                 </Select>
               )}
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              {Object.entries(olevels).map(([subject, grade]) => (
-                <div key={subject} className="flex gap-2">
-                  <div className="flex-1">
-                    <label className="block text-xs text-muted-foreground mb-1">
-                      {subject}
-                    </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                     {Object.entries(olevels).map(([subject, grade]) => (
+                       <div key={subject} className="flex gap-2">
+                         <div className="flex-1">
+                           <label className="block text-xs text-muted-foreground mb-1">
+                             {subject}
+                           </label>
                     <Select
                       value={grade}
                       onValueChange={(value) =>
@@ -306,8 +306,8 @@ export default function CalculatorPage() {
               )}
             </div>
 
-            {showProgramDropdown && programSearch && (
-              <div className="absolute z-50 w-full mt-1 bg-popover border rounded-md shadow-lg max-h-60 overflow-auto">
+                   {showProgramDropdown && programSearch && (
+                     <div className="absolute z-50 w-full mt-1 bg-popover border rounded-md shadow-lg max-h-60 overflow-auto left-0 right-0">
                 {programsLoading ? (
                   <div className="p-4 text-center text-sm text-muted-foreground">
                     Searching...

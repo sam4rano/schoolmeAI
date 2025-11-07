@@ -225,21 +225,21 @@ export default function ProgramsPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
-      <main className="flex-1 container mx-auto py-8 px-4 sm:px-6 lg:px-8 max-w-7xl">
-        <div className="mb-6">
+      <main className="flex-1 container mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <div className="mb-4 sm:mb-6">
           <div className="flex items-center gap-2 mb-2">
-            <GraduationCap className="h-5 w-5 text-primary" />
-            <h1 className="text-2xl font-bold">Programs</h1>
+            <GraduationCap className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+            <h1 className="text-2xl sm:text-3xl font-bold">Programs</h1>
           </div>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground text-xs sm:text-sm">
             Browse all available programs across Nigerian institutions
           </p>
         </div>
 
         {/* Search and Filters */}
-        <Card className="mb-6">
-          <CardContent className="pt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="mb-4 sm:mb-6">
+          <CardContent className="pt-4 sm:pt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -300,8 +300,8 @@ export default function ProgramsPage() {
               </Select>
             </div>
             {selectedCourse !== "all" && (
-              <div className="mt-4 p-3 bg-primary/5 rounded-md border border-primary/20">
-                <p className="text-sm font-medium text-primary">
+              <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-primary/5 rounded-md border border-primary/20">
+                <p className="text-xs sm:text-sm font-medium text-primary">
                   Showing institutions offering <span className="font-bold">{selectedCourse}</span>, ranked by admission difficulty
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
@@ -362,8 +362,8 @@ export default function ProgramsPage() {
             </div>
 
             {pagination && pagination.totalPages > 1 && (
-              <div className="mt-8 flex flex-col items-center gap-4">
-                <div className="flex items-center gap-2">
+              <div className="mt-6 sm:mt-8 flex flex-col items-center gap-3 sm:gap-4">
+                <div className="flex items-center gap-1 sm:gap-2 flex-wrap justify-center">
                   <Button
                     variant="outline"
                     size="sm"
@@ -408,7 +408,7 @@ export default function ProgramsPage() {
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground text-center">
                   Page {pagination.page} of {pagination.totalPages} • {pagination.total} total programs
                 </p>
               </div>

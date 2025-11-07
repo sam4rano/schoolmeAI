@@ -127,11 +127,13 @@ NEXTAUTH_SECRET="your-secret-key-here"
 
 # AI API (optional, for LLM - Gemini is recommended for cost-effectiveness)
 # Gemini API (recommended - most cost-effective)
-GEMINI_API_KEY="AIzaSy..."
+# Get your key from: https://aistudio.google.com/app/apikey
+GEMINI_API_KEY="your-gemini-api-key-here"
 GEMINI_MODEL="gemini-1.5-flash"  # or "gemini-1.5-pro" for better quality
 
 # OpenAI API (fallback option)
-OPENAI_API_KEY="sk-..."
+# Get your key from: https://platform.openai.com/api-keys
+OPENAI_API_KEY="your-openai-api-key-here"
 OPENAI_MODEL="gpt-3.5-turbo"  # or "gpt-4o-mini" for better quality
 
 # Vercel KV (optional, for caching - free tier available)

@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { signIn } from "next-auth/react"
+import { useState, useEffect } from "react"
+import { signIn, useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -15,10 +15,28 @@ import { Loader2 } from "lucide-react"
 
 export default function SignInPage() {
   const router = useRouter()
+  const { data: session, status } = useSession()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (status === "authenticated" && session?.user) {
+      const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl")
+      if (callbackUrl) {
+        router.push(callbackUrl)
+      } else {
+        // Redirect based on role
+        if (session.user.roles?.includes("admin")) {
+          router.push("/admin")
+        } else {
+          router.push("/dashboard")
+        }
+      }
+    }
+  }, [status, session, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,7 +53,25 @@ export default function SignInPage() {
       if (result?.error) {
         setError("Invalid email or password")
       } else {
-        router.push("/dashboard")
+        // Check callback URL first
+        const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl")
+        if (callbackUrl) {
+          router.push(callbackUrl)
+        } else {
+          // Check user role from session
+          try {
+            const sessionRes = await fetch("/api/auth/session")
+            const session = await sessionRes.json()
+            if (session?.user?.roles?.includes("admin")) {
+              router.push("/admin")
+            } else {
+              router.push("/dashboard")
+            }
+          } catch {
+            // Fallback to dashboard if session check fails
+            router.push("/dashboard")
+          }
+        }
         router.refresh()
       }
     } catch (err) {
@@ -43,6 +79,32 @@ export default function SignInPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  // Show loading while checking session
+  if (status === "loading") {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <Navbar />
+        <main className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  // Don't show sign-in form if already authenticated (redirecting)
+  if (status === "authenticated" && session?.user) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <Navbar />
+        <main className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </main>
+        <Footer />
+      </div>
+    )
   }
 
   return (

@@ -71,25 +71,25 @@ export default function RecommendationsPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
-      <main className="flex-1 container mx-auto py-8 px-4 sm:px-6 lg:px-8 max-w-6xl">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-4 flex items-center gap-2">
-            <Sparkles className="h-8 w-8 text-primary" />
+      <main className="flex-1 container mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8 max-w-6xl">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 flex items-center gap-2">
+            <Sparkles className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
             Program Recommendations
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Get personalized program recommendations based on your JAMB and O-level scores
           </p>
         </div>
 
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Enter Your Scores</CardTitle>
-            <CardDescription>
+        <Card className="mb-4 sm:mb-6">
+          <CardHeader className="pb-3 sm:pb-6">
+            <CardTitle className="text-base sm:text-lg">Enter Your Scores</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">
               Fill in your UTME score and O-level grades to get recommendations
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4">
             <div>
               <label className="block text-sm font-medium mb-2">
                 UTME Score (0-400)
@@ -117,7 +117,7 @@ export default function RecommendationsPage() {
                       }
                     }}
                   >
-                    <SelectTrigger className="w-[200px]">
+                    <SelectTrigger className="w-full sm:w-[200px]">
                       <SelectValue placeholder="Add subject" />
                     </SelectTrigger>
                     <SelectContent>
@@ -132,13 +132,13 @@ export default function RecommendationsPage() {
                   </Select>
                 )}
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                {Object.entries(olevels).map(([subject, grade]) => (
-                  <div key={subject} className="flex gap-2">
-                    <div className="flex-1">
-                      <label className="block text-xs text-muted-foreground mb-1">
-                        {subject}
-                      </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                       {Object.entries(olevels).map(([subject, grade]) => (
+                         <div key={subject} className="flex gap-2">
+                           <div className="flex-1">
+                             <label className="block text-xs text-muted-foreground mb-1">
+                               {subject}
+                             </label>
                       <Select
                         value={grade}
                         onValueChange={(value) =>
@@ -246,10 +246,10 @@ export default function RecommendationsPage() {
 
         {showResults && !isLoading && !error && (
           <>
-            {meta && (
-              <Card className="mb-6">
-                <CardContent className="pt-6">
-                  <div className="grid grid-cols-3 gap-4 text-center">
+                   {meta && (
+                     <Card className="mb-4 sm:mb-6">
+                       <CardContent className="pt-4 sm:pt-6">
+                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-center">
                     <div>
                       <p className="text-sm text-muted-foreground">Composite Score</p>
                       <p className="text-2xl font-bold text-primary">{meta.compositeScore.toFixed(1)}</p>

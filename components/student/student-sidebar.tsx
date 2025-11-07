@@ -7,56 +7,56 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   LayoutDashboard,
-  Building2,
+  Calculator,
   GraduationCap,
-  BarChart3,
-  FileText,
-  Settings,
+  Sparkles,
+  BookOpen,
+  User,
   Home,
+  MessageSquare,
   Menu,
   X,
-  Upload,
 } from "lucide-react"
 
 const navItems = [
   {
     title: "Dashboard",
-    href: "/admin",
+    href: "/dashboard",
     icon: LayoutDashboard,
   },
   {
-    title: "Institutions",
-    href: "/admin/institutions",
-    icon: Building2,
+    title: "Calculator",
+    href: "/calculator",
+    icon: Calculator,
+  },
+  {
+    title: "Recommendations",
+    href: "/recommendations",
+    icon: Sparkles,
   },
   {
     title: "Programs",
-    href: "/admin/programs",
+    href: "/programs",
     icon: GraduationCap,
   },
   {
-    title: "Data Quality",
-    href: "/admin/data-quality",
-    icon: BarChart3,
+    title: "Institutions",
+    href: "/institutions",
+    icon: BookOpen,
   },
   {
-    title: "Audit Log",
-    href: "/admin/audit",
-    icon: FileText,
+    title: "AI Assistant",
+    href: "/ai",
+    icon: MessageSquare,
   },
   {
-    title: "Bulk Operations",
-    href: "/admin/bulk-operations",
-    icon: Upload,
-  },
-  {
-    title: "Settings",
-    href: "/admin/settings",
-    icon: Settings,
+    title: "My Profile",
+    href: "/profile",
+    icon: User,
   },
 ]
 
-export function AdminSidebar() {
+export function StudentSidebar() {
   const pathname = usePathname()
   const [isMobileOpen, setIsMobileOpen] = useState(false)
 
@@ -64,9 +64,9 @@ export function AdminSidebar() {
     <>
       {/* Mobile menu button */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-background border-b p-4 flex items-center justify-between">
-        <Link href="/admin" className="flex items-center gap-2">
+        <Link href="/dashboard" className="flex items-center gap-2">
           <LayoutDashboard className="h-5 w-5 text-primary" />
-          <span className="font-bold text-base">Admin Panel</span>
+          <span className="font-bold text-base">Student Portal</span>
         </Link>
         <Button
           variant="ghost"
@@ -94,9 +94,9 @@ export function AdminSidebar() {
         )}
       >
         <div className="flex h-16 items-center border-b px-6 pt-16 lg:pt-0">
-          <Link href="/admin" className="flex items-center gap-2">
+          <Link href="/dashboard" className="flex items-center gap-2">
             <LayoutDashboard className="h-6 w-6 text-primary" />
-            <span className="font-bold text-lg">Admin Panel</span>
+            <span className="font-bold text-lg">Student Portal</span>
           </Link>
         </div>
         
@@ -131,7 +131,7 @@ export function AdminSidebar() {
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
           >
             <Home className="h-4 w-4" />
-            Back to Site
+            Back to Home
           </Link>
         </div>
       </div>

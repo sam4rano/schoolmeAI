@@ -19,10 +19,23 @@ const chatSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    // Get session with proper error handling
+    let session
+    try {
+      session = await getServerSession(authOptions)
+    } catch (error) {
+      console.error("Session error:", error)
+      return NextResponse.json(
+        { error: "Authentication error. Please sign in again." },
+        { status: 401 }
+      )
+    }
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json(
+        { error: "Unauthorized. Please sign in to use the AI assistant." },
+        { status: 401 }
+      )
     }
 
     const body = await request.json()

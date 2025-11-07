@@ -48,33 +48,33 @@ export default async function HomePage() {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
-
       <main className="flex-1">
         {/* Highlights/Important Information Section */}
-        <section className="border-b bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 py-4">
+        <section className="border-b bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 py-3 sm:py-4">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-3 flex-wrap justify-center md:justify-start">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/20 border border-primary/30">
-                  <TrendingUp className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-semibold text-primary">2025/2026 Admission Season</span>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-center sm:justify-start">
+                <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-primary/20 border border-primary/30">
+                  <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
+                  <span className="text-xs sm:text-sm font-semibold text-primary whitespace-nowrap">2025/2026 Admission Season</span>
                 </div>
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/20 border border-green-500/30">
-                  <Award className="h-4 w-4 text-green-600" />
-                  <span className="text-sm font-medium text-green-700 dark:text-green-400">
-                    {stats.institutions > 0 ? `${stats.institutions.toLocaleString()}+` : "800+"} Institutions Available
+                <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-green-500/20 border border-green-500/30">
+                  <Award className="h-3 w-3 sm:h-4 sm:w-4 text-green-600 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm font-medium text-green-700 dark:text-green-400 whitespace-nowrap">
+                    {stats.institutions > 0 ? `${stats.institutions.toLocaleString()}+` : "800+"} Institutions
                   </span>
                 </div>
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/20 border border-blue-500/30">
-                  <Clock className="h-4 w-4 text-blue-600" />
-                  <span className="text-sm font-medium text-blue-700 dark:text-blue-400">Check Application Deadlines</span>
+                <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-blue-500/20 border border-blue-500/30">
+                  <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm font-medium text-blue-700 dark:text-blue-400 whitespace-nowrap hidden sm:inline">Check Deadlines</span>
+                  <span className="text-xs sm:text-sm font-medium text-blue-700 dark:text-blue-400 whitespace-nowrap sm:hidden">Deadlines</span>
                 </div>
               </div>
-              <Link href="/recommendations">
-                <Button size="sm" variant="default" className="gap-2">
-                  <Sparkles className="h-4 w-4" />
-                  Get AI Recommendations
-                  <ArrowRight className="h-4 w-4" />
+              <Link href="/recommendations" className="w-full sm:w-auto">
+                <Button size="sm" variant="default" className="gap-2 w-full sm:w-auto">
+                  <Sparkles className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="text-xs sm:text-sm">Get AI Recommendations</span>
+                  <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 hidden sm:inline" />
                 </Button>
               </Link>
             </div>
@@ -90,12 +90,12 @@ export default async function HomePage() {
                 <span className="font-medium">Made for Nigerian Students</span>
               </div>
 
-              <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+              <h1 className="mb-4 sm:mb-6 text-3xl sm:text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl xl:text-7xl">
                 Your AI-Powered
                 <span className="block text-primary">Admission Guide</span>
               </h1>
 
-              <p className="mb-8 text-lg text-muted-foreground sm:text-xl md:text-2xl">
+              <p className="mb-6 sm:mb-8 text-base sm:text-lg text-muted-foreground md:text-xl lg:text-2xl px-4 sm:px-0">
                 Calculate admission probability, discover the right institutions, and get
                 personalized AI recommendations for your tertiary education journey.
               </p>
@@ -117,18 +117,18 @@ export default async function HomePage() {
         </section>
 
         {/* Features Section */}
-        <section className="py-20 sm:py-24">
+        <section className="py-12 sm:py-20 lg:py-24">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-2xl text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">
+            <div className="mx-auto max-w-2xl text-center mb-8 sm:mb-12">
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight md:text-4xl mb-3 sm:mb-4">
                 Everything You Need for Admission Success
               </h2>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-base sm:text-lg text-muted-foreground px-4 sm:px-0">
                 Comprehensive tools and data to help you make informed admission decisions
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
               <Card className="border-2 hover:border-primary/50 transition-colors">
                 <CardHeader>
                   <div className="mb-4 h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -252,28 +252,28 @@ export default async function HomePage() {
         </section>
 
         {/* Stats Section */}
-        <section className="bg-muted/50 py-16">
+        <section className="bg-muted/50 py-12 sm:py-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+            <div className="grid grid-cols-2 gap-4 sm:gap-8 md:grid-cols-4">
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary mb-2">
+                <div className="text-2xl sm:text-3xl font-bold text-primary mb-1 sm:mb-2">
                   {stats.institutions > 0 ? stats.institutions.toLocaleString() : "800+"}
                 </div>
-                <div className="text-sm text-muted-foreground">Institutions</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Institutions</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary mb-2">
+                <div className="text-2xl sm:text-3xl font-bold text-primary mb-1 sm:mb-2">
                   {stats.programs > 0 ? stats.programs.toLocaleString() : "180+"}
                 </div>
-                <div className="text-sm text-muted-foreground">Programs</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Programs</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary mb-2">5+</div>
-                <div className="text-sm text-muted-foreground">Years of Data</div>
+                <div className="text-2xl sm:text-3xl font-bold text-primary mb-1 sm:mb-2">5+</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Years of Data</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary mb-2">AI</div>
-                <div className="text-sm text-muted-foreground">Powered</div>
+                <div className="text-2xl sm:text-3xl font-bold text-primary mb-1 sm:mb-2">AI</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Powered</div>
               </div>
             </div>
           </div>
@@ -303,7 +303,6 @@ export default async function HomePage() {
           </div>
         </section>
       </main>
-
       <Footer />
     </div>
   )

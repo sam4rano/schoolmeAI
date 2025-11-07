@@ -351,7 +351,7 @@ export default async function AnalyticsPage() {
           </div>
         </CardContent>
       </Card>
-        </main>
+      </main>
       <Footer />
     </div>
   )

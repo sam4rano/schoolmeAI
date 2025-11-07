@@ -45,24 +45,24 @@ export default function InstitutionsPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
-      <main className="flex-1 container mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-2">Institutions</h1>
-          <p className="text-sm text-muted-foreground">
+      <main className="flex-1 container mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2">Institutions</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Browse all Nigerian higher institutions
           </p>
         </div>
 
         {/* Search and Filters */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Filter className="h-5 w-5" />
+        <Card className="mb-4 sm:mb-6">
+          <CardHeader className="pb-3 sm:pb-6">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Filter className="h-4 w-4 sm:h-5 sm:w-5" />
               Search & Filters
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -311,8 +311,8 @@ export default function InstitutionsPage() {
 
             {/* Pagination */}
             {pagination && pagination.totalPages > 1 && (
-              <div className="mt-8 flex items-center justify-between">
-                <p className="text-sm text-muted-foreground">
+              <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
                   Showing page {pagination.page} of {pagination.totalPages} ({pagination.total} total)
                 </p>
                 <div className="flex gap-2">

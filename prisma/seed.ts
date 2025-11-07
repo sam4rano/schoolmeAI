@@ -6,21 +6,60 @@ const prisma = new PrismaClient()
 async function main() {
   console.log("Starting seed...")
 
-  // Create sample user
-  const hashedPassword = await bcrypt.hash("password123", 10)
-  const user = await prisma.user.upsert({
-    where: { email: "test@example.com" },
+  // Create admin user
+  const adminPassword = await bcrypt.hash("password123", 10)
+  const admin = await prisma.user.upsert({
+    where: { email: "admin@example.com" },
+    update: {
+      roles: ["admin", "user"],
+    },
+    create: {
+      email: "admin@example.com",
+      hashedPassword: adminPassword,
+      roles: ["admin", "user"],
+      profile: {
+        name: "Admin User",
+        stateOfOrigin: "Lagos",
+      } as any,
+    },
+  })
+  console.log("Created admin user:", admin.email, "Roles:", admin.roles)
+
+  // Create sample student user
+  const studentPassword = await bcrypt.hash("password123", 10)
+  const student = await prisma.user.upsert({
+    where: { email: "student@example.com" },
     update: {},
     create: {
+      email: "student@example.com",
+      hashedPassword: studentPassword,
+      roles: ["user"],
+      profile: {
+        name: "Student User",
+        stateOfOrigin: "Lagos",
+      } as any,
+    },
+  })
+  console.log("Created student user:", student.email, "Roles:", student.roles)
+
+  // Keep test@example.com for backward compatibility (as admin)
+  const testPassword = await bcrypt.hash("password123", 10)
+  const testUser = await prisma.user.upsert({
+    where: { email: "test@example.com" },
+    update: {
+      roles: ["admin", "user"],
+    },
+    create: {
       email: "test@example.com",
-      hashedPassword,
+      hashedPassword: testPassword,
+      roles: ["admin", "user"],
       profile: {
         name: "Test User",
         stateOfOrigin: "Lagos",
       } as any,
     },
   })
-  console.log("Created user:", user.email)
+  console.log("Created test user:", testUser.email, "Roles:", testUser.roles)
 
   // Sample institutions (20 major Nigerian institutions)
   const institutions = [
