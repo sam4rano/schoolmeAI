@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  scraper-scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: edurepo-scraper
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - S3_ENDPOINT=${S3_ENDPOINT}
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY}
+      - S3_SECRET_KEY=${S3_SECRET_KEY}
+      - S3_BUCKET=${S3_BUCKET}
+      - API_URL=${API_URL:-http://backend:3000}
+    volumes:
+      - ./:/app
+      - scraper_data:/app/data
+    command: python -m scrapers.run_all
+    restart: unless-stopped
+    networks:
+      - edurepo-network
+
+volumes:
+  scraper_data:
+
+networks:
+  edurepo-network:
+    external: true
+
+
