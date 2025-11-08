@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { AdminSidebar } from "@/components/admin/admin-sidebar"
 import { Loader2, Upload, FileText, AlertCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
@@ -71,16 +70,13 @@ export default function BulkDescriptionsPage() {
   }
 
   return (
-    <div className="flex min-h-screen">
-      <AdminSidebar />
-      <div className="flex-1 lg:ml-64">
-        <div className="container mx-auto p-6 space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold">Bulk Description Entry</h1>
-            <p className="text-muted-foreground mt-2">
-              Import program descriptions in bulk
-            </p>
-          </div>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">Bulk Description Entry</h1>
+        <p className="text-muted-foreground mt-2">
+          Import program descriptions in bulk
+        </p>
+      </div>
 
           <Card>
             <CardHeader>
@@ -147,8 +143,6 @@ export default function BulkDescriptionsPage() {
               </Alert>
             </CardContent>
           </Card>
-        </div>
-      </div>
     </div>
   )
 }

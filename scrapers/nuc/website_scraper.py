@@ -39,10 +39,15 @@ class NUCWebsiteScraper:
         websites = {}
         
         # NUC has various pages with institution information
+        # Updated URLs based on current NUC website structure
         nuc_urls = [
+            "https://www.nuc.edu.ng/",
+            "https://www.nuc.edu.ng/universities/",
             "https://www.nuc.edu.ng/nigerian-universities/",
             "https://www.nuc.edu.ng/approved-universities/",
-            "https://www.nuc.edu.ng/universities/",
+            "https://www.nuc.edu.ng/federal-universities/",
+            "https://www.nuc.edu.ng/state-universities/",
+            "https://www.nuc.edu.ng/private-universities/",
         ]
         
         for url in nuc_urls:
@@ -142,8 +147,10 @@ class NUCWebsiteScraper:
         
         # JAMB website might have institution information
         jamb_urls = [
-            "https://www.jamb.gov.ng/Institutions",
-            "https://www.jamb.gov.ng/InstitutionList",
+            "https://www.jamb.gov.ng/",
+            "https://www.jamb.gov.ng/institutions",
+            "https://www.jamb.gov.ng/institution-list",
+            "https://www.jamb.gov.ng/universities",
         ]
         
         for url in jamb_urls:
@@ -175,6 +182,33 @@ class NUCWebsiteScraper:
                 continue
         
         return websites
+    
+    def search_website_via_google(self, institution_name: str) -> Optional[str]:
+        """Search for institution website via Google (fallback method)
+        Note: This requires Google Custom Search API or similar service
+        For now, we'll use a simple heuristic based on common patterns
+        """
+        # Common patterns for Nigerian institution websites
+        normalized_name = self._normalize_name(institution_name)
+        
+        # Try common domain patterns
+        patterns = [
+            f"https://www.{normalized_name.lower().replace(' ', '')}.edu.ng",
+            f"https://{normalized_name.lower().replace(' ', '')}.edu.ng",
+            f"https://www.{normalized_name.lower().replace(' ', '')}.com",
+        ]
+        
+        # Check if any pattern is accessible
+        for pattern in patterns:
+            try:
+                response = requests.head(pattern, timeout=5, allow_redirects=True)
+                if response.status_code == 200:
+                    logger.debug(f"Found website via pattern: {pattern}")
+                    return pattern
+            except:
+                continue
+        
+        return None
 
 
 if __name__ == "__main__":

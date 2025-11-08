@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
+import { logger } from "./logger"
 
 export function handleApiError(error: unknown): NextResponse {
   // Handle unauthorized errors
@@ -16,7 +17,7 @@ export function handleApiError(error: unknown): NextResponse {
   }
 
   // Handle general errors
-  console.error("API Error:", error)
+  logger.error("API Error", error)
   return NextResponse.json(
     { error: "Internal server error" },
     { status: 500 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
+import { logger } from "@/lib/utils/logger"
 
 const searchSchema = z.object({
   query: z.string().optional(),
@@ -37,9 +38,52 @@ export async function GET(request: NextRequest) {
         where,
         skip,
         take: limit * 2, // Fetch extra to account for potential duplicates
-        include: {
+        select: {
+          id: true,
+          name: true,
+          type: true,
+          ownership: true,
+          state: true,
+          city: true,
+          website: true,
+          contact: true,
+          accreditationStatus: true,
+          courses: true,
+          feesSchedule: true, // Use feesSchedule instead of tuitionFees if it exists
+          provenance: true,
+          lastVerifiedAt: true,
+          dataQualityScore: true,
+          missingFields: true,
+          createdAt: true,
+          updatedAt: true,
           programs: {
             take: 5, // Limit programs per institution
+            select: {
+              id: true,
+              name: true,
+              faculty: true,
+              department: true,
+              degreeType: true,
+              description: true,
+              duration: true,
+              utmeSubjects: true,
+              olevelSubjects: true,
+              admissionRequirements: true,
+              cutoffHistory: true,
+              tuitionFees: true,
+              careerProspects: true,
+              courseCurriculum: true,
+              applicationDeadline: true,
+              officialUrl: true,
+              contact: true,
+              accreditationStatus: true,
+              lastVerifiedAt: true,
+              dataQualityScore: true,
+              missingFields: true,
+              provenance: true,
+              createdAt: true,
+              updatedAt: true,
+            },
           },
         },
         orderBy: {
@@ -76,7 +120,10 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    console.error("Error fetching institutions:", error)
+    logger.error("Error fetching institutions", error, {
+      endpoint: "/api/institutions",
+      method: "GET",
+    })
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

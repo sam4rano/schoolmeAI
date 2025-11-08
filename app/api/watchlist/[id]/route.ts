@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { logger } from "@/lib/utils/logger"
 
 export async function DELETE(
   request: NextRequest,
@@ -42,7 +43,10 @@ export async function DELETE(
 
     return NextResponse.json({ message: "Watchlist item removed" })
   } catch (error) {
-    console.error("Error removing from watchlist:", error)
+    logger.error("Error removing from watchlist", error, {
+      endpoint: `/api/watchlist/${params.id}`,
+      method: "DELETE",
+    })
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

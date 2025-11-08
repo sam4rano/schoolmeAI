@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
+import { logger } from "@/lib/utils/logger"
 
 const institutionSchema = z.object({
   name: z.string().min(1),
@@ -117,7 +118,11 @@ export async function POST(request: NextRequest) {
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : "Unknown error"
         results.errors.push(`${instData.name}: ${errorMsg}`)
-        console.error(`Error importing ${instData.name}:`, error)
+        logger.error(`Error importing ${instData.name}`, error, {
+          endpoint: "/api/scrape/import",
+          method: "POST",
+          institutionName: instData.name,
+        })
       }
     }
 
@@ -134,7 +139,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.error("Error importing institutions:", error)
+    logger.error("Error importing institutions", error, {
+      endpoint: "/api/scrape/import",
+      method: "POST",
+    })
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

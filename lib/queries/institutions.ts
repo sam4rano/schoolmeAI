@@ -2,8 +2,8 @@ import { Prisma } from "@prisma/client"
 
 export interface InstitutionFilters {
   search?: string
-  type?: "university" | "polytechnic" | "college" | "nursing" | "military"
-  ownership?: "federal" | "state" | "private"
+  type?: "university" | "polytechnic" | "college" | "nursing" | "military" | "all"
+  ownership?: "federal" | "state" | "private" | "all"
   state?: string
   missingWebsite?: boolean
 }
@@ -17,35 +17,46 @@ export interface InstitutionQueryOptions {
 }
 
 export function buildInstitutionWhere(filters: InstitutionFilters): Prisma.InstitutionWhereInput {
-  const where: Prisma.InstitutionWhereInput = {}
+  const conditions: Prisma.InstitutionWhereInput[] = []
 
-  if (filters.search) {
-    where.name = {
-      contains: filters.search,
-      mode: Prisma.QueryMode.insensitive,
-    }
+  if (filters.search && filters.search.trim()) {
+    conditions.push({
+      name: {
+        contains: filters.search.trim(),
+        mode: Prisma.QueryMode.insensitive,
+      },
+    })
   }
 
-  if (filters.type) {
-    where.type = filters.type
+  if (filters.type && filters.type !== "all") {
+    conditions.push({ type: filters.type as "university" | "polytechnic" | "college" | "nursing" | "military" })
   }
 
-  if (filters.ownership) {
-    where.ownership = filters.ownership
+  if (filters.ownership && filters.ownership !== "all") {
+    conditions.push({ ownership: filters.ownership as "federal" | "state" | "private" })
   }
 
-  if (filters.state) {
-    where.state = filters.state
+  if (filters.state && filters.state.trim()) {
+    conditions.push({ state: filters.state.trim() })
   }
 
   if (filters.missingWebsite) {
-    where.OR = [
-      { website: null },
-      { website: "" },
-    ]
+    conditions.push({
+      OR: [
+        { website: null },
+        { website: "" },
+      ],
+    })
   }
 
-  return where
+  // If we have multiple conditions, combine them with AND
+  if (conditions.length === 0) {
+    return {}
+  } else if (conditions.length === 1) {
+    return conditions[0]
+  } else {
+    return { AND: conditions }
+  }
 }
 
 export function buildInstitutionQuery(

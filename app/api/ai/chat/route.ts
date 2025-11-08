@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { ragPipeline } from "@/lib/ai/rag"
 import { z } from "zod"
+import { logger } from "@/lib/utils/logger"
 
 const chatSchema = z.object({
   message: z.string().min(1).max(1000),
@@ -24,7 +25,10 @@ export async function POST(request: NextRequest) {
     try {
       session = await getServerSession(authOptions)
     } catch (error) {
-      console.error("Session error:", error)
+      logger.error("Session error in AI chat", error, {
+        endpoint: "/api/ai/chat",
+        method: "POST",
+      })
       return NextResponse.json(
         { error: "Authentication error. Please sign in again." },
         { status: 401 }
@@ -44,7 +48,7 @@ export async function POST(request: NextRequest) {
     const result = await ragPipeline(validatedData.message, {
       entityType: validatedData.entityType === "all" ? undefined : validatedData.entityType,
       limit,
-      minSimilarity: 0.5,
+      minSimilarity: 0.3, // Lower threshold to get more results when embeddings are sparse
       userContext: validatedData.userContext
         ? {
             userProfile: validatedData.userContext,
@@ -67,7 +71,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.error("Error in AI chat:", error)
+    logger.error("Error in AI chat", error, {
+      endpoint: "/api/ai/chat",
+      method: "POST",
+    })
     
     // Provide more specific error messages
     const errorMessage = error instanceof Error ? error.message : "Unknown error"

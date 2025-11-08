@@ -34,16 +34,20 @@ export async function retrieveContext(
   try {
     const queryEmbedding = await generateEmbedding(query)
     const limit = options?.limit || 5
-    const minSimilarity = options?.minSimilarity || 0.5
+    // Lower similarity threshold to get more results when embeddings are sparse
+    const minSimilarity = options?.minSimilarity || 0.3
 
     const similarEmbeddings = await findSimilarEmbeddings(
       queryEmbedding,
       options?.entityType,
-      limit
+      limit * 2 // Get more results to filter from
     )
 
+    // Filter by similarity and sort by relevance
     const sources = similarEmbeddings
       .filter((item) => item.similarity >= minSimilarity)
+      .sort((a, b) => b.similarity - a.similarity) // Sort by similarity descending
+      .slice(0, limit) // Take top N results
       .map((item) => ({
         type: item.entityType,
         id: item.entityId,
@@ -87,14 +91,20 @@ async function generateAnswerWithGemini(
     : ""
 
   const prompt = `You are an AI assistant helping Nigerian students with university admission guidance. 
-Use the provided context to answer questions accurately. If the context doesn't contain enough information, 
-say so honestly. Always cite sources using [1], [2], etc. when referencing the context.
+Use the provided context to answer questions accurately and helpfully. Even if the context is limited, 
+provide the best answer you can based on what's available. Always cite sources using [1], [2], etc. when referencing the context.
+
+IMPORTANT: If the context contains relevant information (even if partial), use it to provide a helpful answer. 
+Only say you don't have information if the context is completely empty or irrelevant.
 
 Context:
 ${contextText}
 ${userContextText}
 
-User Question: ${query}`
+User Question: ${query}
+
+Provide a helpful answer based on the context above. If the context has relevant information, use it. 
+If the context is empty, suggest that the user check back later as the database is being updated.`
 
   const model = process.env.GEMINI_MODEL || "gemini-1.5-flash"
 
@@ -154,8 +164,11 @@ async function generateAnswerWithOpenAI(
     : ""
 
   const systemPrompt = `You are an AI assistant helping Nigerian students with university admission guidance. 
-Use the provided context to answer questions accurately. If the context doesn't contain enough information, 
-say so honestly. Always cite sources using [1], [2], etc. when referencing the context.
+Use the provided context to answer questions accurately and helpfully. Even if the context is limited, 
+provide the best answer you can based on what's available. Always cite sources using [1], [2], etc. when referencing the context.
+
+IMPORTANT: If the context contains relevant information (even if partial), use it to provide a helpful answer. 
+Only say you don't have information if the context is completely empty or irrelevant.
 
 Context:
 ${contextText}
@@ -229,16 +242,25 @@ function generateFallbackAnswer(
   userContext?: RAGContext
 ): string {
   if (sources.length === 0) {
-    return `I couldn't find specific information about "${query}" in our database. Please try rephrasing your question or check back later as we continue to update our information.`
+    return `I couldn't find specific information about "${query}" in our database. This might be because:
+
+1. **No embeddings generated yet** - The knowledge base needs to be populated. An admin can generate embeddings at /admin/embeddings
+2. **Data not available** - The information might not be in our database yet
+3. **Try rephrasing** - Try asking in a different way, for example:
+   - "What universities offer Computer Science?"
+   - "Which institutions have Computer Science programs?"
+   - "Show me Computer Science programs in Nigeria"
+
+Please check back later as we continue to update our information, or try rephrasing your question.`
   }
 
-  let answer = `Based on the information available:\n\n`
+  let answer = `Based on the information available in our database:\n\n`
 
   sources.forEach((source, idx) => {
-    answer += `[${idx + 1}] ${source.title}\n${source.content.substring(0, 200)}...\n\n`
+    answer += `[${idx + 1}] ${source.title}\n${source.content.substring(0, 300)}${source.content.length > 300 ? "..." : ""}\n\n`
   })
 
-  answer += `\nNote: This is a simplified response. For more detailed AI-powered answers, please configure a GEMINI_API_KEY or OPENAI_API_KEY.`
+  answer += `\nNote: This is a simplified response. For more detailed AI-powered answers, please configure a GEMINI_API_KEY or OPENAI_API_KEY in your environment variables.`
 
   return answer
 }

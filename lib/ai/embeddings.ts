@@ -137,7 +137,7 @@ export async function findSimilarEmbeddings(
         metadata,
         1 - (embedding <=> $1::vector) as similarity
       FROM embeddings
-      WHERE 1 - (embedding <=> $1::vector) > 0.5
+      WHERE 1 - (embedding <=> $1::vector) > 0.3
     `
 
     const params: any[] = [embeddingVector]

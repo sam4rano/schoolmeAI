@@ -5,7 +5,12 @@ import json
 import logging
 import requests
 import sys
+import os
 from typing import List, Dict
+
+# Add parent directory to path to allow imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from scrapers.myschoolgist.scraper import MySchoolGistScraper
 
 logging.basicConfig(

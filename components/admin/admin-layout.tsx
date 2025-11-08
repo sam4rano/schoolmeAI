@@ -11,18 +11,28 @@ import { usePathname } from "next/navigation"
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const { isLoading, isAuthenticated, isAdmin, isAuthorized } = useAuthGuard({
+  const { isLoading, isAuthenticated, isAdmin, isAuthorized, status } = useAuthGuard({
     requireAuth: true,
     requireAdmin: true,
   })
 
-  // Show loading only if no cached session exists
-  if (isLoading) {
+  // Show loading only if no cached session exists and not in error state
+  if (isLoading && status !== "unauthenticated") {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
+  }
+
+  // If session check failed (decryption error), show error and clear session
+  if (status === "unauthenticated" && !isLoading) {
+    // Try to clear corrupted session
+    if (typeof window !== "undefined") {
+      fetch("/api/auth/signout", { method: "POST" }).catch(() => {
+        // Ignore errors
+      })
+    }
   }
 
   if (!isAuthenticated) {
@@ -72,11 +82,11 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col" style={{ isolation: "isolate" }}>
       <Navbar />
       <div className="flex flex-1 overflow-hidden">
         <AdminSidebar />
-        <main className="flex-1 overflow-y-auto pt-16 lg:pt-0 lg:ml-64">
+        <main className="flex-1 overflow-y-auto pt-16 lg:pt-0 lg:ml-64" style={{ isolation: "isolate" }}>
           <div className="container mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
             {children}
           </div>

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import bcrypt from "bcryptjs"
+import { logger } from "@/lib/utils/logger"
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -63,7 +64,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.error("Error registering user:", error)
+    logger.error("Error registering user", error, {
+      endpoint: "/api/auth/register",
+      method: "POST",
+    })
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

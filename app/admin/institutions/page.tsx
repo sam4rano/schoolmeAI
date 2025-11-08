@@ -66,7 +66,7 @@ export default function InstitutionsPage() {
   const [ownership, setOwnership] = useState("all")
   const [missingWebsite, setMissingWebsite] = useState(false)
 
-  const { data, isLoading } = useInstitutions({
+  const { data, isLoading, isError, error } = useInstitutions({
     page,
     limit: 20,
     search: search || undefined,
@@ -170,6 +170,14 @@ export default function InstitutionsPage() {
               {[...Array(5)].map((_, i) => (
                 <Skeleton key={i} className="h-12 w-full" />
               ))}
+            </div>
+          ) : isError ? (
+            <div className="text-center py-12">
+              <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+              <p className="text-destructive font-medium mb-2">Error loading institutions</p>
+              <p className="text-muted-foreground text-sm">
+                {error instanceof Error ? error.message : "Please try again"}
+              </p>
             </div>
           ) : institutions.length === 0 ? (
             <div className="text-center py-12">

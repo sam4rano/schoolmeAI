@@ -47,9 +47,11 @@ export function buildProgramWhere(filters: ProgramFilters): Prisma.ProgramWhereI
     }
   }
 
-  if (filters.missingCutoff) {
-    where.cutoffHistory = null as any
-  }
+  // Note: For JSON fields like cutoffHistory, we can't filter directly in Prisma
+  // This filter will be applied in JavaScript after fetching
+  // if (filters.missingCutoff) {
+  //   where.cutoffHistory = null as any
+  // }
 
   if (filters.missingDescription) {
     where.OR = [

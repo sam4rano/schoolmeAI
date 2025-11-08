@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
+import { logger } from "@/lib/utils/logger"
 
 const searchSchema = z.object({
   query: z.string().optional(),
@@ -255,7 +256,10 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    console.error("Error fetching programs:", error)
+    logger.error("Error fetching programs", error, {
+      endpoint: "/api/programs",
+      method: "GET",
+    })
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

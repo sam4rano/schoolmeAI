@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
+import { logger } from "@/lib/utils/logger"
 
 const feeCalculationSchema = z.object({
   programIds: z.array(z.string().uuid()).min(1).max(10),
@@ -158,13 +159,16 @@ export async function POST(request: NextRequest) {
       data: results,
     })
   } catch (error) {
-    console.error("Error calculating fees:", error)
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Invalid request data", details: error.errors },
         { status: 400 }
       )
     }
+    logger.error("Error calculating fees", error, {
+      endpoint: "/api/calculate/fees",
+      method: "POST",
+    })
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

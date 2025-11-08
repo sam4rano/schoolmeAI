@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/middleware/admin"
 import { z } from "zod"
 import { buildInstitutionQuery } from "@/lib/queries/institutions"
 import { handleApiError } from "@/lib/utils/api-error-handler"
+import { logger } from "@/lib/utils/logger"
 
 const createInstitutionSchema = z.object({
   name: z.string().min(1),
@@ -26,8 +27,8 @@ export async function GET(request: NextRequest) {
 
     const filters = {
       search: searchParams.get("search") || undefined,
-      type: searchParams.get("type") as any,
-      ownership: searchParams.get("ownership") as any,
+      type: (searchParams.get("type") && searchParams.get("type") !== "all") ? searchParams.get("type") as any : undefined,
+      ownership: (searchParams.get("ownership") && searchParams.get("ownership") !== "all") ? searchParams.get("ownership") as any : undefined,
       missingWebsite: searchParams.get("missingWebsite") === "true",
     }
 
@@ -40,7 +41,7 @@ export async function GET(request: NextRequest) {
 
     const [institutions, total] = await Promise.all([
       prisma.institution.findMany(query),
-      prisma.institution.count({ where: query.where }),
+      prisma.institution.count({ where: query.where || {} }),
     ])
 
     return NextResponse.json({
@@ -53,6 +54,10 @@ export async function GET(request: NextRequest) {
       },
     })
   } catch (error) {
+    logger.error("Error in GET /api/admin/institutions", error, {
+      endpoint: "/api/admin/institutions",
+      method: "GET",
+    })
     return handleApiError(error)
   }
 }

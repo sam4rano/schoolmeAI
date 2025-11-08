@@ -25,7 +25,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { AdminLayout } from "@/components/admin/admin-layout"
 
 interface Review {
   id: string
@@ -138,16 +137,15 @@ export default function AdminReviewsPage() {
   })
 
   return (
-    <AdminLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Review Moderation</h1>
-          <p className="text-muted-foreground">
-            Moderate user reviews for institutions and programs
-          </p>
-        </div>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">Review Moderation</h1>
+        <p className="text-muted-foreground">
+          Moderate user reviews for institutions and programs
+        </p>
+      </div>
 
-        <div className="flex gap-4 flex-wrap">
+      <div className="flex gap-4 flex-wrap">
           <div className="flex-1 min-w-[200px]">
             <Input
               placeholder="Search reviews..."
@@ -167,9 +165,9 @@ export default function AdminReviewsPage() {
               <SelectItem value="flagged">Flagged</SelectItem>
             </SelectContent>
           </Select>
-        </div>
+      </div>
 
-        {loading ? (
+      {loading ? (
           <div className="flex items-center justify-center p-8">
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
@@ -328,8 +326,7 @@ export default function AdminReviewsPage() {
             ))}
           </div>
         )}
-      </div>
-    </AdminLayout>
+    </div>
   )
 }
 

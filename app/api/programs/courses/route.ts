@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { logger } from "@/lib/utils/logger"
 
 export async function GET(request: NextRequest) {
   try {
@@ -20,7 +21,10 @@ export async function GET(request: NextRequest) {
       data: courses,
     })
   } catch (error) {
-    console.error("Error fetching courses:", error)
+    logger.error("Error fetching courses", error, {
+      endpoint: "/api/programs/courses",
+      method: "GET",
+    })
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

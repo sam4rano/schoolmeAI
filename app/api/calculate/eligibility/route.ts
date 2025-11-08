@@ -9,6 +9,7 @@ import {
   type EligibilityResult,
 } from "@/lib/eligibility"
 import { estimateProbabilityWithModel } from "@/lib/probability-model"
+import { logger } from "@/lib/utils/logger"
 
 const eligibilitySchema = z.object({
   utme: z.number().min(0).max(400),
@@ -104,7 +105,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.error("Error calculating eligibility:", error)
+    logger.error("Error calculating eligibility", error, {
+      endpoint: "/api/calculate/eligibility",
+      method: "POST",
+    })
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

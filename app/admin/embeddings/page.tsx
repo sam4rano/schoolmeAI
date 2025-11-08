@@ -1,16 +1,33 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { Loader2, Sparkles, Building2, GraduationCap } from "lucide-react"
-import { AdminSidebar } from "@/components/admin/admin-sidebar"
 
 export default function EmbeddingsPage() {
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
   const [generating, setGenerating] = useState<string | null>(null)
+  const [embeddingCount, setEmbeddingCount] = useState<number | null>(null)
+
+  // Check embedding count on mount
+  useEffect(() => {
+    const checkEmbeddings = async () => {
+      try {
+        const response = await fetch("/api/admin/embeddings/count")
+        if (response.ok) {
+          const data = await response.json()
+          setEmbeddingCount(data.count)
+        }
+      } catch (error) {
+        console.error("Error checking embeddings:", error)
+      }
+    }
+    checkEmbeddings()
+  }, [])
 
   const handleGenerate = async (type: "institution" | "program" | "all") => {
     setLoading(true)
@@ -36,6 +53,13 @@ export default function EmbeddingsPage() {
         title: "Success",
         description: data.message + (data.count ? ` (${data.count} embeddings)` : data.total ? ` (${data.total} total)` : ""),
       })
+      
+      // Refresh embedding count
+      const countResponse = await fetch("/api/admin/embeddings/count")
+      if (countResponse.ok) {
+        const countData = await countResponse.json()
+        setEmbeddingCount(countData.count)
+      }
     } catch (error) {
       console.error("Error generating embeddings:", error)
       toast({
@@ -50,15 +74,24 @@ export default function EmbeddingsPage() {
   }
 
   return (
-    <div className="flex min-h-screen">
-      <AdminSidebar />
-      <div className="flex-1 lg:ml-64">
-        <div className="container mx-auto p-6 space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold">AI Embeddings Management</h1>
-            <p className="text-muted-foreground mt-2">
-              Generate embeddings for institutions and programs to improve AI chat responses
-            </p>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">AI Embeddings Management</h1>
+        <p className="text-muted-foreground mt-2">
+          Generate embeddings for institutions and programs to improve AI chat responses
+        </p>
+            {embeddingCount !== null && (
+              <div className="mt-4">
+                <Badge variant={embeddingCount > 0 ? "default" : "destructive"}>
+                  {embeddingCount} embeddings in database
+                </Badge>
+                {embeddingCount === 0 && (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    ⚠️ No embeddings found. Generate embeddings to enable AI chat responses.
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="grid gap-6 md:grid-cols-3">
@@ -170,6 +203,17 @@ export default function EmbeddingsPage() {
                 </p>
               </div>
               <div>
+                <h3 className="font-semibold mb-2">⚠️ Important: Generate Embeddings First</h3>
+                <p className="text-sm text-muted-foreground mb-2">
+                  <strong>Before the AI chat can answer questions, you must generate embeddings.</strong> The AI chat
+                  will show &quot;I couldn&apos;t find information&quot; errors until embeddings are generated.
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Click &quot;Generate All Embeddings&quot; above to populate the knowledge base. This is required
+                  for the AI chat to work properly.
+                </p>
+              </div>
+              <div>
                 <h3 className="font-semibold mb-2">When to regenerate embeddings</h3>
                 <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
                   <li>After adding new institutions or programs</li>
@@ -187,8 +231,6 @@ export default function EmbeddingsPage() {
               </div>
             </CardContent>
           </Card>
-        </div>
-      </div>
     </div>
   )
 }

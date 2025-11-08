@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
+import { logger } from "@/lib/utils/logger"
 
 const watchlistSchema = z.object({
   programId: z.string().uuid(),
@@ -46,7 +47,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ data: watchlistItems })
   } catch (error) {
-    console.error("Error fetching watchlist:", error)
+    logger.error("Error fetching watchlist", error, {
+      endpoint: "/api/watchlist",
+      method: "GET",
+    })
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -128,7 +132,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.error("Error adding to watchlist:", error)
+    logger.error("Error adding to watchlist", error, {
+      endpoint: "/api/watchlist",
+      method: "POST",
+    })
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

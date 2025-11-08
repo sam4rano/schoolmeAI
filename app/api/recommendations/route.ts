@@ -6,6 +6,7 @@ import {
   calculateCompositeScore,
 } from "@/lib/eligibility"
 import { estimateProbabilityWithModel } from "@/lib/probability-model"
+import { logger } from "@/lib/utils/logger"
 
 const recommendationsSchema = z.object({
   utme: z.number().min(0).max(400),
@@ -103,7 +104,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.error("Error generating recommendations:", error)
+    logger.error("Error generating recommendations", error, {
+      endpoint: "/api/recommendations",
+      method: "POST",
+    })
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

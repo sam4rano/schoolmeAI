@@ -35,11 +35,38 @@ export function useAuthGuard(options: UseAuthGuardOptions = {}): UseAuthGuardRet
   const pathname = usePathname()
   const hasRedirected = useRef(false)
   const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const [sessionError, setSessionError] = useState(false)
 
-  const isAuthenticated = status === "authenticated" && !!session?.user
+  // Handle session errors (decryption failures)
+  useEffect(() => {
+    if (status === "unauthenticated" && session === null) {
+      // Check if this is a decryption error by trying to clear session
+      const checkSession = async () => {
+        try {
+          const response = await fetch("/api/auth/session", {
+            credentials: "include",
+          })
+          if (!response.ok && response.status >= 500) {
+            // Likely a decryption error, clear session
+            setSessionError(true)
+            try {
+              await fetch("/api/auth/signout", { method: "POST" })
+            } catch (e) {
+              // Ignore signout errors
+            }
+          }
+        } catch (error) {
+          // Ignore errors
+        }
+      }
+      checkSession()
+    }
+  }, [status, session])
+
+  const isAuthenticated = status === "authenticated" && !!session?.user && !sessionError
   const isAdmin = isAuthenticated && session?.user?.roles?.includes("admin")
-  const hasSession = session && session.user
-  const isLoading = status === "loading" && !hasSession
+  const hasSession = session && session.user && !sessionError
+  const isLoading = status === "loading" && !hasSession && !sessionError
   const isAuthorized = requireAdmin ? isAdmin : isAuthenticated
 
   // Handle redirects

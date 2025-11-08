@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { Prisma } from "@prisma/client"
 import { requireAdmin } from "@/lib/middleware/admin"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -17,7 +18,7 @@ async function getAdminStats() {
     totalInstitutions,
     totalPrograms,
     institutionsWithoutWebsite,
-    programsWithoutCutoff,
+    allPrograms,
     recentChanges,
   ] = await Promise.all([
     prisma.institution.count(),
@@ -30,10 +31,9 @@ async function getAdminStats() {
         ],
       },
     }),
-    prisma.program.count({
-      where: {
-        cutoffHistory: null as any,
-      },
+    // For JSON fields, we need to fetch and filter in JavaScript
+    prisma.program.findMany({
+      select: { id: true, cutoffHistory: true },
     }),
     prisma.auditEvent.findMany({
       take: 5,
@@ -47,6 +47,15 @@ async function getAdminStats() {
       },
     }),
   ])
+
+  // Filter programs without cutoff history
+  const programsWithoutCutoff = allPrograms.filter(p => {
+    if (!p.cutoffHistory) return true
+    if (Array.isArray(p.cutoffHistory)) {
+      return p.cutoffHistory.length === 0
+    }
+    return false
+  }).length
 
   const dataQualityScore = Math.round(
     ((totalInstitutions - institutionsWithoutWebsite) / totalInstitutions) * 50 +

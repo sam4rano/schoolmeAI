@@ -18,6 +18,7 @@ import {
   Upload,
   MessageSquare,
   Sparkles,
+  Globe,
 } from "lucide-react"
 
 const navItems = [
@@ -77,6 +78,11 @@ const navItems = [
     icon: Sparkles,
   },
   {
+    title: "Website Review",
+    href: "/admin/websites/review",
+    icon: Globe,
+  },
+  {
     title: "Settings",
     href: "/admin/settings",
     icon: Settings,
@@ -116,13 +122,20 @@ export function AdminSidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed lg:static top-16 lg:top-0 h-[calc(100vh-4rem)] lg:h-screen left-0 z-30 w-64 flex-col border-r bg-background",
+          "fixed top-16 lg:top-0 h-[calc(100vh-4rem)] lg:h-screen left-0 z-30 w-64 flex-col border-r bg-background",
           "lg:flex lg:translate-x-0", // Always visible on desktop
           isMobileOpen ? "flex translate-x-0" : "-translate-x-full", // Mobile only transition
-          "transition-transform duration-300" // Smooth transition for mobile
+          "transition-transform duration-300 ease-in-out" // Smooth transition for mobile
         )}
+        style={{ 
+          willChange: "transform",
+          isolation: "isolate",
+          backfaceVisibility: "hidden",
+          WebkitBackfaceVisibility: "hidden",
+          transform: "translateZ(0)",
+        }}
       >
-        <div className="flex h-16 items-center border-b px-6 pt-16 lg:pt-0">
+        <div className="flex h-16 items-center border-b px-6 pt-0">
           <Link href="/admin" className="flex items-center gap-2">
             <LayoutDashboard className="h-6 w-6 text-primary" />
             <span className="font-bold text-lg">Admin Panel</span>

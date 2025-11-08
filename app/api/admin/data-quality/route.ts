@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
       totalInstitutions,
       totalPrograms,
       institutionsWithoutWebsite,
-      programsWithoutCutoff,
+      allPrograms,
       programsWithoutDescription,
     ] = await Promise.all([
       prisma.institution.count(),
@@ -30,10 +30,9 @@ export async function GET(request: NextRequest) {
           ],
         },
       }),
-      prisma.program.count({
-        where: {
-          cutoffHistory: null as any,
-        },
+      // For JSON fields, we need to fetch and filter in JavaScript
+      prisma.program.findMany({
+        select: { id: true, cutoffHistory: true },
       }),
       prisma.program.count({
         where: {
@@ -44,6 +43,15 @@ export async function GET(request: NextRequest) {
         },
       }),
     ])
+
+    // Filter programs without cutoff history
+    const programsWithoutCutoff = allPrograms.filter(p => {
+      if (!p.cutoffHistory) return true
+      if (Array.isArray(p.cutoffHistory)) {
+        return p.cutoffHistory.length === 0
+      }
+      return false
+    }).length
 
     // Calculate data quality score
     const websiteScore = totalInstitutions > 0
@@ -97,9 +105,23 @@ export async function GET(request: NextRequest) {
         },
       }))
     } else if (issueType === "missingCutoff") {
+      // For JSON fields, fetch all and filter in JavaScript
+      const allPrograms = await prisma.program.findMany({
+        select: { id: true, cutoffHistory: true },
+      })
+      const programsWithoutCutoffIds = allPrograms
+        .filter(p => {
+          if (!p.cutoffHistory) return true
+          if (Array.isArray(p.cutoffHistory)) {
+            return p.cutoffHistory.length === 0
+          }
+          return false
+        })
+        .map(p => p.id)
+      
       const programs = await prisma.program.findMany({
         where: {
-          cutoffHistory: null as any,
+          id: { in: programsWithoutCutoffIds },
         },
         include: {
           institution: {

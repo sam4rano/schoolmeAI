@@ -1,0 +1,107 @@
+[
+  {
+    "institution_id": "eb0ed28c-dad3-40a7-ad77-3700c52fefa5",
+    "institution_name": "Abubakar Tatari Ali Polytechnic, Bauchi",
+    "website": "https://www.atapb.com",
+    "matched_name": "Abubakar Tatari Ali Polytechnic, Bauchi",
+    "confidence": 100.0
+  },
+  {
+    "institution_id": "51bd9647-844f-4b80-9f39-cc2677c44743",
+    "institution_name": "Adamawa State Polytechnic, Yola",
+    "website": "https://www.aspy.com",
+    "matched_name": "Adamawa State Polytechnic, Yola",
+    "confidence": 100.0
+  },
+  {
+    "institution_id": "e566c9d4-eacc-4411-94d3-07d527063e53",
+    "institution_name": "Adeseun Ogundoyin Polytechnic, Eruwa",
+    "website": "https://aope.edu.ng",
+    "matched_name": "Adeseun Ogundoyin Polytechnic, Eruwa",
+    "confidence": 100.0
+  },
+  {
+    "institution_id": "9a0ff4e5-e46f-4e1b-b337-f56a23b57c89",
+    "institution_name": "Adeyemi University of Education, Ondo",
+    "website": "https://www.aueo.com",
+    "matched_name": "Adeyemi University of Education, Ondo",
+    "confidence": 100.0
+  },
+  {
+    "institution_id": "58cde014-e5e4-4243-b4b8-a413b91dc97a",
+    "institution_name": "African Aviation and Aerospace University",
+    "website": "https://www.aaaau.com",
+    "matched_name": "African Aviation and Aerospace University",
+    "confidence": 100.0
+  },
+  {
+    "institution_id": "34331481-7b3c-4f90-82ce-919bc5acedf4",
+    "institution_name": "Al-Ansar University, Maiduguri, Borno",
+    "website": "https://www.aumb.com",
+    "matched_name": "Al-Ansar University, Maiduguri, Borno",
+    "confidence": 100.0
+  },
+  {
+    "institution_id": "bcb66971-a3e2-4516-b7fd-a685ab7acc3f",
+    "institution_name": "Aletheia University, Ago-Iwoye Ogun State",
+    "website": "https://www.auaos.com",
+    "matched_name": "Aletheia University, Ago-Iwoye Ogun State",
+    "confidence": 100.0
+  },
+  {
+    "institution_id": "fc9ef320-eec6-49a1-8aa1-df18237aa4a1",
+    "institution_name": "Al-Hikma Polytechnic, Karu",
+    "website": "https://www.apk.com",
+    "matched_name": "Al-Hikma Polytechnic, Karu",
+    "confidence": 100.0
+  },
+  {
+    "institution_id": "a721d5ae-24b4-455f-8eac-b57fad6903ef",
+    "institution_name": "Al-Hikma Polytechnic, Karu",
+    "website": "https://www.apk.com",
+    "matched_name": "Al-Hikma Polytechnic, Karu",
+    "confidence": 100.0
+  },
+  {
+    "institution_id": "89873fac-0f3f-4a61-903b-ac3a01857d93",
+    "institution_name": "Al-Hikma Polytechnic, Karu",
+    "website": "https://www.apk.com",
+    "matched_name": "Al-Hikma Polytechnic, Karu",
+    "confidence": 100.0
+  },
+  {
+    "institution_id": "8de1b5f4-ee1d-477b-8111-253ce0fbf756",
+    "institution_name": "Al-Muhibbah Open University, Abuja",
+    "website": "https://www.aoua.com",
+    "matched_name": "Al-Muhibbah Open University, Abuja",
+    "confidence": 100.0
+  },
+  {
+    "institution_id": "a0dcbf4e-c1d2-409e-a6c6-b7d493fd3ac9",
+    "institution_name": "Ambrose Alli University, Ekpoma",
+    "website": "https://www.aaue.com",
+    "matched_name": "Ambrose Alli University, Ekpoma",
+    "confidence": 100.0
+  },
+  {
+    "institution_id": "1179a288-efff-4002-87fc-0b65140f13af",
+    "institution_name": "Ambrose Alli University, Ekpoma",
+    "website": "https://www.aaue.com",
+    "matched_name": "Ambrose Alli University, Ekpoma",
+    "confidence": 100.0
+  },
+  {
+    "institution_id": "9e04146f-c2cd-469f-8aed-59aff917bd81",
+    "institution_name": "Ambrose Alli University, Ekpoma",
+    "website": "https://www.aaue.com",
+    "matched_name": "Ambrose Alli University, Ekpoma",
+    "confidence": 100.0
+  },
+  {
+    "institution_id": "fb7d53b8-fd3c-4cad-995e-e52edd424bcd",
+    "institution_name": "Anambra State Polytechnic, Mgbakwu",
+    "website": "https://www.aspm.com",
+    "matched_name": "Anambra State Polytechnic, Mgbakwu",
+    "confidence": 100.0
+  }
+]

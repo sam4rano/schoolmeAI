@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
+import { logger } from "@/lib/utils/logger"
 
 const updateSchema = z.object({
   website: z.string().url().optional().nullable(),
@@ -35,7 +36,10 @@ export async function GET(
 
     return NextResponse.json({ data: institution })
   } catch (error) {
-    console.error("Error fetching institution:", error)
+    logger.error("Error fetching institution", error, {
+      endpoint: `/api/institutions/${params.id}`,
+      method: "GET",
+    })
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -91,7 +95,10 @@ export async function PATCH(
       )
     }
 
-    console.error("Error updating institution:", error)
+    logger.error("Error updating institution", error, {
+      endpoint: `/api/institutions/${params.id}`,
+      method: "PATCH",
+    })
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
