@@ -18,6 +18,7 @@ jest.mock("@/lib/utils/logger", () => ({
   },
 }))
 
+
 describe("GET /api/institutions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -50,7 +51,9 @@ describe("GET /api/institutions", () => {
     ;(prisma.institution.findMany as jest.Mock).mockResolvedValue(mockInstitutions)
     ;(prisma.institution.count as jest.Mock).mockResolvedValue(2)
 
-    const request = new NextRequest("http://localhost:3000/api/institutions?page=1&limit=20")
+    // Create a proper URL with searchParams
+    const url = new URL("http://localhost:3000/api/institutions?page=1&limit=20")
+    const request = new NextRequest(url)
 
     const response = await GET(request)
     const data = await response.json()
@@ -78,7 +81,8 @@ describe("GET /api/institutions", () => {
     ;(prisma.institution.findMany as jest.Mock).mockResolvedValue(mockInstitutions)
     ;(prisma.institution.count as jest.Mock).mockResolvedValue(1)
 
-    const request = new NextRequest("http://localhost:3000/api/institutions?type=university")
+    const url = new URL("http://localhost:3000/api/institutions?type=university")
+    const request = new NextRequest(url)
 
     const response = await GET(request)
     const data = await response.json()
@@ -110,7 +114,8 @@ describe("GET /api/institutions", () => {
     ;(prisma.institution.findMany as jest.Mock).mockResolvedValue(mockInstitutions)
     ;(prisma.institution.count as jest.Mock).mockResolvedValue(1)
 
-    const request = new NextRequest("http://localhost:3000/api/institutions?ownership=private")
+    const url = new URL("http://localhost:3000/api/institutions?ownership=private")
+    const request = new NextRequest(url)
 
     const response = await GET(request)
     const data = await response.json()
@@ -142,7 +147,8 @@ describe("GET /api/institutions", () => {
     ;(prisma.institution.findMany as jest.Mock).mockResolvedValue(mockInstitutions)
     ;(prisma.institution.count as jest.Mock).mockResolvedValue(1)
 
-    const request = new NextRequest("http://localhost:3000/api/institutions?query=Lagos")
+    const url = new URL("http://localhost:3000/api/institutions?query=Lagos")
+    const request = new NextRequest(url)
 
     const response = await GET(request)
     const data = await response.json()
@@ -175,7 +181,8 @@ describe("GET /api/institutions", () => {
     ;(prisma.institution.findMany as jest.Mock).mockResolvedValue(mockInstitutions)
     ;(prisma.institution.count as jest.Mock).mockResolvedValue(50)
 
-    const request = new NextRequest("http://localhost:3000/api/institutions?page=2&limit=10")
+    const url = new URL("http://localhost:3000/api/institutions?page=2&limit=10")
+    const request = new NextRequest(url)
 
     const response = await GET(request)
     const data = await response.json()
@@ -191,7 +198,8 @@ describe("GET /api/institutions", () => {
     const dbError = new Error("Database connection failed")
     ;(prisma.institution.findMany as jest.Mock).mockRejectedValue(dbError)
 
-    const request = new NextRequest("http://localhost:3000/api/institutions")
+    const url = new URL("http://localhost:3000/api/institutions")
+    const request = new NextRequest(url)
 
     const response = await GET(request)
     const data = await response.json()
@@ -201,7 +209,8 @@ describe("GET /api/institutions", () => {
   })
 
   it("should handle invalid query parameters", async () => {
-    const request = new NextRequest("http://localhost:3000/api/institutions?page=invalid")
+    const url = new URL("http://localhost:3000/api/institutions?page=invalid")
+    const request = new NextRequest(url)
 
     const response = await GET(request)
     const data = await response.json()

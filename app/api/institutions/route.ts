@@ -3,6 +3,74 @@ import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { logger } from "@/lib/utils/logger"
 
+/**
+ * @swagger
+ * /api/institutions:
+ *   get:
+ *     summary: Get list of institutions
+ *     tags: [Institutions]
+ *     parameters:
+ *       - in: query
+ *         name: query
+ *         schema:
+ *           type: string
+ *         description: Search query for institution name
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: [university, polytechnic, college, nursing, military]
+ *         description: Filter by institution type
+ *       - in: query
+ *         name: ownership
+ *         schema:
+ *           type: string
+ *           enum: [federal, state, private]
+ *         description: Filter by ownership
+ *       - in: query
+ *         name: state
+ *         schema:
+ *           type: string
+ *         description: Filter by state
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 20
+ *         description: Items per page
+ *     responses:
+ *       200:
+ *         description: List of institutions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Institution'
+ *                 pagination:
+ *                   $ref: '#/components/schemas/Pagination'
+ *       400:
+ *         description: Invalid query parameters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 const searchSchema = z.object({
   query: z.string().optional(),
   type: z.enum(["university", "polytechnic", "college", "nursing", "military"]).optional(),

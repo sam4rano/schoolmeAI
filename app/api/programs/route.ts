@@ -3,6 +3,71 @@ import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { logger } from "@/lib/utils/logger"
 
+/**
+ * @swagger
+ * /api/programs:
+ *   get:
+ *     summary: Get list of programs
+ *     tags: [Programs]
+ *     parameters:
+ *       - in: query
+ *         name: query
+ *         schema:
+ *           type: string
+ *         description: Search query for program name
+ *       - in: query
+ *         name: course
+ *         schema:
+ *           type: string
+ *         description: Exact course name filter
+ *       - in: query
+ *         name: institution_id
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Filter by institution ID
+ *       - in: query
+ *         name: institution_type
+ *         schema:
+ *           type: string
+ *           enum: [university, polytechnic, college, nursing, military]
+ *         description: Filter by institution type
+ *       - in: query
+ *         name: degreeType
+ *         schema:
+ *           type: string
+ *         description: Filter by degree type
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 20
+ *         description: Items per page
+ *     responses:
+ *       200:
+ *         description: List of programs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Program'
+ *                 pagination:
+ *                   $ref: '#/components/schemas/Pagination'
+ *       400:
+ *         description: Invalid query parameters
+ *       500:
+ *         description: Internal server error
+ */
 const searchSchema = z.object({
   query: z.string().optional(),
   course: z.string().optional(), // Exact course name filter

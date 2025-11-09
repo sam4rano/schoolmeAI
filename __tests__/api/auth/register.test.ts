@@ -15,6 +15,9 @@ jest.mock("@/lib/prisma", () => ({
 
 jest.mock("bcryptjs", () => ({
   hash: jest.fn(),
+  default: {
+    hash: jest.fn(),
+  },
 }))
 
 jest.mock("@/lib/utils/logger", () => ({
@@ -42,6 +45,9 @@ describe("POST /api/auth/register", () => {
 
     const request = new NextRequest("http://localhost:3000/api/auth/register", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         email: "test@example.com",
         password: "password123",

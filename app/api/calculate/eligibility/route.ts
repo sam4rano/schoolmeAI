@@ -11,6 +11,48 @@ import {
 import { estimateProbabilityWithModel } from "@/lib/probability-model"
 import { logger } from "@/lib/utils/logger"
 
+/**
+ * @swagger
+ * /api/calculate/eligibility:
+ *   post:
+ *     summary: Calculate admission eligibility for a program
+ *     tags: [Calculator]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - utme
+ *               - olevels
+ *               - programId
+ *             properties:
+ *               utme:
+ *                 type: integer
+ *                 minimum: 0
+ *                 maximum: 400
+ *               olevels:
+ *                 type: object
+ *                 additionalProperties:
+ *                   type: string
+ *               programId:
+ *                 type: string
+ *                 format: uuid
+ *               stateOfOrigin:
+ *                 type: string
+ *               postUtme:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Eligibility calculation result
+ *       400:
+ *         description: Invalid request data
+ *       404:
+ *         description: Program not found
+ *       500:
+ *         description: Internal server error
+ */
 const eligibilitySchema = z.object({
   utme: z.number().min(0).max(400),
   olevels: z.record(z.string(), z.string()),

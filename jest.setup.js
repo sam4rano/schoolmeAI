@@ -22,22 +22,6 @@ jest.mock("next/navigation", () => ({
   },
 }))
 
-// Mock Next.js server components
-jest.mock("next/server", () => ({
-  NextRequest: jest.fn(),
-  NextResponse: {
-    json: jest.fn((data, init) => ({
-      json: async () => data,
-      status: init?.status || 200,
-      headers: new Headers(init?.headers),
-    })),
-  },
-}))
-
-// Suppress console errors in tests (optional)
-global.console = {
-  ...console,
-  error: jest.fn(),
-  warn: jest.fn(),
-}
+// Suppress console errors in tests (optional) - but allow them to be spied on
+// Don't override console completely, just allow spying
 

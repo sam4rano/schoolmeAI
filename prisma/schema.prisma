@@ -63,6 +63,9 @@ model Institution {
   @@index([state])
   @@index([type])
   @@index([ownership])
+  @@index([type, ownership])
+  @@index([state, type])
+  @@index([name, type])
   @@map("institutions")
 }
 
@@ -99,6 +102,9 @@ model Program {
   reviews        Review[]
 
   @@index([institutionId])
+  @@index([institutionId, name])
+  @@index([institutionId, degreeType])
+  @@index([name, degreeType])
   @@index([name])
   @@index([degreeType])
   @@map("programs")
@@ -267,6 +273,7 @@ model Review {
 
   @@unique([userId, entityType, entityId]) // One review per user per entity
   @@index([entityType, entityId])
+  @@index([entityType, entityId, status])
   @@index([userId])
   @@index([status])
   @@index([createdAt])
@@ -306,6 +313,8 @@ model Notification {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([userId, status])
+  @@index([userId, status, type])
   @@index([status])
   @@index([type])
   @@index([createdAt])
