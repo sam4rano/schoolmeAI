@@ -5,10 +5,14 @@ node_modules/
 
 # Testing
 /coverage
+__tests__/
 
 # Next.js
 /.next/
 /out/
+.swc
+.cursor
+docs
 
 # Production
 /build
