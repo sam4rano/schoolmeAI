@@ -1,0 +1,3391 @@
+[
+  {
+    "name": "A.D. Rufa’i College for Islamic and Legal Studies",
+    "type": "college",
+    "ownership": "state",
+    "state": "Bauchi",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Abdullahi Maikano College of Education, Wase",
+    "type": "college",
+    "ownership": "private",
+    "state": "Plateau",
+    "city": "Wase",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Abubakar Garba Zagada- Zagada College of Education, Bajoga",
+    "type": "college",
+    "ownership": "private",
+    "state": "Gombe",
+    "city": "Bajoga",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Abubakar Tatari Polytechnic",
+    "type": "college",
+    "ownership": "state",
+    "state": "Bauchi",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "email": "rector@atapolybauci.com",
+      "address": "Provost: Dr. Suleiman Mohammed Lame"
+    }
+  },
+  {
+    "name": "Adamu Augie College of Education, Argungu",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kebbi",
+    "city": "Argungu",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Aliyu Mohammed B/Kebbi"
+    }
+  },
+  {
+    "name": "Adamu Garkuwa COE, Toro",
+    "type": "college",
+    "ownership": "private",
+    "state": "Bauchi",
+    "city": "Toro",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Adamu Tafawa Balewa COE, Kangere",
+    "type": "college",
+    "ownership": "state",
+    "state": "Bauchi",
+    "city": "Kangere",
+    "website": "https://none.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Adamu Magaji Yanbuga"
+    }
+  },
+  {
+    "name": "Adesina College of Education, Share, Kwara State",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kwara",
+    "city": "Kwara State",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Aremu Mufutau Olawale"
+    }
+  },
+  {
+    "name": "Adigrace COE, Byepyi",
+    "type": "college",
+    "ownership": "private",
+    "state": "Taraba",
+    "city": "Byepyi",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "African Church College of Education, Ifako Ijaye",
+    "type": "college",
+    "ownership": "private",
+    "state": "Lagos",
+    "city": "Ifako Ijaye",
+    "website": "https://SomethingEdu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Provost"
+    }
+  },
+  {
+    "name": "African Thinkers Community of Inquiry COE, Enugu",
+    "type": "college",
+    "ownership": "private",
+    "state": "Enugu",
+    "city": "Enugu",
+    "website": "https://www.atcoicoe.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Obozuhuike Ofoelue"
+    }
+  },
+  {
+    "name": "Ahlus-Suffah COE, Ira",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kaduna",
+    "city": "Ira",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Ajetumobi COE, Ira",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kwara",
+    "city": "Ira",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Akwa Ibom State College of Education, Afahansit",
+    "type": "college",
+    "ownership": "state",
+    "state": "Akwa Ibom",
+    "city": "Afahansit",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. Mathew A. Ekpo"
+    }
+  },
+  {
+    "name": "AL HIKMA COLLEGE OF EDUCATION, ANKPA",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kogi",
+    "city": "ANKPA",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Mohammed Abdulkarim"
+    }
+  },
+  {
+    "name": "Al-fajr College of Education, Kano",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kano",
+    "city": "Kano",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Muhammad Miftau Umar"
+    }
+  },
+  {
+    "name": "Al-Ibadan COE",
+    "type": "college",
+    "ownership": "private",
+    "state": "Ibadan",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Al-Iman College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Plateau",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Al-Madinah COE Oshogbo",
+    "type": "college",
+    "ownership": "private",
+    "state": "Osun",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Al-Mustafa College of Education, Kano",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kano",
+    "city": "Kano",
+    "website": "https://mcekano.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: NOT AVAILABLE"
+    }
+  },
+  {
+    "name": "Al-Ummah COE (UMCOED)",
+    "type": "college",
+    "ownership": "private",
+    "state": "Osun",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Ameenuddeen College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kano",
+    "city": "Unknown",
+    "website": "https://SomethingEdu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Provost"
+    }
+  },
+  {
+    "name": "Ameer Shehu Idris College of Advanced Studies, Zaria",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kaduna",
+    "city": "Zaria",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Aminu Kano College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kano",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Aminu Kano College of Islamic and Legal Studies",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kano",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Aminu Sale College of Education, Azare",
+    "type": "college",
+    "ownership": "state",
+    "state": "Bauchi",
+    "city": "Azare",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Abdullahi Mohammed Isyaku"
+    }
+  },
+  {
+    "name": "Angel Crown COE",
+    "type": "college",
+    "ownership": "private",
+    "state": "FCT Abuja",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Barr. Samuel Osahon"
+    }
+  },
+  {
+    "name": "Annur College of Education Kano",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kano",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Ansar-Ud-Deen College of Education, Isolo",
+    "type": "college",
+    "ownership": "private",
+    "state": "Lagos",
+    "city": "Isolo",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Alh. M.S. Idris (Diploma, B.A., M.A., PGDE)"
+    }
+  },
+  {
+    "name": "Apa COE, Aido",
+    "type": "college",
+    "ownership": "private",
+    "state": "Benue",
+    "city": "Aido",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr."
+    }
+  },
+  {
+    "name": "Archbishop Alexander Ibezim COE, Anambra",
+    "type": "college",
+    "ownership": "private",
+    "state": "Anambra",
+    "city": "Anambra",
+    "website": "https://none.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: not available"
+    }
+  },
+  {
+    "name": "Assanusiya COE, Odeomu, Osun",
+    "type": "college",
+    "ownership": "private",
+    "state": "Osun",
+    "city": "Osun",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Mr. Akinloye I. K."
+    }
+  },
+  {
+    "name": "Awori District COE",
+    "type": "college",
+    "ownership": "private",
+    "state": "Ogun",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Pst. Idowu Isaac Aboiye"
+    }
+  },
+  {
+    "name": "Bauchi Institute for Arabic and Islamic Studies",
+    "type": "college",
+    "ownership": "state",
+    "state": "Bauchi",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Bayo Tijani COE, Lagos",
+    "type": "college",
+    "ownership": "private",
+    "state": "Lagos",
+    "city": "Lagos",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Mrs Amaechi Matilda"
+    }
+  },
+  {
+    "name": "Benjamin Uwajumogu (State) College of Education, Ihitte Uboma",
+    "type": "college",
+    "ownership": "state",
+    "state": "Imo",
+    "city": "Ihitte Uboma",
+    "website": "https://imsced.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Nwachukwu Chinyere Maryrose"
+    }
+  },
+  {
+    "name": "Best Legacy COE Ogbomoso",
+    "type": "college",
+    "ownership": "private",
+    "state": "Oyo",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr."
+    }
+  },
+  {
+    "name": "BETHEL COE IJARE, ONDO",
+    "type": "college",
+    "ownership": "private",
+    "state": "Ondo",
+    "city": "ONDO",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: professor"
+    }
+  },
+  {
+    "name": "Biga College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Sokoto",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr."
+    }
+  },
+  {
+    "name": "Bogoro College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Bauchi",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Calvin Foundation COE",
+    "type": "college",
+    "ownership": "private",
+    "state": "Benue",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Mr. Ekani Otikwu Elias"
+    }
+  },
+  {
+    "name": "Christian Chukwuma Onoh COE",
+    "type": "college",
+    "ownership": "private",
+    "state": "Enugu",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Christian College of Education, Gombe",
+    "type": "college",
+    "ownership": "private",
+    "state": "Gombe",
+    "city": "Gombe",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "City College of Education, Mararaba",
+    "type": "college",
+    "ownership": "private",
+    "state": "FCT Abuja",
+    "city": "Mararaba",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr Ogiera A.E"
+    }
+  },
+  {
+    "name": "Climax College of Education, Bauchi",
+    "type": "college",
+    "ownership": "private",
+    "state": "Bauchi",
+    "city": "Bauchi",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Yunusa Abubakarr"
+    }
+  },
+  {
+    "name": "COASTLINE COLLEGE OF EDUCATION",
+    "type": "college",
+    "ownership": "private",
+    "state": "Ondo",
+    "city": "Unknown",
+    "website": "https://coastlinecollege.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Provost"
+    }
+  },
+  {
+    "name": "COE, Ero, Akure",
+    "type": "college",
+    "ownership": "private",
+    "state": "Ondo",
+    "city": "Akure",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. J. O. Adamolekun"
+    }
+  },
+  {
+    "name": "COE, Moro, Ife-North",
+    "type": "college",
+    "ownership": "private",
+    "state": "Osun",
+    "city": "Ife-North",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. A. Adediji"
+    }
+  },
+  {
+    "name": "College of Education (Technical), Dass",
+    "type": "college",
+    "ownership": "state",
+    "state": "Bauchi",
+    "city": "Dass",
+    "website": "https://none.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Mohammed Alkali."
+    }
+  },
+  {
+    "name": "College of Education Akwanga",
+    "type": "college",
+    "ownership": "state",
+    "state": "Nasarawa",
+    "city": "Unknown",
+    "website": "https://coeakwanga.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Danladi Ibrahim"
+    }
+  },
+  {
+    "name": "College of Education and Legal, Nguru",
+    "type": "college",
+    "ownership": "state",
+    "state": "Yobe",
+    "city": "Nguru",
+    "website": "https://none.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Abba Idris Adam"
+    }
+  },
+  {
+    "name": "College of Education Ilemona",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kwara",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "College of Education Kura",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kano",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "College of Education llorin",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kwara",
+    "city": "Unknown",
+    "website": "https://none.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Not Available"
+    }
+  },
+  {
+    "name": "College of Education Oju",
+    "type": "college",
+    "ownership": "state",
+    "state": "Benue",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Chief (Amb) Godwin Egene Oga"
+    }
+  },
+  {
+    "name": "College of Education Oro",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kwara",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. O. A. Olowonirejuaro"
+    }
+  },
+  {
+    "name": "College of Education, Arochukwu, Abia",
+    "type": "college",
+    "ownership": "state",
+    "state": "Abia",
+    "city": "Abia",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Philips O. Nto"
+    }
+  },
+  {
+    "name": "College of Education, Billiri",
+    "type": "college",
+    "ownership": "state",
+    "state": "Gombe",
+    "city": "Billiri",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr Esrom Toro Jokthan"
+    }
+  },
+  {
+    "name": "College of Education, Darazo",
+    "type": "college",
+    "ownership": "private",
+    "state": "Bauchi",
+    "city": "Darazo",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "College of Education, Dutsen Tanshi",
+    "type": "college",
+    "ownership": "private",
+    "state": "Bauchi",
+    "city": "Dutsen Tanshi",
+    "website": "https://SomethingEdu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Provost"
+    }
+  },
+  {
+    "name": "College of Education, Gindiri",
+    "type": "college",
+    "ownership": "state",
+    "state": "Plateau",
+    "city": "Gindiri",
+    "website": "https://coeg.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. Lazarus Maigoro"
+    }
+  },
+  {
+    "name": "College of Education, Hong",
+    "type": "college",
+    "ownership": "state",
+    "state": "Yola",
+    "city": "Hong",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. Johnson H. Pongri"
+    }
+  },
+  {
+    "name": "College of Education, Ikere-Ekiti",
+    "type": "college",
+    "ownership": "state",
+    "state": "Ekiti",
+    "city": "Ikere-Ekiti",
+    "website": "https://www.coeikere.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. (Mrs.) Mojisola Adenike Oyarekua"
+    }
+  },
+  {
+    "name": "College of Education, Ila-Orangun, Osun State",
+    "type": "college",
+    "ownership": "state",
+    "state": "Osun",
+    "city": "Osun State",
+    "website": "https://oscoedilesa.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Lasisi Ayanda Jimoh"
+    }
+  },
+  {
+    "name": "College of Education, katsina-Ala",
+    "type": "college",
+    "ownership": "state",
+    "state": "Benue",
+    "city": "katsina-Ala",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: J.O Kor"
+    }
+  },
+  {
+    "name": "College of Education, Waka BIU",
+    "type": "college",
+    "ownership": "state",
+    "state": "Borno",
+    "city": "Waka BIU",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Usman Mustapha Biu"
+    }
+  },
+  {
+    "name": "College of Education, Warri",
+    "type": "college",
+    "ownership": "state",
+    "state": "Delta",
+    "city": "Warri",
+    "website": "https://www.coewarri.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. (Mrs.) Mary Olire Edema"
+    }
+  },
+  {
+    "name": "College of Education, Zing",
+    "type": "college",
+    "ownership": "state",
+    "state": "Taraba",
+    "city": "Zing",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Mike Dio Jen"
+    }
+  },
+  {
+    "name": "Community COE, Kano",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kano",
+    "city": "Kano",
+    "website": "https://fcekano.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Sadi Mohammed Sirajo"
+    }
+  },
+  {
+    "name": "Corner Stone College of Education, Ikeja",
+    "type": "college",
+    "ownership": "private",
+    "state": "Lagos",
+    "city": "Ikeja",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Corona COE Lekki",
+    "type": "college",
+    "ownership": "private",
+    "state": "Lagos",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Olajumoke Mekiliuwa"
+    }
+  },
+  {
+    "name": "Covenant College of Education (CCOE)",
+    "type": "college",
+    "ownership": "private",
+    "state": "Abia",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Not Available"
+    }
+  },
+  {
+    "name": "Crescent Pearls Technical College of Education, Abuja",
+    "type": "college",
+    "ownership": "private",
+    "state": "FCT Abuja",
+    "city": "Abuja",
+    "website": "https://nodomain.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Abiola Owodunni"
+    }
+  },
+  {
+    "name": "CRESTFIELD COLLEGE OF EDUCATION",
+    "type": "college",
+    "ownership": "private",
+    "state": "Osun",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Not Available"
+    }
+  },
+  {
+    "name": "Cross River State Coll. of Education, Akampa",
+    "type": "college",
+    "ownership": "state",
+    "state": "Cross River",
+    "city": "Akampa",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. James Etimn Archibong"
+    }
+  },
+  {
+    "name": "Dala College of Education, Kano",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kano",
+    "city": "Kano",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Danyaya College of Education, Ningi",
+    "type": "college",
+    "ownership": "private",
+    "state": "Bauchi",
+    "city": "Ningi",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Delar College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Oyo",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Professor M.A.P. Fakoride"
+    }
+  },
+  {
+    "name": "Delta State College of Education, Mosogar",
+    "type": "college",
+    "ownership": "state",
+    "state": "Delta",
+    "city": "Mosogar",
+    "website": "https://nodomain.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Samuel Ogheneovo Ugboduma"
+    }
+  },
+  {
+    "name": "DIAMOND COLLEGE OF EDUCATION, ABA",
+    "type": "college",
+    "ownership": "private",
+    "state": "Abia",
+    "city": "ABA",
+    "website": "https://www.dce.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Sir Peter Osuagwu, PHD"
+    }
+  },
+  {
+    "name": "Doviana COE, Gboko",
+    "type": "college",
+    "ownership": "private",
+    "state": "Benue",
+    "city": "Gboko",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Ebenezer College of Education Amangwu",
+    "type": "college",
+    "ownership": "private",
+    "state": "Ebonyi",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Ebonyi State College of Education, (T) Ikwo",
+    "type": "college",
+    "ownership": "state",
+    "state": "Ebonyi",
+    "city": "(T) Ikwo",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. S.O. Omebe"
+    }
+  },
+  {
+    "name": "ECWA COE Igbaja",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kwara",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Ass. Prof S.O.T Baba"
+    }
+  },
+  {
+    "name": "ECWA COE, Bayara",
+    "type": "college",
+    "ownership": "private",
+    "state": "Bauchi",
+    "city": "Bayara",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "ECWA College of Education, Jos (ECOEJ)",
+    "type": "college",
+    "ownership": "private",
+    "state": "Plateau",
+    "city": "Jos (ECOEJ)",
+    "website": "https://www.jets.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. Randee O. Ijatuyi-Morphe"
+    }
+  },
+  {
+    "name": "Edexcel College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Benue",
+    "city": "Unknown",
+    "website": "https://SomethingEdu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Provost"
+    }
+  },
+  {
+    "name": "Edo State College of Education, Igueben",
+    "type": "college",
+    "ownership": "state",
+    "state": "Edo",
+    "city": "Igueben",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Professor (Mrs) Roseline O. Osagie"
+    }
+  },
+  {
+    "name": "Elder Oyama Memorial COE, Ofat",
+    "type": "college",
+    "ownership": "private",
+    "state": "Cross River",
+    "city": "Ofat",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr."
+    }
+  },
+  {
+    "name": "Elibest College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Ondo",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Oloruntuyi Ayodeji"
+    }
+  },
+  {
+    "name": "Elizabeth Memorial College of Education Nsukka",
+    "type": "college",
+    "ownership": "private",
+    "state": "Enugu",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Emamor College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Rivers",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Godspower Igenewari"
+    }
+  },
+  {
+    "name": "Emirate College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Bauchi",
+    "city": "Unknown",
+    "website": "https://SomethingEdu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Provost"
+    }
+  },
+  {
+    "name": "Emmanuel Ebije Ikwue College Of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Benue",
+    "city": "Unknown",
+    "website": "https://SomethingEdu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Provost"
+    }
+  },
+  {
+    "name": "Enugu State Coll. of Education (T), Enugu",
+    "type": "college",
+    "ownership": "state",
+    "state": "Enugu",
+    "city": "Enugu",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Mrs. Stella C. Ekwueme"
+    }
+  },
+  {
+    "name": "FCT College of Education, Zuba",
+    "type": "college",
+    "ownership": "state",
+    "state": "FCT Abuja",
+    "city": "Zuba",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Muhammad Gambo Hamza"
+    }
+  },
+  {
+    "name": "Federal College of Education (FCE) Gwoza",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Borno",
+    "city": "Unknown",
+    "website": "https://nodomain.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Ibrahim Mohammed Mbitsa"
+    }
+  },
+  {
+    "name": "Federal College of Education (Special), Oyo",
+    "type": "college",
+    "ownership": "state",
+    "state": "Oyo",
+    "city": "Oyo",
+    "website": "https://www.fceoyo.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. Usman, Kamoru Olayiwola"
+    }
+  },
+  {
+    "name": "Federal College of Education (T), ISU Ebonyi State",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Ebonyi",
+    "city": "ISU Ebonyi State",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Okey Reuben Okechukwu"
+    }
+  },
+  {
+    "name": "Federal College of Education (T), Umunze",
+    "type": "college",
+    "ownership": "state",
+    "state": "Anambra",
+    "city": "Umunze",
+    "website": "https://www.fcetumunze.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. (Mrs.) Theresa O. Okoli"
+    }
+  },
+  {
+    "name": "Federal College of Education (Tech), Potiskum",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Yobe",
+    "city": "Potiskum",
+    "website": "https://fcetpotiskum.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Mohammed Madu Yunusa"
+    }
+  },
+  {
+    "name": "Federal College of Education (Technical) in Yauri",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Kebbi",
+    "city": "Unknown",
+    "website": "https://nodomain.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. Sa'adu Umar"
+    }
+  },
+  {
+    "name": "Federal College of Education (Technical), Akoka",
+    "type": "college",
+    "ownership": "state",
+    "state": "Lagos",
+    "city": "Akoka",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Sijibomi O. Olusanya"
+    }
+  },
+  {
+    "name": "Federal College of Education (Technical), Asaba",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Delta",
+    "city": "Asaba",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Mrs. Anene Akeakwa"
+    }
+  },
+  {
+    "name": "Federal College of Education (Technical), Bichi",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Kano",
+    "city": "Bichi",
+    "website": "https://www.fcetbichi.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr Bashir Sabo Abubakar"
+    }
+  },
+  {
+    "name": "Federal College of Education (Technical), Gombe",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Gombe",
+    "city": "Gombe",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Ali Adamu"
+    }
+  },
+  {
+    "name": "Federal College of Education (Technical), Gusau",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Zamfara",
+    "city": "Gusau",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Ag. Provost"
+    }
+  },
+  {
+    "name": "Federal College of Education (Technical), Omoku",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Rivers",
+    "city": "Omoku",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "email": "www.infor@fcetomoku.edu.com",
+      "address": "Provost: Emmanuel Ikenyiri"
+    }
+  },
+  {
+    "name": "Federal College of Education Bauchi",
+    "type": "college",
+    "ownership": "state",
+    "state": "Bauchi",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. A.I Mohammed"
+    }
+  },
+  {
+    "name": "Federal College of Education Edo",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Edo",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Emmanuel Asagha"
+    }
+  },
+  {
+    "name": "Federal College of Education Ilawe-Ekiti",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Ekiti",
+    "city": "Unknown",
+    "website": "https://none.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Ajigbade Ikuejube"
+    }
+  },
+  {
+    "name": "Federal College of Education Ofeme-Ohuhu",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Abia",
+    "city": "Unknown",
+    "website": "https://nodomain.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr Titus Ezeme"
+    }
+  },
+  {
+    "name": "Federal College of Education Osun",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Osun",
+    "city": "Unknown",
+    "website": "https://www.fceiwo.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. Rafiu I. Adebayo"
+    }
+  },
+  {
+    "name": "Federal College of Education Sokoto",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Sokoto",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. Faruk Umar Zaki"
+    }
+  },
+  {
+    "name": "Federal College of Education, Abeokuta",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Ogun",
+    "city": "Abeokuta",
+    "website": "https://www.fce.abeokuta.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Ayodele A. Ajayi"
+    }
+  },
+  {
+    "name": "Federal College of Education, Eha-Amufu",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Enugu",
+    "city": "Eha-Amufu",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Pauline N. Ikuegbu"
+    }
+  },
+  {
+    "name": "Federal College of Education, Ididep",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Akwa Ibom",
+    "city": "Ididep",
+    "website": "https://www.none.com",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Edem Archibong Ntuk"
+    }
+  },
+  {
+    "name": "Federal College of Education, Katsina",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Katsina",
+    "city": "Katsina",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Aliyu Idris Futua"
+    }
+  },
+  {
+    "name": "Federal College of Education, Obudu",
+    "type": "college",
+    "ownership": "state",
+    "state": "Cross River",
+    "city": "Obudu",
+    "website": "https://www.fceobudu.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. James Bassey Ejue"
+    }
+  },
+  {
+    "name": "Federal College of Education, Odugbo, Benue State",
+    "type": "college",
+    "ownership": "state",
+    "state": "Benue",
+    "city": "Benue State",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. Joel Obo Eriba"
+    }
+  },
+  {
+    "name": "Federal College of Education, Okene",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kogi",
+    "city": "Okene",
+    "website": "https://www.fceokene.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Umar Hassan"
+    }
+  },
+  {
+    "name": "Federal College of Education, Yola",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Adamawa",
+    "city": "Yola",
+    "website": "https://www.fceyolanigeria.org",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Professor A.M. SA'AD"
+    }
+  },
+  {
+    "name": "Federal College of Education, Zaria",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Kaduna",
+    "city": "Zaria",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Ango Abdullahi Ladan"
+    }
+  },
+  {
+    "name": "Federal College Of Education(Technical), Keana",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Nasarawa",
+    "city": "Keana",
+    "website": "https://nodomain.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Yusuf Abdullahi Ogwuzebe"
+    }
+  },
+  {
+    "name": "FESTMED COLLEGE OF EDUCATION, ONDO STATE",
+    "type": "college",
+    "ownership": "private",
+    "state": "Ondo",
+    "city": "ONDO STATE",
+    "website": "https://www.coea-edu.com",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Shogbesan Yusuf Olayinka (Mr.)"
+    }
+  },
+  {
+    "name": "Folrac Fortified College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Ondo",
+    "city": "Unknown",
+    "website": "https://ffcoe.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Pastor Foluso Ilemobayo Awoniyi"
+    }
+  },
+  {
+    "name": "Gand-Plus College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kwara",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Gboko College of Education Benue State",
+    "type": "college",
+    "ownership": "private",
+    "state": "Benue",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Mr. Benedict Terka Iornyagh"
+    }
+  },
+  {
+    "name": "Global COE, Bukuru",
+    "type": "college",
+    "ownership": "private",
+    "state": "Plateau",
+    "city": "Bukuru",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof"
+    }
+  },
+  {
+    "name": "Gombe State COE, NAFADA",
+    "type": "college",
+    "ownership": "state",
+    "state": "Gombe",
+    "city": "NAFADA",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Good Shepperd COE",
+    "type": "college",
+    "ownership": "private",
+    "state": "Ogun",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "GRACE COLLEGE OF EDUCATION",
+    "type": "college",
+    "ownership": "private",
+    "state": "Osun",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Not Available"
+    }
+  },
+  {
+    "name": "Hamzainab College of Education, Oshogbo",
+    "type": "college",
+    "ownership": "private",
+    "state": "Osun",
+    "city": "Oshogbo",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Hassan Usman Katsina Polytechnic",
+    "type": "college",
+    "ownership": "state",
+    "state": "Katsina",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Ibrahim Mudi Kurfi"
+    }
+  },
+  {
+    "name": "Havard Wilson College of Education, Aba",
+    "type": "college",
+    "ownership": "private",
+    "state": "Abia",
+    "city": "Aba",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Uko Adaugo Akwaugu Q."
+    }
+  },
+  {
+    "name": "Hill COE, Gwanje, Akwanga",
+    "type": "college",
+    "ownership": "private",
+    "state": "Nasarawa",
+    "city": "Akwanga",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Chief G. F Oyeleye"
+    }
+  },
+  {
+    "name": "His Grace College of Education, Ilorin",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kwara",
+    "city": "Ilorin",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Ayeni J. K."
+    }
+  },
+  {
+    "name": "Hope and Anchor College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Niger",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Ife College of Education Omala",
+    "type": "college",
+    "ownership": "private",
+    "state": "kogi",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Jibrin Joseph"
+    }
+  },
+  {
+    "name": "Ikeduru College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Imo",
+    "city": "Unknown",
+    "website": "https://none.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: not available"
+    }
+  },
+  {
+    "name": "Imam Hamzat COE, Ilorin",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kwara",
+    "city": "Ilorin",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Imam Saidu COE, Funtua",
+    "type": "college",
+    "ownership": "private",
+    "state": "Katsina",
+    "city": "Funtua",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr."
+    }
+  },
+  {
+    "name": "Innovative College of Education, Karu",
+    "type": "college",
+    "ownership": "state",
+    "state": "Nasarawa",
+    "city": "Karu",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Maro,Joshua Embugu"
+    }
+  },
+  {
+    "name": "Institute of Ecumenical Education (Thinkers Corner)",
+    "type": "college",
+    "ownership": "state",
+    "state": "Enugu",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "International College of Education, Langtang",
+    "type": "college",
+    "ownership": "private",
+    "state": "Plateau",
+    "city": "Langtang",
+    "website": "https://SomethingEdu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Provost"
+    }
+  },
+  {
+    "name": "Ipere COE, Agyaragu",
+    "type": "college",
+    "ownership": "private",
+    "state": "Nasarawa",
+    "city": "Agyaragu",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Oguche M. Damian"
+    }
+  },
+  {
+    "name": "Isa Kaita College of Education, Dutsin-Ma",
+    "type": "college",
+    "ownership": "state",
+    "state": "Katsina",
+    "city": "Dutsin-Ma",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. M Abdu"
+    }
+  },
+  {
+    "name": "Isaac Jasper Boro COE, Sagbama",
+    "type": "college",
+    "ownership": "state",
+    "state": "Bayelsa",
+    "city": "Sagbama",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. Saviour Nathan A. Agoro"
+    }
+  },
+  {
+    "name": "Islamic COE, Potiskum",
+    "type": "college",
+    "ownership": "private",
+    "state": "Yobe",
+    "city": "Potiskum",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Not Available"
+    }
+  },
+  {
+    "name": "JIBWIS COE, Jama’are",
+    "type": "college",
+    "ownership": "private",
+    "state": "Bauchi",
+    "city": "Jama’are",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "JIBWIS COE, Jega, Kebbi",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kebbi",
+    "city": "Kebbi",
+    "website": "https://none.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Haruna Saidu Sauwa"
+    }
+  },
+  {
+    "name": "Jibwis COE, Zuru, Kebbi State",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kebbi",
+    "city": "Kebbi State",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "JIBWIS College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Nasarawa",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "JIBWIS College of Education Gombe",
+    "type": "college",
+    "ownership": "private",
+    "state": "Gombe",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "JIBWIS College of Education Jos",
+    "type": "college",
+    "ownership": "private",
+    "state": "Plateau",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Ahmad Garba"
+    }
+  },
+  {
+    "name": "Jibwis College of Education, Gumau",
+    "type": "college",
+    "ownership": "private",
+    "state": "Bauchi",
+    "city": "Gumau",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Jigawa State COE",
+    "type": "college",
+    "ownership": "state",
+    "state": "Jigawa",
+    "city": "Unknown",
+    "website": "https://none.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Jummai Ali Kazaure"
+    }
+  },
+  {
+    "name": "JIGAWA STATE COLLEGE OF EDUCATION AND LEGAL STUDIES, RINGIM",
+    "type": "college",
+    "ownership": "state",
+    "state": "Jigawa",
+    "city": "RINGIM",
+    "website": "https://www.jscilsringim.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Not Available"
+    }
+  },
+  {
+    "name": "Jigawa State College of Education, Gumel",
+    "type": "college",
+    "ownership": "state",
+    "state": "Jigawa",
+    "city": "Gumel",
+    "website": "https://jscoeg.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Nura Muhammed Ringim"
+    }
+  },
+  {
+    "name": "Jigawa State Polytechnic",
+    "type": "college",
+    "ownership": "state",
+    "state": "Jigwa",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Jornato College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Benue",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Patric Elem"
+    }
+  },
+  {
+    "name": "Kaduna Polytechnics",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kaduna",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. Idris M. Bugaje"
+    }
+  },
+  {
+    "name": "Kaduna State College of Education, Gidan-Waya, Kafanchan",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kaduna",
+    "city": "Kafanchan",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. Alexander Kure"
+    }
+  },
+  {
+    "name": "Kano State College of Education and Preliminary  Studies (KASCEPTS)",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kano",
+    "city": "Unknown",
+    "website": "https://none.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr Sunusi Yakubu Ahmad"
+    }
+  },
+  {
+    "name": "Kano State Polytechnic",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kano",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. Muktar Atiku Kurawa"
+    }
+  },
+  {
+    "name": "Kashim Ibrahim College of Education",
+    "type": "college",
+    "ownership": "state",
+    "state": "Borno",
+    "city": "Unknown",
+    "website": "https://none.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Alh. Muhammad Alkali"
+    }
+  },
+  {
+    "name": "Kazaure College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Jigawa",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Kebbi State Polytechnic",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kebbi",
+    "city": "Unknown",
+    "website": "https://none.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Haruna Saidu-Sauwa"
+    }
+  },
+  {
+    "name": "Kinsey College Of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kwara",
+    "city": "Unknown",
+    "website": "https://SomethingEdu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Provost"
+    }
+  },
+  {
+    "name": "Kogi East College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kogi",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Kogi State College of Education, Ankpa",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kogi",
+    "city": "Ankpa",
+    "website": "https://www.kscoeankpa.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Mohammed Kebiru Ibrahim"
+    }
+  },
+  {
+    "name": "Kogi State College of Education, Kabba",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kogi",
+    "city": "Kabba",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: --Mrs Jagboro Victoria Olusola"
+    }
+  },
+  {
+    "name": "Kwaine COE, Gombe",
+    "type": "college",
+    "ownership": "private",
+    "state": "Gombe",
+    "city": "Gombe",
+    "website": "https://non.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Ali Adamu Boderi"
+    }
+  },
+  {
+    "name": "Kwara State College of Education (Technical), Lafiagi",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kwara",
+    "city": "Lafiagi",
+    "website": "https://www.kwacoet.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Barakat Bose Ibrahim"
+    }
+  },
+  {
+    "name": "Kwararafa COE, Otukpo",
+    "type": "college",
+    "ownership": "private",
+    "state": "Benue",
+    "city": "Otukpo",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Micheal Ogbeche"
+    }
+  },
+  {
+    "name": "Lessel COE Gboko",
+    "type": "college",
+    "ownership": "private",
+    "state": "Benue",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr."
+    }
+  },
+  {
+    "name": "Lifegate College of Education, Asa",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kwara",
+    "city": "Asa",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "MARYAM IDRIS UMAR COLLEGE OF EDUCATION LIMITED",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kano",
+    "city": "Unknown",
+    "website": "https://SomethingEdu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Provost"
+    }
+  },
+  {
+    "name": "MCF COE Agbarha-Otor, Delta",
+    "type": "college",
+    "ownership": "private",
+    "state": "Delta",
+    "city": "Delta",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Daniel D.Whawo"
+    }
+  },
+  {
+    "name": "Meadow Hall COE",
+    "type": "college",
+    "ownership": "private",
+    "state": "Lagos",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Metro COE, Adogi-Lafia",
+    "type": "college",
+    "ownership": "private",
+    "state": "Nasarawa",
+    "city": "Adogi-Lafia",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Moje College of Education, Erin-Ile",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kwara",
+    "city": "Erin-Ile",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Muftau Olanihun College of Education, Ibadan",
+    "type": "college",
+    "ownership": "private",
+    "state": "Oyo",
+    "city": "Ibadan",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Mr. Lawan Musliu"
+    }
+  },
+  {
+    "name": "Muhammad Goni College of Legal and Islamic Studies (MOGOLIS)",
+    "type": "college",
+    "ownership": "state",
+    "state": "Borno",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Muhyideen College of Education, Ilorin",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kwara",
+    "city": "Ilorin",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Alh. Nurudeen Amzat Balio"
+    }
+  },
+  {
+    "name": "Murtadha COE, Olodo",
+    "type": "college",
+    "ownership": "private",
+    "state": "Oyo",
+    "city": "Olodo",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Not Available"
+    }
+  },
+  {
+    "name": "Mus'ab Bn Umair College of Education Bajoga",
+    "type": "college",
+    "ownership": "private",
+    "state": "Gombe",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Engr. Tukur M. Lawal"
+    }
+  },
+  {
+    "name": "Nana Aishat Memorial COE",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kwara",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Abdurrafu"
+    }
+  },
+  {
+    "name": "Nasarrawa State College of Education, Akwanga",
+    "type": "college",
+    "ownership": "state",
+    "state": "Nassarawa",
+    "city": "Akwanga",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Mrs. Esther Abua Ammu-nnadi"
+    }
+  },
+  {
+    "name": "National Institute for Nigerian Languages",
+    "type": "college",
+    "ownership": "state",
+    "state": "Abia",
+    "city": "Unknown",
+    "website": "https://none.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. Ogbonna Onuoha"
+    }
+  },
+  {
+    "name": "National Teachers Institute(NTI)",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kaduna",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Niger State College of Education, Minna",
+    "type": "college",
+    "ownership": "state",
+    "state": "Niger",
+    "city": "Minna",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Professor. Mohammad Yakubu Auna"
+    }
+  },
+  {
+    "name": "Nigerian Army College of Education (NACOE), Ilorin",
+    "type": "college",
+    "ownership": "federal",
+    "state": "Kwara",
+    "city": "Ilorin",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Brig. Gen. Nuhu F Umaru"
+    }
+  },
+  {
+    "name": "Nosakhare COE, Benin City",
+    "type": "college",
+    "ownership": "private",
+    "state": "Edo",
+    "city": "Benin City",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Nuhu Bamalli Polytechnic",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kaduna",
+    "city": "Unknown",
+    "website": "https://nubapoly.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Provost"
+    }
+  },
+  {
+    "name": "Nwafor Orizu College of Education, Nsugbe",
+    "type": "college",
+    "ownership": "state",
+    "state": "Anambra",
+    "city": "Nsugbe",
+    "website": "https://nocen.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Justina C. Anyadiegwu"
+    }
+  },
+  {
+    "name": "Olekamba College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Ondo",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Omaga aejigbo College of education Ajiolo-Ojiaji",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kogi",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Kakubu Shuaibu"
+    }
+  },
+  {
+    "name": "ONIT COE, Abagana",
+    "type": "college",
+    "ownership": "private",
+    "state": "Anambra",
+    "city": "Abagana",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Mrs. Nwose Adaobi"
+    }
+  },
+  {
+    "name": "Osan Ekiti COE, Ekiti State",
+    "type": "college",
+    "ownership": "private",
+    "state": "Ekiti",
+    "city": "Ekiti State",
+    "website": "https://osanekiticoe.com",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Professor J.M. Ajibade Oyinloye"
+    }
+  },
+  {
+    "name": "Osisa Tech. College of Education, Enugu",
+    "type": "college",
+    "ownership": "private",
+    "state": "Enugu",
+    "city": "Enugu",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Mike Ike Okwudili"
+    }
+  },
+  {
+    "name": "Oswald Waller COE Shendam",
+    "type": "college",
+    "ownership": "private",
+    "state": "Plateau",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. Mathew N. Sule"
+    }
+  },
+  {
+    "name": "Owu College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Ogu",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Oyo State College of Education, Lanlate",
+    "type": "college",
+    "ownership": "state",
+    "state": "Oyo",
+    "city": "Lanlate",
+    "website": "https://oyscoel.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Mr. A. Johnson Oladipupo"
+    }
+  },
+  {
+    "name": "Pan Africa Entrepreneurship and Vocational College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Lagos",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Imide Israel"
+    }
+  },
+  {
+    "name": "PAN African COE Offa",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kwara",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: professor"
+    }
+  },
+  {
+    "name": "Peace College Of Education Ankpa",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kogi",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Mohd Ibrahim"
+    }
+  },
+  {
+    "name": "Peaceland College of Education, Enugu",
+    "type": "college",
+    "ownership": "private",
+    "state": "Enugu",
+    "city": "Enugu",
+    "website": "https://www.peaceland.edu,ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Rev. Fr. Dr. Leo IIechukwu"
+    }
+  },
+  {
+    "name": "Peacock College of Education Jalingo",
+    "type": "college",
+    "ownership": "private",
+    "state": "Taraba",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Piaget College of Education",
+    "type": "college",
+    "ownership": "state",
+    "state": "Ogun",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: O. A. wiltz"
+    }
+  },
+  {
+    "name": "Plateau State Polytechnic",
+    "type": "college",
+    "ownership": "state",
+    "state": "Plataeu",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Jmaes Mashor Julson"
+    }
+  },
+  {
+    "name": "Premier COE, Osun",
+    "type": "college",
+    "ownership": "private",
+    "state": "Osun",
+    "city": "Osun",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Ramat Polytechnic",
+    "type": "college",
+    "ownership": "state",
+    "state": "Borno",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: B.G. Ibrahim"
+    }
+  },
+  {
+    "name": "Raphat COE",
+    "type": "college",
+    "ownership": "private",
+    "state": "Osun",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Royal City COE, Iyesi-Ota",
+    "type": "college",
+    "ownership": "private",
+    "state": "Ogun",
+    "city": "Iyesi-Ota",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Mrs. Da-Silva Augustina"
+    }
+  },
+  {
+    "name": "Royal COE, Ikeja, Lagos State",
+    "type": "college",
+    "ownership": "private",
+    "state": "Lagos",
+    "city": "Lagos State",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr"
+    }
+  },
+  {
+    "name": "Royal College of Education, Ogun State",
+    "type": "college",
+    "ownership": "private",
+    "state": "Ogun",
+    "city": "Ogun State",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Adesanya Mercy Olubisi"
+    }
+  },
+  {
+    "name": "S. Light College of Education, Kano",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kano",
+    "city": "Kano",
+    "website": "https://nodomain.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Saifullahi Garba Umar"
+    }
+  },
+  {
+    "name": "Sa'adatu Rimi College of Education, Kumbotso, Kano",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kano",
+    "city": "Kano",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Yahaya Isa Bunkure"
+    }
+  },
+  {
+    "name": "Sam Ale College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "FCT Abuja",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Sarkin Yama Community College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Bauchi",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Sharifat College of Education and Islamic Legal Studies",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kwara",
+    "city": "Unknown",
+    "website": "https://kwaracails.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Sharifat Musa"
+    }
+  },
+  {
+    "name": "Shehu Shagari College of Education, Sokoto",
+    "type": "college",
+    "ownership": "state",
+    "state": "Sokoto",
+    "city": "Sokoto",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Muhammad Wadata Hakimi"
+    }
+  },
+  {
+    "name": "Sinai COE & Ent. Studies Gboko, Benue",
+    "type": "college",
+    "ownership": "private",
+    "state": "Benue",
+    "city": "Benue",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Akange I.S"
+    }
+  },
+  {
+    "name": "St. Augustine College of Education Akoka, Lagos",
+    "type": "college",
+    "ownership": "private",
+    "state": "Lagos",
+    "city": "Lagos",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Professor (Mrs.) J O. Omokhodion"
+    }
+  },
+  {
+    "name": "St. Frances Asissi College of Education, Zaria",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kaduna",
+    "city": "Zaria",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Rev. Fr. Ven Isaac Akut"
+    }
+  },
+  {
+    "name": "St. Paul's College of Education NNewi",
+    "type": "college",
+    "ownership": "private",
+    "state": "Anambra",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Rev. Fr. Jude O. Umeh"
+    }
+  },
+  {
+    "name": "STEADY FLOW COE, IKOM",
+    "type": "college",
+    "ownership": "private",
+    "state": "Cross River",
+    "city": "IKOM",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr."
+    }
+  },
+  {
+    "name": "Sunnah College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Bauchi",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr."
+    }
+  },
+  {
+    "name": "Tai Solarin College of Education, Science and Technology, Omu-Ajose",
+    "type": "college",
+    "ownership": "state",
+    "state": "Ogun",
+    "city": "Omu-Ajose",
+    "website": "https://www.tasce.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Adeola-Kiadese Lukman"
+    }
+  },
+  {
+    "name": "Talent Finders College of Education, Ilala, Kwara State",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kwara",
+    "city": "Kwara State",
+    "website": "https://SomethingEdu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Provost"
+    }
+  },
+  {
+    "name": "Tamic COE, Lagos",
+    "type": "college",
+    "ownership": "private",
+    "state": "Lagos",
+    "city": "Lagos",
+    "website": "https://NON.EDU.NG",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: NOT AVAILABLE"
+    }
+  },
+  {
+    "name": "TCNN College of Education, Bukuru",
+    "type": "college",
+    "ownership": "private",
+    "state": "Plateau",
+    "city": "Bukuru",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Prof. Samuel P. Ango"
+    }
+  },
+  {
+    "name": "The College of Education Iseyin",
+    "type": "college",
+    "ownership": "private",
+    "state": "Oyo",
+    "city": "Unknown",
+    "website": "https://coediseyin.edukate.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Rasak Adetunji Adefabi"
+    }
+  },
+  {
+    "name": "The College of Education, Nsukka",
+    "type": "college",
+    "ownership": "private",
+    "state": "Enugu",
+    "city": "Nsukka",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Nwosu O.O"
+    }
+  },
+  {
+    "name": "The Heritage College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Ondo",
+    "city": "Unknown",
+    "website": "https://SomethingEdu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Provost"
+    }
+  },
+  {
+    "name": "The Polytechnic Iree, Osun State",
+    "type": "college",
+    "ownership": "state",
+    "state": "Osun",
+    "city": "Osun State",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr"
+    }
+  },
+  {
+    "name": "Tijjani Ibrahim College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kano",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Ahmad AminuHausawa"
+    }
+  },
+  {
+    "name": "Tony G Erewa College of Education",
+    "type": "college",
+    "ownership": "private",
+    "state": "Delta",
+    "city": "Unknown",
+    "website": "https://tonygerewacoe.com.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Othuke Valentine Oroka"
+    }
+  },
+  {
+    "name": "Top Sprout Coe, Ilorin",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kwara",
+    "city": "Ilorin",
+    "website": "https://none.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Ayinde Shehu Jawondo"
+    }
+  },
+  {
+    "name": "Top-Most COE, Ipaja-Agbado",
+    "type": "college",
+    "ownership": "private",
+    "state": "Lagos",
+    "city": "Ipaja-Agbado",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr."
+    }
+  },
+  {
+    "name": "Turath COE, Kano",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kano",
+    "city": "Kano",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Uli College of Education, Uli",
+    "type": "college",
+    "ownership": "private",
+    "state": "Anambra",
+    "city": "Uli",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Umar Bun Khatab College of Education, Tudun Nupawa, Kaduna",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kaduna",
+    "city": "Kaduna",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data"
+  },
+  {
+    "name": "Umar Ibn Ibrahim El-Kanemi College of Education, Science and Technology, Bama",
+    "type": "college",
+    "ownership": "state",
+    "state": "Borno",
+    "city": "Bama",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Usman Aja Makinta"
+    }
+  },
+  {
+    "name": "Umar Suleiman College of Education Gashua",
+    "type": "college",
+    "ownership": "state",
+    "state": "Yobe",
+    "city": "Unknown",
+    "website": "https://none.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Abdurahman Danladi"
+    }
+  },
+  {
+    "name": "Unity College of Education, Aukpa Adoka, Benue",
+    "type": "college",
+    "ownership": "private",
+    "state": "Benue",
+    "city": "Benue",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Ajene Otache"
+    }
+  },
+  {
+    "name": "Upland College of Education, Science and Technology",
+    "type": "college",
+    "ownership": "state",
+    "state": "Ondo",
+    "city": "Science and Technology",
+    "website": "https://upland.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr."
+    }
+  },
+  {
+    "name": "Victory Belt College of Education,Iyale",
+    "type": "college",
+    "ownership": "private",
+    "state": "Kogi",
+    "city": "Iyale",
+    "website": "https://victorybeltintlminitries.com/college-of-education/",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. Provost"
+    }
+  },
+  {
+    "name": "WATERSIDE COLLEGE OF EDUCATION",
+    "type": "college",
+    "ownership": "private",
+    "state": "Ogun",
+    "city": "Unknown",
+    "website": "https://nodomain.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Adeniran Adewale Sunday"
+    }
+  },
+  {
+    "name": "Waziri Umaru Federal Polytechnic",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kebbi",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Arc. Muhammad Sani Aliyu"
+    }
+  },
+  {
+    "name": "Yewa Central College of Education, Ayetoro, Abeokuta",
+    "type": "college",
+    "ownership": "private",
+    "state": "Ogun",
+    "city": "Abeokuta",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Mrs. M.O Bamgbose"
+    }
+  },
+  {
+    "name": "Yusuf Bala Usman CoE and Legal Studies, Daura",
+    "type": "college",
+    "ownership": "state",
+    "state": "Katsina",
+    "city": "Daura",
+    "website": "https://none.edu.ng",
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Dr. AbdulMudallib Ahmad Muhammad"
+    }
+  },
+  {
+    "name": "Zamfara State College of Education, Maru",
+    "type": "college",
+    "ownership": "state",
+    "state": "Zamfara",
+    "city": "Maru",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Nasiru S Pawa"
+    }
+  },
+  {
+    "name": "Zaria Institute of Information Technology",
+    "type": "college",
+    "ownership": "state",
+    "state": "Kaduna",
+    "city": "Unknown",
+    "website": null,
+    "accreditationStatus": "accredited",
+    "source_url": "https://ncce.gov.ng/AccreditedColleges",
+    "license": "NCCE Official Data",
+    "contact": {
+      "address": "Provost: Ibrahim Ahmad Ango"
+    }
+  }
+]

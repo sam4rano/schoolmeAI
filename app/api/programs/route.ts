@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { logger } from "@/lib/utils/logger"
+import { PAGINATION, HTTP_STATUS } from "@/lib/constants"
+import { getCached, generateCacheKey, CACHE_CONFIG, CACHE_TAGS } from "@/lib/cache"
 
 /**
  * @swagger
@@ -74,8 +76,13 @@ const searchSchema = z.object({
   institution_id: z.string().optional(),
   institution_type: z.enum(["university", "polytechnic", "college", "nursing", "military"]).optional(),
   degreeType: z.string().optional(),
-  page: z.string().optional().transform((val) => (val ? parseInt(val, 10) : 1)),
-  limit: z.string().optional().transform((val) => (val ? parseInt(val, 10) : 20)),
+  accreditationStatus: z.enum(["Full", "Interim", "Denied"]).optional(),
+  cutoffMin: z.string().optional().transform((val) => val ? parseInt(val, 10) : undefined),
+  cutoffMax: z.string().optional().transform((val) => val ? parseInt(val, 10) : undefined),
+  feesMin: z.string().optional().transform((val) => val ? parseInt(val, 10) : undefined),
+  feesMax: z.string().optional().transform((val) => val ? parseInt(val, 10) : undefined),
+  page: z.string().optional().transform((val) => (val ? parseInt(val, 10) : PAGINATION.DEFAULT_PAGE)),
+  limit: z.string().optional().transform((val) => (val ? parseInt(val, 10) : PAGINATION.DEFAULT_LIMIT)),
   rankByDifficulty: z.string().optional().transform((val) => val === "true"), // Rank institutions by difficulty
 })
 
@@ -85,7 +92,7 @@ export async function GET(request: NextRequest) {
     const params = Object.fromEntries(searchParams.entries())
     const validatedParams = searchSchema.parse(params)
 
-    const { query, course, institution_id, institution_type, degreeType, page = 1, limit = 20, rankByDifficulty } = validatedParams
+    const { query, course, institution_id, institution_type, degreeType, accreditationStatus, cutoffMin, cutoffMax, feesMin, feesMax, page = PAGINATION.DEFAULT_PAGE, limit = PAGINATION.DEFAULT_LIMIT, rankByDifficulty } = validatedParams
 
     const where: any = {}
     
@@ -102,6 +109,10 @@ export async function GET(request: NextRequest) {
     
     if (degreeType && degreeType !== "all") {
       where.degreeType = degreeType
+    }
+
+    if (accreditationStatus) {
+      where.accreditationStatus = accreditationStatus
     }
     
     // Filter by exact course name (for course dropdown)
@@ -184,28 +195,39 @@ export async function GET(request: NextRequest) {
     const skip = shouldRank ? 0 : (page - 1) * limit
     const take = shouldRank ? undefined : limit
 
-    const [programsRaw, total] = await Promise.all([
-      prisma.program.findMany({
-        where,
-        skip,
-        take,
-        include: {
-          institution: {
-            select: {
-              id: true,
-              name: true,
-              type: true,
-              ownership: true,
-              state: true,
+    // Generate cache key
+    const cacheKey = generateCacheKey("programs", { query, course, institution_id, institution_type, degreeType, page, limit, rankByDifficulty })
+
+    // Fetch with caching
+    const [programsRaw, total] = await getCached(
+      cacheKey,
+      async () => {
+        return Promise.all([
+          prisma.program.findMany({
+            where,
+            skip,
+            take,
+            include: {
+              institution: {
+                select: {
+                  id: true,
+                  name: true,
+                  type: true,
+                  ownership: true,
+                  state: true,
+                },
+              },
             },
-          },
-        },
-        orderBy: {
-          name: "asc",
-        },
-      }),
-      prisma.program.count({ where }),
-    ])
+            orderBy: {
+              name: "asc",
+            },
+          }),
+          prisma.program.count({ where }),
+        ])
+      },
+      CACHE_CONFIG.PROGRAMS_TTL,
+      [CACHE_TAGS.PROGRAMS]
+    )
 
     // Calculate institution difficulty scores and rank if requested
     let programs = programsRaw
@@ -304,6 +326,46 @@ export async function GET(request: NextRequest) {
       programs = programs.slice(startIndex, startIndex + limit)
     }
 
+    // Apply cutoff range filter
+    if (cutoffMin !== undefined || cutoffMax !== undefined) {
+      programs = programs.filter((program) => {
+        const cutoffHistory = Array.isArray(program.cutoffHistory)
+          ? program.cutoffHistory
+          : program.cutoffHistory
+          ? JSON.parse(JSON.stringify(program.cutoffHistory))
+          : []
+        
+        if (cutoffHistory.length === 0) return false
+        
+        const latestCutoff = cutoffHistory[0]
+        const cutoff = typeof latestCutoff === "object" ? latestCutoff.cutoff : latestCutoff
+        const cutoffValue = typeof cutoff === "number" ? cutoff : parseFloat(cutoff) || 0
+        
+        if (cutoffMin !== undefined && cutoffValue < cutoffMin) return false
+        if (cutoffMax !== undefined && cutoffValue > cutoffMax) return false
+        return true
+      })
+    }
+
+    // Apply fees range filter
+    if (feesMin !== undefined || feesMax !== undefined) {
+      programs = programs.filter((program) => {
+        const tuitionFees = program.tuitionFees
+        if (!tuitionFees) return false
+        
+        let feeAmount = 0
+        if (typeof tuitionFees === "object" && !Array.isArray(tuitionFees) && tuitionFees !== null) {
+          const amount = (tuitionFees as any).amount
+          feeAmount = typeof amount === "number" ? amount : parseFloat(String(amount || "")) || 0
+        }
+        
+        if (feeAmount === 0) return false
+        if (feesMin !== undefined && feeAmount < feesMin) return false
+        if (feesMax !== undefined && feeAmount > feesMax) return false
+        return true
+      })
+    }
+
     return NextResponse.json({
       data: programs,
       pagination: {
@@ -317,7 +379,7 @@ export async function GET(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Invalid query parameters", details: error.errors },
-        { status: 400 }
+        { status: HTTP_STATUS.BAD_REQUEST }
       )
     }
 
@@ -327,7 +389,7 @@ export async function GET(request: NextRequest) {
     })
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
     )
   }
 }

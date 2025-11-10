@@ -7,9 +7,13 @@ import { Input } from "@/components/ui/input"
 import { Navbar } from "@/components/ui/navbar"
 import { Footer } from "@/components/ui/footer"
 import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Send, Bot, User, Loader2, Download, Trash2, History, Sparkles, X } from "lucide-react"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Bot, Download, History, Sparkles, Loader2, Send, User } from "lucide-react"
+import { ChatMessage } from "@/components/ai/chat-message"
+import { ChatInput } from "@/components/ai/chat-input"
+import { ConversationHistory } from "@/components/ai/conversation-history"
+import { SuggestedQuestions } from "@/components/ai/suggested-questions"
 import { useSession } from "next-auth/react"
 import { useToast } from "@/hooks/use-toast"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
@@ -249,6 +253,12 @@ export default function AIPage() {
     setLoading(true)
 
     try {
+      // Build conversation context from recent messages
+      const recentMessages = messages.slice(-6).map((msg) => ({
+        role: msg.role,
+        content: msg.content,
+      }))
+
       const response = await fetch("/api/ai/chat", {
         method: "POST",
         headers: {
@@ -259,6 +269,7 @@ export default function AIPage() {
           message: userInput,
           entityType: "all",
           limit: 5,
+          conversationHistory: recentMessages,
         }),
       })
 
@@ -410,73 +421,20 @@ export default function AIPage() {
           )}
         </div>
 
-        <div className="flex gap-4 flex-col lg:flex-row">
+        <div className="flex gap-4 flex-col lg:flex-row mb-6">
           {/* Conversation History Sidebar */}
-          {isAuthenticated && showHistory && (
-            <Card className="lg:w-64 h-[600px] flex flex-col">
-              <CardHeader className="border-b pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">Conversations</CardTitle>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6"
-                    onClick={() => setShowHistory(false)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="flex-1 overflow-y-auto p-0">
-                <div className="space-y-1 p-2">
-                  {conversations.length === 0 ? (
-                    <p className="text-sm text-muted-foreground p-4 text-center">
-                      No conversations yet
-                    </p>
-                  ) : (
-                    conversations.map((conv) => (
-                      <div
-                        key={conv.id}
-                        className={`p-3 rounded-lg cursor-pointer hover:bg-muted transition-colors ${
-                          currentConversationId === conv.id ? "bg-muted" : ""
-                        }`}
-                        onClick={() => loadConversation(conv.id)}
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate">
-                              {conv.title}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {conv.messages.length} messages
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {conv.updatedAt.toLocaleDateString()}
-                            </p>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6 flex-shrink-0"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              deleteConversation(conv.id)
-                            }}
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          <ConversationHistory
+            conversations={conversations}
+            currentConversationId={currentConversationId}
+            showHistory={isAuthenticated && showHistory}
+            onClose={() => setShowHistory(false)}
+            onLoadConversation={loadConversation}
+            onDeleteConversation={deleteConversation}
+          />
 
           {/* Main Chat Card */}
-          <Card className={`${isAuthenticated && showHistory ? "lg:flex-1" : "w-full"} h-[600px] flex flex-col shadow-lg`}>
-            <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-primary/10">
+          <Card className={`${isAuthenticated && showHistory ? "lg:flex-1" : "w-full"} max-h-[600px] min-h-[500px] flex flex-col shadow-lg`}>
+            <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-primary/10 flex-shrink-0">
               <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                 <Bot className="h-5 w-5 text-primary" />
                 Chat with AI
@@ -485,57 +443,10 @@ export default function AIPage() {
                 Ask questions about institutions, programs, or admission requirements
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col p-0 bg-gradient-to-b from-background to-muted/20">
+            <CardContent className="flex-1 flex flex-col p-0 bg-gradient-to-b from-background to-muted/20 min-h-0">
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
                 {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex gap-3 items-start ${
-                      message.role === "user" ? "justify-end" : "justify-start"
-                    }`}
-                  >
-                    {message.role === "assistant" && (
-                      <Avatar className="h-9 w-9 flex-shrink-0 border-2 border-primary/20">
-                        <AvatarFallback className="bg-primary text-primary-foreground">
-                          <Bot className="h-5 w-5" />
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
-                    <div
-                      className={`max-w-[75%] rounded-2xl px-4 py-3 shadow-sm ${
-                        message.role === "user"
-                          ? "bg-primary text-primary-foreground rounded-br-sm"
-                          : message.isError
-                          ? "bg-destructive/10 border-2 border-destructive/30 text-destructive rounded-bl-sm"
-                          : "bg-background border border-border rounded-bl-sm"
-                      }`}
-                    >
-                      <p className={`text-sm leading-relaxed ${message.isError ? "font-medium" : ""}`}>
-                        {message.content}
-                      </p>
-                      <p
-                        className={`text-xs mt-2 ${
-                          message.role === "user"
-                            ? "text-primary-foreground/60"
-                            : message.isError
-                            ? "text-destructive/60"
-                            : "text-muted-foreground"
-                        }`}
-                      >
-                        {message.timestamp.toLocaleTimeString("en-US", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </p>
-                    </div>
-                    {message.role === "user" && (
-                      <Avatar className="h-9 w-9 flex-shrink-0 border-2 border-primary/20">
-                        <AvatarFallback className="bg-primary text-primary-foreground">
-                          <User className="h-5 w-5" />
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
-                  </div>
+                  <ChatMessage key={message.id} message={message} />
                 ))}
                 {loading && (
                   <div className="flex gap-3 justify-start items-start">
@@ -554,47 +465,22 @@ export default function AIPage() {
                 )}
                 <div ref={messagesEndRef} />
               </div>
-              <div className="border-t bg-background p-4">
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault()
-                    handleSend()
-                  }}
-                  className="flex gap-2"
-                >
-                  <Input
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask me anything about admissions, programs, or institutions..."
-                    disabled={loading}
-                    className="flex-1 h-11"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey && !loading && input.trim()) {
-                        e.preventDefault()
-                        handleSend()
-                      }
-                    }}
-                  />
-                  <Button 
-                    type="submit" 
-                    disabled={loading || !input.trim()}
-                    size="default"
-                    className="h-11 px-6"
-                  >
-                    {loading ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Send className="h-4 w-4" />
-                    )}
-                  </Button>
-                </form>
+              <div className="flex-shrink-0 border-t bg-background">
+                <ChatInput
+                  input={input}
+                  setInput={setInput}
+                  onSend={handleSend}
+                  loading={loading}
+                  disabled={isGuest && guestMessageCount >= GUEST_MESSAGE_LIMIT}
+                  placeholder="Ask me anything about admissions, programs, or institutions..."
+                />
                 {isAuthenticated && (
-                  <p className="text-xs text-muted-foreground mt-2 text-center">
+                  <p className="text-xs text-muted-foreground mt-2 text-center px-4 pb-2">
                     Signed in as {session?.user?.email}
                   </p>
                 )}
                 {isGuest && (
-                  <p className="text-xs text-muted-foreground mt-2 text-center">
+                  <p className="text-xs text-muted-foreground mt-2 text-center px-4 pb-2">
                     Guest Mode • {GUEST_MESSAGE_LIMIT - guestMessageCount} messages remaining
                   </p>
                 )}
@@ -604,35 +490,12 @@ export default function AIPage() {
         </div>
 
         {/* Suggested Questions */}
-        {messages.length === 1 && (
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-primary" />
-                Suggested Questions
-              </CardTitle>
-              <CardDescription className="text-xs sm:text-sm">
-                Click on any question to get started
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                {SUGGESTED_QUESTIONS.map((question, index) => (
-                  <Button
-                    key={index}
-                    variant="outline"
-                    size="sm"
-                    className="h-auto py-3 px-4 text-left justify-start whitespace-normal"
-                    onClick={() => setInput(question)}
-                    disabled={loading || (isGuest && guestMessageCount >= GUEST_MESSAGE_LIMIT)}
-                  >
-                    <span className="text-xs sm:text-sm">{question}</span>
-                  </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        <SuggestedQuestions
+          onSelectQuestion={setInput}
+          loading={loading}
+          disabled={isGuest && guestMessageCount >= GUEST_MESSAGE_LIMIT}
+          show={messages.length === 1}
+        />
 
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
 

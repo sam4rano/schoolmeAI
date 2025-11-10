@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { handleApiError } from "@/lib/utils/api-error-handler"
+import { requireAuth } from "@/lib/middleware/auth"
 
 const reportReviewSchema = z.object({
   reason: z.string().min(5).max(500),
@@ -14,13 +13,11 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
+    const authResult = await requireAuth()
+    if ("response" in authResult) {
+      return authResult.response
     }
+    const { session } = authResult
 
     const body = await request.json()
     const validatedData = reportReviewSchema.parse(body)

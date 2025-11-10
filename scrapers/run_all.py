@@ -7,6 +7,8 @@ from datetime import datetime
 from scrapers.nuc.scraper import NUCScraper
 from scrapers.myschool.scraper import MySchoolScraper
 from scrapers.myschoolgist.scraper import MySchoolGistScraper
+from scrapers.ncce.scraper import NCCEScraper
+from scrapers.nbte.scraper import NBTEScraper
 
 logging.basicConfig(
     level=logging.INFO,
@@ -24,6 +26,8 @@ def main():
         "nuc": {"institutions": 0, "programs": 0, "cutoffs": 0},
         "myschool": {"institutions": 0, "programs": 0, "cutoffs": 0},
         "myschoolgist": {"institutions": 0, "programs": 0, "cutoffs": 0},
+        "ncce": {"institutions": 0, "programs": 0, "cutoffs": 0},
+        "nbte": {"institutions": 0, "programs": 0, "cutoffs": 0},
     }
 
     try:
@@ -44,6 +48,18 @@ def main():
         myschoolgist_scraper = MySchoolGistScraper()
         myschoolgist_institutions = myschoolgist_scraper.scrape_institutions()
         results["myschoolgist"]["institutions"] = len(myschoolgist_institutions)
+
+        # Run NCCE scraper
+        logger.info("Running NCCE scraper...")
+        ncce_scraper = NCCEScraper()
+        ncce_institutions = ncce_scraper.scrape_institutions()
+        results["ncce"]["institutions"] = len(ncce_institutions)
+
+        # Run NBTE scraper
+        logger.info("Running NBTE scraper...")
+        nbte_scraper = NBTEScraper()
+        nbte_institutions = nbte_scraper.scrape_institutions()
+        results["nbte"]["institutions"] = len(nbte_institutions)
 
     except Exception as e:
         logger.error(f"Error running scrapers: {e}", exc_info=True)

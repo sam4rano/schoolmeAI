@@ -19,6 +19,7 @@ import {
   MessageSquare,
   Sparkles,
   Globe,
+  Users,
 } from "lucide-react"
 
 const navItems = [
@@ -68,6 +69,16 @@ const navItems = [
     icon: Upload,
   },
   {
+    title: "Accreditation Import",
+    href: "/admin/accreditation",
+    icon: FileText,
+  },
+  {
+    title: "Institutions Import",
+    href: "/admin/institutions/import",
+    icon: Upload,
+  },
+  {
     title: "Review Moderation",
     href: "/admin/reviews",
     icon: MessageSquare,
@@ -83,6 +94,11 @@ const navItems = [
     icon: Globe,
   },
   {
+    title: "Users",
+    href: "/admin/users",
+    icon: Users,
+  },
+  {
     title: "Settings",
     href: "/admin/settings",
     icon: Settings,
@@ -95,7 +111,7 @@ export function AdminSidebar() {
 
   return (
     <>
-      {/* Mobile menu button - positioned below navbar */}
+      {/* Mobile menu button - positioned in admin header */}
       <div className="lg:hidden fixed top-16 left-0 right-0 z-40 bg-background border-b p-4 flex items-center justify-between">
         <Link href="/admin" className="flex items-center gap-2">
           <LayoutDashboard className="h-5 w-5 text-primary" />
@@ -122,7 +138,7 @@ export function AdminSidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-16 lg:top-0 h-[calc(100vh-4rem)] lg:h-screen left-0 z-30 w-64 flex-col border-r bg-background",
+          "fixed top-16 lg:top-16 h-[calc(100vh-4rem)] lg:h-[calc(100vh-4rem)] left-0 z-30 w-64 flex-col border-r bg-background",
           "lg:flex lg:translate-x-0", // Always visible on desktop
           isMobileOpen ? "flex translate-x-0" : "-translate-x-full", // Mobile only transition
           "transition-transform duration-300 ease-in-out" // Smooth transition for mobile

@@ -1,25 +1,27 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { logger } from "@/lib/utils/logger"
+import { requireAuth } from "@/lib/middleware/auth"
 
 const watchlistSchema = z.object({
   programId: z.string().uuid(),
+  priority: z.enum(["high", "medium", "low"]).optional(),
+  notes: z.string().optional().nullable(),
+})
+
+const bulkAddSchema = z.object({
+  programIds: z.array(z.string().uuid()).min(1).max(50),
   priority: z.enum(["high", "medium", "low"]).optional(),
 })
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
+    const authResult = await requireAuth()
+    if ("response" in authResult) {
+      return authResult.response
     }
+    const { session } = authResult
 
     const watchlistItems = await prisma.applicationsWatchlist.findMany({
       where: {
@@ -60,14 +62,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
+    const authResult = await requireAuth()
+    if ("response" in authResult) {
+      return authResult.response
     }
+    const { session } = authResult
 
     const body = await request.json()
     const validatedData = watchlistSchema.parse(body)
@@ -94,11 +93,13 @@ export async function POST(request: NextRequest) {
       },
       update: {
         priority: validatedData.priority,
+        notes: validatedData.notes,
       },
       create: {
         userId: session.user.id,
         programId: validatedData.programId,
         priority: validatedData.priority || "medium",
+        notes: validatedData.notes || null,
       },
       include: {
         program: {

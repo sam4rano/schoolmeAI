@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { useSession } from "next-auth/react"
-import { Loader2, Check, X, Calendar, Bookmark, Sparkles, TrendingUp, DollarSign, Bell } from "lucide-react"
+import { Loader2, Check, X, Bell } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 import Link from "next/link"
 import {
@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { NOTIFICATION_TYPE_ICONS, NOTIFICATION_TYPE_COLORS } from "@/lib/constants/notifications"
 
 interface Notification {
   id: string
@@ -32,44 +33,63 @@ interface Notification {
 interface NotificationListProps {
   onRead?: () => void
   limit?: number
+  statusFilter?: string
+  typeFilter?: string
+  onStatusFilterChange?: (value: string) => void
+  onTypeFilterChange?: (value: string) => void
+  showFilters?: boolean
+  showPagination?: boolean
+  page?: number
+  total?: number
+  onPageChange?: (page: number) => void
 }
 
-const typeIcons = {
-  deadline_reminder: Calendar,
-  watchlist_update: Bookmark,
-  new_program: Sparkles,
-  cutoff_update: TrendingUp,
-  fee_update: DollarSign,
-  general: Bell,
-}
-
-const typeColors = {
-  deadline_reminder: "text-orange-500",
-  watchlist_update: "text-blue-500",
-  new_program: "text-green-500",
-  cutoff_update: "text-purple-500",
-  fee_update: "text-yellow-500",
-  general: "text-gray-500",
-}
-
-export function NotificationList({ onRead, limit = 10 }: NotificationListProps) {
+export function NotificationList({
+  onRead,
+  limit = 10,
+  statusFilter: externalStatusFilter,
+  typeFilter: externalTypeFilter,
+  onStatusFilterChange,
+  onTypeFilterChange,
+  showFilters = true,
+  showPagination = false,
+  page: externalPage,
+  total: externalTotal,
+  onPageChange,
+}: NotificationListProps) {
   const { toast } = useToast()
   const { data: session } = useSession()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(true)
-  const [statusFilter, setStatusFilter] = useState<string>("unread")
+  const [internalStatusFilter, setInternalStatusFilter] = useState<string>("unread")
+  const [internalTypeFilter, setInternalTypeFilter] = useState<string>("all")
+  const [internalPage, setInternalPage] = useState(1)
+  
+  const statusFilter = externalStatusFilter ?? internalStatusFilter
+  const typeFilter = externalTypeFilter ?? internalTypeFilter
+  const page = externalPage ?? internalPage
+  const total = externalTotal ?? 0
 
   const fetchNotifications = useCallback(async () => {
     if (!session) return
 
     setLoading(true)
     try {
-      const response = await fetch(
-        `/api/notifications?status=${statusFilter}&limit=${limit}`
-      )
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+      })
+      if (statusFilter && statusFilter !== "all") {
+        params.append("status", statusFilter)
+      }
+      if (typeFilter && typeFilter !== "all") {
+        params.append("type", typeFilter)
+      }
+
+      const response = await fetch(`/api/notifications?${params.toString()}`)
       if (!response.ok) throw new Error("Failed to fetch notifications")
       const data = await response.json()
-      setNotifications(data.data)
+      setNotifications(data.data || [])
     } catch (error) {
       console.error("Error fetching notifications:", error)
       toast({
@@ -80,7 +100,7 @@ export function NotificationList({ onRead, limit = 10 }: NotificationListProps) 
     } finally {
       setLoading(false)
     }
-  }, [session, statusFilter, limit, toast])
+  }, [session, statusFilter, typeFilter, page, limit, toast])
 
   useEffect(() => {
     fetchNotifications()
@@ -146,9 +166,35 @@ export function NotificationList({ onRead, limit = 10 }: NotificationListProps) 
   }
 
   const Icon = (type: string) => {
-    const IconComponent = typeIcons[type as keyof typeof typeIcons] || Bell
-    const colorClass = typeColors[type as keyof typeof typeColors] || "text-gray-500"
+    const IconComponent = NOTIFICATION_TYPE_ICONS[type as keyof typeof NOTIFICATION_TYPE_ICONS] || Bell
+    const colorClass = NOTIFICATION_TYPE_COLORS[type as keyof typeof NOTIFICATION_TYPE_COLORS] || "text-gray-500"
     return <IconComponent className={`h-4 w-4 ${colorClass}`} />
+  }
+
+  const handleStatusFilterChange = (value: string) => {
+    if (onStatusFilterChange) {
+      onStatusFilterChange(value)
+    } else {
+      setInternalStatusFilter(value)
+    }
+    if (onPageChange) {
+      onPageChange(1)
+    } else {
+      setInternalPage(1)
+    }
+  }
+
+  const handleTypeFilterChange = (value: string) => {
+    if (onTypeFilterChange) {
+      onTypeFilterChange(value)
+    } else {
+      setInternalTypeFilter(value)
+    }
+    if (onPageChange) {
+      onPageChange(1)
+    } else {
+      setInternalPage(1)
+    }
   }
 
   if (!session) {
@@ -160,32 +206,49 @@ export function NotificationList({ onRead, limit = 10 }: NotificationListProps) 
   }
 
   return (
-    <div className="max-h-[500px] overflow-y-auto">
-      <div className="sticky top-0 bg-background border-b p-4 flex items-center justify-between">
-        <CardTitle className="text-base">Notifications</CardTitle>
-        <div className="flex items-center gap-2">
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[120px] h-8">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="unread">Unread</SelectItem>
-              <SelectItem value="read">Read</SelectItem>
-              <SelectItem value="archived">Archived</SelectItem>
-            </SelectContent>
-          </Select>
-          {notifications.length > 0 && statusFilter === "unread" && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleMarkAllRead}
-              className="h-8"
-            >
-              Mark all read
-            </Button>
-          )}
+    <div className={showPagination ? "" : "max-h-[500px] overflow-y-auto"}>
+      {showFilters && (
+        <div className="sticky top-0 bg-background border-b p-4 flex items-center justify-between">
+          <CardTitle className="text-base">Notifications</CardTitle>
+          <div className="flex items-center gap-2">
+            <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
+              <SelectTrigger className="w-[120px] h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="unread">Unread</SelectItem>
+                <SelectItem value="read">Read</SelectItem>
+                <SelectItem value="archived">Archived</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={typeFilter} onValueChange={handleTypeFilterChange}>
+              <SelectTrigger className="w-[160px] h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="deadline_reminder">Deadline Reminders</SelectItem>
+                <SelectItem value="watchlist_update">Watchlist Updates</SelectItem>
+                <SelectItem value="new_program">New Programs</SelectItem>
+                <SelectItem value="cutoff_update">Cutoff Updates</SelectItem>
+                <SelectItem value="fee_update">Fee Updates</SelectItem>
+                <SelectItem value="general">General</SelectItem>
+              </SelectContent>
+            </Select>
+            {notifications.length > 0 && statusFilter === "unread" && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleMarkAllRead}
+                className="h-8"
+              >
+                Mark all read
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {loading ? (
         <div className="flex items-center justify-center p-8">

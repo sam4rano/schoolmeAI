@@ -13,19 +13,23 @@ import Link from "next/link"
 import { useInstitutions } from "@/lib/hooks/use-institutions"
 import { NIGERIAN_STATES_WITH_ABUJA } from "@/lib/constants/nigerian-states"
 import { Search, Filter, MapPin, Globe, Building2, DollarSign, ExternalLink } from "lucide-react"
+import { AdvancedSearch, SearchFilters } from "@/components/search/advanced-search"
+import { formatInstitutionName } from "@/lib/utils/institution-name"
 
 export default function InstitutionsPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [typeFilter, setTypeFilter] = useState<string>("")
-  const [ownershipFilter, setOwnershipFilter] = useState<string>("")
-  const [stateFilter, setStateFilter] = useState<string>("")
+  const [searchFilters, setSearchFilters] = useState<SearchFilters>({})
   const [page, setPage] = useState(1)
 
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(1)
+  }, [searchFilters])
+
   const { data, isLoading, error } = useInstitutions({
-    query: searchQuery || undefined,
-    type: typeFilter || undefined,
-    ownership: ownershipFilter || undefined,
-    state: stateFilter || undefined,
+    query: searchFilters.query,
+    type: searchFilters.type,
+    ownership: searchFilters.ownership,
+    state: searchFilters.state,
     page,
     limit: 12,
   })
@@ -53,151 +57,87 @@ export default function InstitutionsPage() {
           </p>
         </div>
 
-        {/* Search and Filters */}
-        <Card className="mb-4 sm:mb-6">
-          <CardHeader className="pb-3 sm:pb-6">
-            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-              <Filter className="h-4 w-4 sm:h-5 sm:w-5" />
-              Search & Filters
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search institutions..."
-                  value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value)
-                    setPage(1)
-                  }}
-                  className="pl-10"
-                />
+        {/* Advanced Search */}
+        <div className="mb-4 sm:mb-6">
+          <AdvancedSearch
+            type="institutions"
+            onSearch={(filters) => {
+              setSearchFilters(filters)
+              setPage(1)
+            }}
+            initialFilters={searchFilters}
+          />
+        </div>
+
+        {/* Active Filters Display */}
+        {Object.keys(searchFilters).length > 0 && (
+          <Card className="mb-4 sm:mb-6">
+            <CardContent className="pt-4 sm:pt-6">
+              <div className="flex flex-wrap gap-2">
+                {searchFilters.query && (
+                  <Badge variant="secondary" className="gap-2">
+                    Search: {searchFilters.query}
+                    <button
+                      onClick={() => {
+                        const newFilters = { ...searchFilters }
+                        delete newFilters.query
+                        setSearchFilters(newFilters)
+                      }}
+                      className="ml-1 hover:text-destructive"
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                )}
+                {searchFilters.type && (
+                  <Badge variant="secondary" className="gap-2">
+                    Type: {searchFilters.type}
+                    <button
+                      onClick={() => {
+                        const newFilters = { ...searchFilters }
+                        delete newFilters.type
+                        setSearchFilters(newFilters)
+                      }}
+                      className="ml-1 hover:text-destructive"
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                )}
+                {searchFilters.ownership && (
+                  <Badge variant="secondary" className="gap-2">
+                    Ownership: {searchFilters.ownership}
+                    <button
+                      onClick={() => {
+                        const newFilters = { ...searchFilters }
+                        delete newFilters.ownership
+                        setSearchFilters(newFilters)
+                      }}
+                      className="ml-1 hover:text-destructive"
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                )}
+                {searchFilters.state && (
+                  <Badge variant="secondary" className="gap-2">
+                    State: {searchFilters.state}
+                    <button
+                      onClick={() => {
+                        const newFilters = { ...searchFilters }
+                        delete newFilters.state
+                        setSearchFilters(newFilters)
+                      }}
+                      className="ml-1 hover:text-destructive"
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                )}
               </div>
-
-              <Select
-                value={typeFilter || "all"}
-                onValueChange={(value) => {
-                  setTypeFilter(value === "all" ? "" : value)
-                  setPage(1)
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="All Types" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="university">University</SelectItem>
-                  <SelectItem value="polytechnic">Polytechnic</SelectItem>
-                  <SelectItem value="college">College</SelectItem>
-                  <SelectItem value="nursing">Nursing</SelectItem>
-                  <SelectItem value="military">Military</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select
-                value={ownershipFilter || "all"}
-                onValueChange={(value) => {
-                  setOwnershipFilter(value === "all" ? "" : value)
-                  setPage(1)
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="All Ownership" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Ownership</SelectItem>
-                  <SelectItem value="federal">Federal</SelectItem>
-                  <SelectItem value="state">State</SelectItem>
-                  <SelectItem value="private">Private</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select
-                value={stateFilter || "all"}
-                onValueChange={(value) => {
-                  setStateFilter(value === "all" ? "" : value)
-                  setPage(1)
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="All States" />
-                </SelectTrigger>
-                <SelectContent className="max-h-[300px]">
-                  <SelectItem value="all">All States</SelectItem>
-                  {NIGERIAN_STATES_WITH_ABUJA.map((state) => (
-                    <SelectItem key={state} value={state}>
-                      {state === "FCT" ? "FCT (Abuja)" : state}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {(typeFilter || ownershipFilter || stateFilter || searchQuery) && (
-              <div className="mt-4 flex flex-wrap gap-2">
-                {searchQuery && (
-                  <Badge variant="secondary" className="gap-2">
-                    Search: {searchQuery}
-                    <button
-                      onClick={() => setSearchQuery("")}
-                      className="ml-1 hover:text-destructive"
-                    >
-                      ×
-                    </button>
-                  </Badge>
-                )}
-                {typeFilter && (
-                  <Badge variant="secondary" className="gap-2">
-                    Type: {typeFilter}
-                    <button
-                      onClick={() => setTypeFilter("")}
-                      className="ml-1 hover:text-destructive"
-                    >
-                      ×
-                    </button>
-                  </Badge>
-                )}
-                {ownershipFilter && (
-                  <Badge variant="secondary" className="gap-2">
-                    Ownership: {ownershipFilter}
-                    <button
-                      onClick={() => setOwnershipFilter("")}
-                      className="ml-1 hover:text-destructive"
-                    >
-                      ×
-                    </button>
-                  </Badge>
-                )}
-                {stateFilter && (
-                  <Badge variant="secondary" className="gap-2">
-                    State: {stateFilter}
-                    <button
-                      onClick={() => setStateFilter("")}
-                      className="ml-1 hover:text-destructive"
-                    >
-                      ×
-                    </button>
-                  </Badge>
-                )}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setSearchQuery("")
-                    setTypeFilter("")
-                    setOwnershipFilter("")
-                    setStateFilter("")
-                    setPage(1)
-                  }}
-                >
-                  Clear All
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Results */}
         {isLoading ? (
@@ -237,7 +177,7 @@ export default function InstitutionsPage() {
                       <div className="flex-1">
                         <CardTitle className="flex items-center gap-2 text-base font-semibold">
                           <Building2 className="h-4 w-4 text-primary flex-shrink-0" />
-                          <span className="line-clamp-2">{institution.name}</span>
+                          <span className="line-clamp-2">{formatInstitutionName(institution.name)}</span>
                         </CardTitle>
                         <div className="mt-1.5 flex flex-wrap gap-1.5 text-sm text-muted-foreground">
                           <Badge variant="outline" className="text-xs px-1.5 py-0">{institution.type}</Badge>

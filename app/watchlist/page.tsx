@@ -14,9 +14,15 @@ import { Footer } from "@/components/ui/footer"
 import { ProtectedRoute } from "@/components/protected-route"
 import { usePrograms } from "@/lib/hooks/use-programs"
 import Link from "next/link"
-import { Trash2, Plus, Bookmark, GraduationCap, Search, Building2, X, GitCompare, Calendar, Download } from "lucide-react"
+import { Trash2, Plus, Bookmark, GraduationCap, Search, Building2, X, GitCompare, Calendar, Download, FileText, Share2, Bell, CheckSquare } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Skeleton } from "@/components/ui/skeleton"
+import { WatchlistNotes } from "@/components/watchlist/watchlist-notes"
+import { WatchlistShare } from "@/components/watchlist/watchlist-share"
+import { WatchlistAnalytics } from "@/components/watchlist/watchlist-analytics"
+import { DeadlineReminders } from "@/components/watchlist/deadline-reminders"
+import { Checkbox } from "@/components/ui/checkbox"
+import { useToast } from "@/hooks/use-toast"
 
 interface WatchlistItem {
   id: string
@@ -31,12 +37,14 @@ interface WatchlistItem {
     }
   }
   priority: string | null
+  notes: string | null
   createdAt: string
 }
 
 export default function WatchlistPage() {
   const sessionResult = useSession()
   const router = useRouter()
+  const { toast } = useToast()
   const [watchlist, setWatchlist] = useState<WatchlistItem[]>([])
   const [loading, setLoading] = useState(true)
   const [programId, setProgramId] = useState("")
@@ -46,6 +54,9 @@ export default function WatchlistPage() {
   const [showProgramDropdown, setShowProgramDropdown] = useState(false)
   const [priority, setPriority] = useState<string>("medium")
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [bulkDialogOpen, setBulkDialogOpen] = useState(false)
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set())
+  const [bulkPrograms, setBulkPrograms] = useState<any[]>([])
   const programDropdownRef = useRef<HTMLDivElement>(null)
 
   // Debounce program search
@@ -167,17 +178,19 @@ export default function WatchlistPage() {
       institution: item.program.institution.name,
       location: item.program.institution.state,
       priority: item.priority || "medium",
+      notes: item.notes || "",
       deadline: (item.program as any).applicationDeadline || "N/A",
       added: item.createdAt,
     }))
 
     const csv = [
-      ["Program", "Institution", "Location", "Priority", "Deadline", "Added"],
+      ["Program", "Institution", "Location", "Priority", "Notes", "Deadline", "Added"],
       ...data.map((item) => [
         item.program,
         item.institution,
         item.location,
         item.priority,
+        item.notes,
         item.deadline === "N/A" ? "N/A" : new Date(item.deadline).toLocaleDateString(),
         new Date(item.added).toLocaleDateString(),
       ]),
@@ -196,6 +209,95 @@ export default function WatchlistPage() {
     URL.revokeObjectURL(url)
   }
 
+  const handleBulkAdd = async () => {
+    if (bulkPrograms.length === 0) {
+      toast({
+        title: "Error",
+        description: "Please select at least one program",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      const programIds = bulkPrograms.map((p) => p.id)
+      const response = await fetch("/api/watchlist/bulk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ programIds, priority }),
+      })
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: `Added ${bulkPrograms.length} program(s) to watchlist`,
+        })
+        setBulkPrograms([])
+        setBulkDialogOpen(false)
+        fetchWatchlist()
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add programs to watchlist",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    if (selectedItems.size === 0) {
+      toast({
+        title: "Error",
+        description: "Please select at least one item",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!confirm(`Are you sure you want to delete ${selectedItems.size} item(s)?`)) {
+      return
+    }
+
+    try {
+      await Promise.all(
+        Array.from(selectedItems).map((id) =>
+          fetch(`/api/watchlist/${id}`, { method: "DELETE" })
+        )
+      )
+      toast({
+        title: "Success",
+        description: `Deleted ${selectedItems.size} item(s) from watchlist`,
+      })
+      setSelectedItems(new Set())
+      fetchWatchlist()
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete items",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleToggleSelect = (id: string) => {
+    const newSelected = new Set(selectedItems)
+    if (newSelected.has(id)) {
+      newSelected.delete(id)
+    } else {
+      newSelected.add(id)
+    }
+    setSelectedItems(newSelected)
+  }
+
+  const handleSelectAll = () => {
+    if (selectedItems.size === watchlist.length) {
+      setSelectedItems(new Set())
+    } else {
+      setSelectedItems(new Set(watchlist.map((item) => item.id)))
+    }
+  }
+
   return (
     <ProtectedRoute>
       <div className="flex min-h-screen flex-col">
@@ -211,7 +313,7 @@ export default function WatchlistPage() {
                 Track programs you&apos;re interested in
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               {watchlist.length >= 2 && (
                 <Button
                   variant="outline"
@@ -219,6 +321,27 @@ export default function WatchlistPage() {
                 >
                   <GitCompare className="mr-2 h-4 w-4" />
                   Compare Programs
+                </Button>
+              )}
+              {watchlist.length > 0 && (
+                <>
+                  <WatchlistShare watchlistItems={watchlist} />
+                  <Button
+                    variant="outline"
+                    onClick={handleExportWatchlist}
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Export CSV
+                  </Button>
+                </>
+              )}
+              {selectedItems.size > 0 && (
+                <Button
+                  variant="destructive"
+                  onClick={handleBulkDelete}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete Selected ({selectedItems.size})
                 </Button>
               )}
               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -345,6 +468,140 @@ export default function WatchlistPage() {
                 </div>
               </DialogContent>
             </Dialog>
+
+            {/* Bulk Add Dialog */}
+            <Dialog open={bulkDialogOpen} onOpenChange={setBulkDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Bulk Add
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Bulk Add Programs</DialogTitle>
+                  <DialogDescription>
+                    Search and select multiple programs to add to your watchlist
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2 relative" ref={programDropdownRef}>
+                    <label className="text-sm font-medium">Search Programs</label>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        type="text"
+                        value={programSearch}
+                        onChange={(e) => {
+                          setProgramSearch(e.target.value)
+                          setShowProgramDropdown(true)
+                        }}
+                        onFocus={() => setShowProgramDropdown(true)}
+                        placeholder="Search for programs..."
+                        className="pl-10"
+                      />
+                    </div>
+
+                    {showProgramDropdown && programSearch && (
+                      <div className="absolute z-50 w-full mt-1 bg-popover border rounded-md shadow-lg max-h-60 overflow-auto">
+                        {programsLoading ? (
+                          <div className="p-4 text-center text-sm text-muted-foreground">
+                            Searching...
+                          </div>
+                        ) : programs.length === 0 ? (
+                          <div className="p-4 text-center text-sm text-muted-foreground">
+                            No programs found
+                          </div>
+                        ) : (
+                          <div className="p-1">
+                            {programs.map((program: any) => {
+                              const isSelected = bulkPrograms.some((p) => p.id === program.id)
+                              return (
+                                <button
+                                  key={program.id}
+                                  onClick={() => {
+                                    if (isSelected) {
+                                      setBulkPrograms(bulkPrograms.filter((p) => p.id !== program.id))
+                                    } else {
+                                      setBulkPrograms([...bulkPrograms, program])
+                                    }
+                                  }}
+                                  className={`w-full text-left p-3 rounded-sm hover:bg-accent transition-colors ${
+                                    isSelected ? "bg-accent" : ""
+                                  }`}
+                                >
+                                  <div className="flex items-start gap-2">
+                                    <Checkbox checked={isSelected} />
+                                    <div className="flex-1 min-w-0">
+                                      <p className="font-medium text-sm truncate">{program.name}</p>
+                                      <p className="text-xs text-muted-foreground truncate">
+                                        {program.institution?.name}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </button>
+                              )
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {bulkPrograms.length > 0 && (
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">
+                        Selected Programs ({bulkPrograms.length})
+                      </label>
+                      <div className="max-h-40 overflow-y-auto border rounded-md p-2 space-y-1">
+                        {bulkPrograms.map((program) => (
+                          <div
+                            key={program.id}
+                            className="flex items-center justify-between p-2 bg-muted/50 rounded-md"
+                          >
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate">{program.name}</p>
+                              <p className="text-xs text-muted-foreground truncate">
+                                {program.institution?.name}
+                              </p>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setBulkPrograms(bulkPrograms.filter((p) => p.id !== program.id))}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Priority</label>
+                    <Select value={priority} onValueChange={setPriority}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="high">High</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="low">Low</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <Button
+                    onClick={handleBulkAdd}
+                    disabled={bulkPrograms.length === 0}
+                    className="w-full"
+                  >
+                    Add {bulkPrograms.length > 0 ? `${bulkPrograms.length} ` : ""}Program(s)
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
             </div>
           </div>
 
@@ -377,28 +634,62 @@ export default function WatchlistPage() {
               </CardContent>
             </Card>
           ) : (
-            <Card>
-              <CardHeader>
-                <CardTitle>Tracked Programs ({watchlist.length})</CardTitle>
-                <CardDescription>
-                  Programs you&apos;re monitoring for admission
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Program</TableHead>
-                      <TableHead>Institution</TableHead>
-                      <TableHead>Location</TableHead>
-                      <TableHead>Deadline</TableHead>
-                      <TableHead>Priority</TableHead>
-                      <TableHead>Added</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {watchlist.map((item) => {
+            <>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                {/* Analytics */}
+                <div className="lg:col-span-2">
+                  <WatchlistAnalytics watchlistItems={watchlist} />
+                </div>
+
+                {/* Deadline Reminders */}
+                <div>
+                  <DeadlineReminders watchlistItems={watchlist} />
+                </div>
+              </div>
+
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle>Tracked Programs ({watchlist.length})</CardTitle>
+                      <CardDescription>
+                        Programs you&apos;re monitoring for admission
+                      </CardDescription>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleSelectAll}
+                      >
+                        <CheckSquare className="h-4 w-4 mr-2" />
+                        {selectedItems.size === watchlist.length ? "Deselect All" : "Select All"}
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-12">
+                          <Checkbox
+                            checked={selectedItems.size === watchlist.length && watchlist.length > 0}
+                            onCheckedChange={handleSelectAll}
+                          />
+                        </TableHead>
+                        <TableHead>Program</TableHead>
+                        <TableHead>Institution</TableHead>
+                        <TableHead>Location</TableHead>
+                        <TableHead>Deadline</TableHead>
+                        <TableHead>Priority</TableHead>
+                        <TableHead>Notes</TableHead>
+                        <TableHead>Added</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {watchlist.map((item) => {
                       const deadline = (item.program as any).applicationDeadline
                       const daysRemaining = deadline
                         ? Math.ceil(
@@ -411,6 +702,12 @@ export default function WatchlistPage() {
 
                       return (
                         <TableRow key={item.id}>
+                          <TableCell>
+                            <Checkbox
+                              checked={selectedItems.has(item.id)}
+                              onCheckedChange={() => handleToggleSelect(item.id)}
+                            />
+                          </TableCell>
                           <TableCell className="font-medium">
                             <Link
                               href={`/programs/${item.program.id}`}
@@ -470,17 +767,35 @@ export default function WatchlistPage() {
                               {item.priority || "medium"}
                             </Badge>
                           </TableCell>
+                          <TableCell>
+                            {item.notes ? (
+                              <div className="max-w-xs">
+                                <p className="text-sm text-muted-foreground line-clamp-2">
+                                  {item.notes}
+                                </p>
+                              </div>
+                            ) : (
+                              <span className="text-muted-foreground text-sm">—</span>
+                            )}
+                          </TableCell>
                           <TableCell className="text-muted-foreground">
                             {new Date(item.createdAt).toLocaleDateString()}
                           </TableCell>
                           <TableCell className="text-right">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleDelete(item.id)}
-                            >
-                              <Trash2 className="h-4 w-4 text-destructive" />
-                            </Button>
+                            <div className="flex items-center justify-end gap-2">
+                              <WatchlistNotes
+                                watchlistItemId={item.id}
+                                currentNotes={item.notes}
+                                onUpdate={fetchWatchlist}
+                              />
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleDelete(item.id)}
+                              >
+                                <Trash2 className="h-4 w-4 text-destructive" />
+                              </Button>
+                            </div>
                           </TableCell>
                         </TableRow>
                       )
@@ -489,6 +804,7 @@ export default function WatchlistPage() {
                 </Table>
               </CardContent>
             </Card>
+            </>
           )}
         </main>
         <Footer />

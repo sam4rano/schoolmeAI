@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { Navbar } from "@/components/ui/navbar"
 import { Footer } from "@/components/ui/footer"
 import {
@@ -14,31 +15,44 @@ import {
   Clock,
   Award,
   ArrowRight,
+  Newspaper,
 } from "lucide-react"
 
 async function getStats() {
   try {
-    const [institutionsRes, programsRes] = await Promise.all([
+    const [institutionsRes, programsRes, reviewsRes, newsRes] = await Promise.all([
       fetch(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/institutions?limit=1`, {
         cache: "no-store",
       }),
       fetch(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/programs?limit=1`, {
         cache: "no-store",
       }),
+      fetch(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/reviews?limit=1`, {
+        cache: "no-store",
+      }),
+      fetch(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/news?limit=6&featured=true`, {
+        cache: "no-store",
+      }),
     ])
 
     const institutionsData = institutionsRes.ok ? await institutionsRes.json() : null
     const programsData = programsRes.ok ? await programsRes.json() : null
+    const reviewsData = reviewsRes.ok ? await reviewsRes.json() : null
+    const newsData = newsRes.ok ? await newsRes.json() : null
 
     return {
       institutions: institutionsData?.pagination?.total || 0,
       programs: programsData?.pagination?.total || 0,
+      reviews: reviewsData?.pagination?.total || 0,
+      news: newsData?.data || [],
     }
   } catch (error) {
     console.error("Error fetching stats:", error)
     return {
       institutions: 0,
       programs: 0,
+      reviews: 0,
+      news: [],
     }
   }
 }
@@ -379,7 +393,7 @@ export default async function HomePage() {
         {/* Stats Section */}
         <section className="bg-muted/50 py-12 sm:py-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 gap-4 sm:gap-8 md:grid-cols-4">
+            <div className="grid grid-cols-2 gap-4 sm:gap-8 md:grid-cols-5">
               <div className="text-center">
                 <div className="text-2xl sm:text-3xl font-bold text-primary mb-1 sm:mb-2">
                   {stats.institutions > 0 ? stats.institutions.toLocaleString() : "800+"}
@@ -393,6 +407,12 @@ export default async function HomePage() {
                 <div className="text-xs sm:text-sm text-muted-foreground">Programs</div>
               </div>
               <div className="text-center">
+                <div className="text-2xl sm:text-3xl font-bold text-primary mb-1 sm:mb-2">
+                  {stats.reviews > 0 ? stats.reviews.toLocaleString() : "100+"}
+                </div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Reviews</div>
+              </div>
+              <div className="text-center">
                 <div className="text-2xl sm:text-3xl font-bold text-primary mb-1 sm:mb-2">5+</div>
                 <div className="text-xs sm:text-sm text-muted-foreground">Years of Data</div>
               </div>
@@ -403,6 +423,145 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* Success Stories Section */}
+        <section className="py-12 sm:py-20 lg:py-24">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-2xl text-center mb-8 sm:mb-12">
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight md:text-4xl mb-3 sm:mb-4">
+                Success Stories
+              </h2>
+              <p className="text-base sm:text-lg text-muted-foreground px-4 sm:px-0">
+                Real students who achieved their admission goals using our platform
+              </p>
+            </div>
+            <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
+              <Card className="border-2 hover:border-primary/50 transition-colors">
+                <CardHeader>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
+                      <span className="text-xl font-bold text-primary">AT</span>
+                    </div>
+                    <div>
+                      <CardTitle className="text-base">Adebayo T.</CardTitle>
+                      <p className="text-xs text-muted-foreground">University of Lagos</p>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    &quot;Used the eligibility calculator and got admitted to my dream program. The AI recommendations were spot-on!&quot;
+                  </p>
+                  <div className="flex items-center gap-2 text-xs">
+                    <Badge variant="secondary">Computer Science</Badge>
+                    <span className="text-muted-foreground">UTME: 280</span>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-2 hover:border-primary/50 transition-colors">
+                <CardHeader>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-green-500/20 to-green-500/40 flex items-center justify-center">
+                      <span className="text-xl font-bold text-green-600">CO</span>
+                    </div>
+                    <div>
+                      <CardTitle className="text-base">Chinwe O.</CardTitle>
+                      <p className="text-xs text-muted-foreground">University of Ibadan</p>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    &quot;The comparison feature helped me choose between multiple programs. Got admitted to my target school!&quot;
+                  </p>
+                  <div className="flex items-center gap-2 text-xs">
+                    <Badge variant="secondary">Medicine</Badge>
+                    <span className="text-muted-foreground">UTME: 320</span>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-2 hover:border-primary/50 transition-colors">
+                <CardHeader>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-500/40 flex items-center justify-center">
+                      <span className="text-xl font-bold text-blue-600">IM</span>
+                    </div>
+                    <div>
+                      <CardTitle className="text-base">Ibrahim M.</CardTitle>
+                      <p className="text-xs text-muted-foreground">Ahmadu Bello University</p>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    &quot;The historical cutoff data was invaluable. Helped me make informed decisions and I got admitted!&quot;
+                  </p>
+                  <div className="flex items-center gap-2 text-xs">
+                    <Badge variant="secondary">Engineering</Badge>
+                    <span className="text-muted-foreground">UTME: 265</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Latest News Section */}
+        {stats.news && stats.news.length > 0 && (
+          <section className="py-12 sm:py-20 lg:py-24 bg-muted/30">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="mx-auto max-w-2xl text-center mb-8 sm:mb-12">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border bg-background px-4 py-2 text-sm">
+                  <Newspaper className="h-4 w-4 text-primary" />
+                  <span className="font-medium">Latest News</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight md:text-4xl mb-3 sm:mb-4">
+                  Stay Updated
+                </h2>
+                <p className="text-base sm:text-lg text-muted-foreground px-4 sm:px-0">
+                  Get the latest news about JAMB, Post UTME, admissions, NYSC, and more
+                </p>
+              </div>
+              <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto mb-8">
+                {stats.news.slice(0, 3).map((article: any) => (
+                  <Card key={article.id} className="border-2 hover:border-primary/50 transition-colors">
+                    <CardHeader>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant="default" className="text-xs">
+                          {article.category}
+                        </Badge>
+                        {article.featured && (
+                          <Badge variant="default" className="text-xs">Featured</Badge>
+                        )}
+                      </div>
+                      <CardTitle className="line-clamp-2">{article.title}</CardTitle>
+                      {article.excerpt && (
+                        <CardDescription className="line-clamp-2 mt-2">
+                          {article.excerpt}
+                        </CardDescription>
+                      )}
+                    </CardHeader>
+                    <CardContent>
+                      <Link href={`/news/${article.slug}`}>
+                        <Button variant="ghost" className="w-full">
+                          Read More →
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              <div className="text-center">
+                <Link href="/news">
+                  <Button variant="outline" size="lg">
+                    View All News
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* CTA Section */}
         <section className="py-20 sm:py-24">

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import crypto from "crypto"
+import type { Vector } from "@/lib/types/vector"
 
 interface EmbeddingData {
   entityType: string
@@ -12,7 +13,7 @@ interface EmbeddingData {
  * Generate embedding using OpenAI API
  * Falls back to local embedding if OPENAI_API_KEY is not set
  */
-export async function generateEmbedding(text: string): Promise<number[]> {
+export async function generateEmbedding(text: string): Promise<Vector<1536>> {
   const apiKey = process.env.OPENAI_API_KEY
 
   if (!apiKey) {
@@ -50,7 +51,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
  * Fallback embedding generator (simple hash-based)
  * For production, consider using a local model like sentence-transformers
  */
-function generateFallbackEmbedding(text: string): number[] {
+function generateFallbackEmbedding(text: string): Vector<1536> {
   const hash = crypto.createHash("sha256").update(text).digest("hex")
   const embedding = new Array(1536).fill(0)
 
@@ -64,7 +65,7 @@ function generateFallbackEmbedding(text: string): number[] {
 /**
  * Store embedding in database
  */
-export async function storeEmbedding(data: EmbeddingData, embedding: number[]): Promise<void> {
+export async function storeEmbedding(data: EmbeddingData, embedding: Vector<1536>): Promise<void> {
   const contentHash = crypto.createHash("sha256").update(data.content).digest("hex")
   const embeddingVector = `[${embedding.join(",")}]`
   const metadataJson = data.metadata ? JSON.stringify(data.metadata) : null
@@ -121,7 +122,7 @@ export async function storeEmbedding(data: EmbeddingData, embedding: number[]): 
  * Find similar embeddings using cosine similarity
  */
 export async function findSimilarEmbeddings(
-  queryEmbedding: number[],
+  queryEmbedding: Vector<1536>,
   entityType?: string,
   limit: number = 5
 ): Promise<Array<{ id: string; entityType: string; entityId: string; content: string; metadata: any; similarity: number }>> {

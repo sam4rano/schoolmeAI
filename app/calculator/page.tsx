@@ -8,11 +8,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Navbar } from "@/components/ui/navbar"
 import { Footer } from "@/components/ui/footer"
 import { usePrograms } from "@/lib/hooks/use-programs"
-import { Search, GraduationCap, Building2, X, Trash2, History, GitCompare, Clock, CheckCircle2 } from "lucide-react"
+import { useSession } from "next-auth/react"
+import { Search, GraduationCap, Building2, X, Trash2, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { CalculatorForm } from "@/components/calculator/calculator-form"
+import { CalculatorResults } from "@/components/calculator/calculator-results"
+import { CalculatorHistory } from "@/components/calculator/calculator-history"
+import { CalculatorComparison } from "@/components/calculator/calculator-comparison"
+import { WhatIfScenarios } from "@/components/calculator/what-if-scenarios"
+import { useToast } from "@/hooks/use-toast"
+import { analytics } from "@/lib/analytics/tracker"
 
 interface EligibilityResult {
   compositeScore: number
@@ -65,6 +71,8 @@ const COMMON_OLEVEL_SUBJECTS = [
 ]
 
 export default function CalculatorPage() {
+  const { data: session } = useSession()
+  const { toast } = useToast()
   const [utme, setUtme] = useState("")
   const [olevels, setOlevels] = useState<Record<string, string>>({
     "English Language": "none",
@@ -82,28 +90,122 @@ export default function CalculatorPage() {
   const [selectedForComparison, setSelectedForComparison] = useState<Set<string>>(new Set())
   const [showHistory, setShowHistory] = useState(false)
   const [showComparison, setShowComparison] = useState(false)
+  const [syncing, setSyncing] = useState(false)
   const programDropdownRef = useRef<HTMLDivElement>(null)
 
-  // Load history from localStorage on mount
+  // Load history from database for signed-in users, or localStorage for guests
   useEffect(() => {
-    const savedHistory = localStorage.getItem("calculator-history")
-    if (savedHistory) {
-      try {
-        setHistory(JSON.parse(savedHistory))
-      } catch (e) {
-        console.error("Failed to load calculation history", e)
+    const loadHistory = async () => {
+      if (session?.user) {
+        // Load from database
+        try {
+          const response = await fetch("/api/calculations")
+          if (response.ok) {
+            const data = await response.json()
+            const dbHistory: CalculationHistory[] = (data.data || []).map((calc: any) => ({
+              id: calc.id,
+              timestamp: new Date(calc.createdAt).getTime(),
+              utme: calc.utme,
+              olevels: calc.olevels as Record<string, string>,
+              programId: calc.programId,
+              programName: calc.program.name,
+              institutionName: calc.program.institution.name,
+              result: {
+                compositeScore: calc.compositeScore,
+                probability: calc.probability || undefined,
+                category: calc.category as "safe" | "target" | "reach",
+                rationale: calc.rationale || "",
+                dataQuality: {
+                  cutoffConfidence: "verified" as const,
+                },
+              },
+            }))
+            setHistory(dbHistory)
+
+            // Sync localStorage with database
+            const localHistory = localStorage.getItem("calculator-history")
+            if (localHistory) {
+              try {
+                const localData = JSON.parse(localHistory)
+                if (localData.length > 0) {
+                  // Sync local data to database
+                  await syncLocalToDatabase(localData)
+                }
+              } catch (e) {
+                console.error("Failed to parse local history", e)
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Failed to load calculation history from database", error)
+          // Fallback to localStorage
+          loadFromLocalStorage()
+        }
+      } else {
+        // Load from localStorage for guests
+        loadFromLocalStorage()
       }
     }
-  }, [])
 
-  // Save history to localStorage whenever it changes
+    const loadFromLocalStorage = () => {
+      const savedHistory = localStorage.getItem("calculator-history")
+      if (savedHistory) {
+        try {
+          setHistory(JSON.parse(savedHistory))
+        } catch (e) {
+          console.error("Failed to load calculation history", e)
+        }
+      }
+    }
+
+    loadHistory()
+  }, [session])
+
+  // Sync localStorage calculations to database
+  const syncLocalToDatabase = async (localData: CalculationHistory[]) => {
+    if (!session?.user || localData.length === 0) return
+
+    setSyncing(true)
+    try {
+      const response = await fetch("/api/calculations/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ calculations: localData }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.data.synced > 0) {
+          toast({
+            title: "History synced",
+            description: `Synced ${data.data.synced} calculation(s) to your account`,
+          })
+          // Clear localStorage after successful sync
+          localStorage.removeItem("calculator-history")
+        }
+      }
+    } catch (error) {
+      console.error("Failed to sync calculations", error)
+    } finally {
+      setSyncing(false)
+    }
+  }
+
+  // Save history to localStorage for guests, or database for signed-in users
   useEffect(() => {
     if (history.length > 0) {
-      // Keep only last 50 calculations
-      const recentHistory = history.slice(0, 50)
-      localStorage.setItem("calculator-history", JSON.stringify(recentHistory))
+      if (session?.user) {
+        // For signed-in users, history is managed by the database
+        // We still keep a local copy for offline access
+        const recentHistory = history.slice(0, 50)
+        localStorage.setItem("calculator-history", JSON.stringify(recentHistory))
+      } else {
+        // For guests, save to localStorage only
+        const recentHistory = history.slice(0, 50)
+        localStorage.setItem("calculator-history", JSON.stringify(recentHistory))
+      }
     }
-  }, [history])
+  }, [history, session])
 
   // Debounce program search
   useEffect(() => {
@@ -167,24 +269,20 @@ export default function CalculatorPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleCalculate = async () => {
-    setLoading(true)
-    setError(null)
-    setResult(null)
-
+  const calculateEligibility = async (utmeScore: number, olevelGrades: Record<string, string>): Promise<EligibilityResult | null> => {
     try {
       const response = await fetch("/api/calculate/eligibility", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-          body: JSON.stringify({
-            utme: parseInt(utme),
-            olevels: Object.fromEntries(
-              Object.entries(olevels).filter(([_, value]) => value !== "" && value !== "none")
-            ),
-            programId,
-          }),
+        body: JSON.stringify({
+          utme: utmeScore,
+          olevels: Object.fromEntries(
+            Object.entries(olevelGrades).filter(([_, value]) => value !== "" && value !== "none")
+          ),
+          programId,
+        }),
       })
 
       if (!response.ok) {
@@ -193,8 +291,39 @@ export default function CalculatorPage() {
       }
 
       const data = await response.json()
-      const calculationResult = data.data
+      return data.data
+    } catch (err) {
+      console.error("Error calculating eligibility:", err)
+      return null
+    }
+  }
+
+  const handleCalculate = async () => {
+    setLoading(true)
+    setError(null)
+    setResult(null)
+
+    try {
+      const calculationResult = await calculateEligibility(parseInt(utme), olevels)
+      
+      if (!calculationResult) {
+        throw new Error("Failed to calculate eligibility")
+      }
+
       setResult(calculationResult)
+
+      // Track calculation event
+      analytics.track("calculation_performed", {
+        programId,
+        programName: selectedProgram?.name,
+        utme: parseInt(utme),
+        category: calculationResult.category,
+        probability: calculationResult.probability,
+      })
+      analytics.trackConversion("calculation", undefined, {
+        programId,
+        category: calculationResult.category,
+      })
 
       // Save to history
       if (selectedProgram) {
@@ -211,6 +340,39 @@ export default function CalculatorPage() {
           result: calculationResult,
         }
         setHistory((prev) => [historyEntry, ...prev])
+
+        // Save to database for signed-in users
+        if (session?.user) {
+          try {
+            const response = await fetch("/api/calculations", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                programId,
+                utme: parseInt(utme),
+                olevels: historyEntry.olevels,
+                compositeScore: calculationResult.compositeScore,
+                probability: calculationResult.probability,
+                category: calculationResult.category,
+                rationale: calculationResult.rationale,
+                result: calculationResult,
+              }),
+            })
+
+            if (response.ok) {
+              const data = await response.json()
+              // Update the history entry with the database ID
+              setHistory((prev) =>
+                prev.map((item) =>
+                  item.id === historyEntry.id ? { ...item, id: data.data.id } : item
+                )
+              )
+            }
+          } catch (error) {
+            console.error("Failed to save calculation to database", error)
+            // Continue with localStorage only
+          }
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
@@ -259,136 +421,14 @@ export default function CalculatorPage() {
                    </p>
                  </div>
                  <div className="flex gap-2">
-                   <Dialog open={showHistory} onOpenChange={setShowHistory}>
-                     <DialogTrigger asChild>
-                       <Button variant="outline" size="sm">
-                         <History className="h-4 w-4 mr-2" />
-                         History ({history.length})
-                       </Button>
-                     </DialogTrigger>
-                     <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                       <DialogHeader>
-                         <DialogTitle>Calculation History</DialogTitle>
-                         <DialogDescription>
-                           View and reload your previous calculations
-                         </DialogDescription>
-                       </DialogHeader>
-                       {history.length === 0 ? (
-                         <div className="text-center py-8 text-muted-foreground">
-                           No calculation history yet
-                         </div>
-                       ) : (
-                         <div className="space-y-2">
-                           <div className="flex justify-end">
-                             <Button variant="outline" size="sm" onClick={clearHistory}>
-                               Clear History
-                             </Button>
-                           </div>
-                           {history.map((entry) => (
-                             <Card key={entry.id} className="p-4">
-                               <div className="flex items-start justify-between">
-                                 <div className="flex-1">
-                                   <div className="flex items-center gap-2 mb-2">
-                                     <Badge variant="outline">{entry.programName}</Badge>
-                                     <span className="text-xs text-muted-foreground">
-                                       {entry.institutionName}
-                                     </span>
-                                   </div>
-                                   <div className="flex items-center gap-4 text-sm">
-                                     <span>UTME: {entry.utme}</span>
-                                     <span>Score: {entry.result.compositeScore.toFixed(1)}</span>
-                                     {entry.result.probability && (
-                                       <span>{(entry.result.probability * 100).toFixed(0)}%</span>
-                                     )}
-                                     <Badge variant={entry.result.category === "safe" ? "default" : entry.result.category === "target" ? "secondary" : "destructive"}>
-                                       {entry.result.category}
-                                     </Badge>
-                                   </div>
-                                   <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
-                                     <Clock className="h-3 w-3" />
-                                     {new Date(entry.timestamp).toLocaleString()}
-                                   </div>
-                                 </div>
-                                 <div className="flex gap-2">
-                                   <Button
-                                     variant="outline"
-                                     size="sm"
-                                     onClick={() => loadFromHistory(entry)}
-                                   >
-                                     Load
-                                   </Button>
-                                   <Button
-                                     variant={selectedForComparison.has(entry.id) ? "default" : "outline"}
-                                     size="sm"
-                                     onClick={() => toggleComparison(entry.id)}
-                                   >
-                                     <GitCompare className="h-3 w-3" />
-                                   </Button>
-                                 </div>
-                               </div>
-                             </Card>
-                           ))}
-                         </div>
-                       )}
-                     </DialogContent>
-                   </Dialog>
-                   {comparedCalculations.length > 0 && (
-                     <Dialog open={showComparison} onOpenChange={setShowComparison}>
-                       <DialogTrigger asChild>
-                         <Button variant="outline" size="sm">
-                           <GitCompare className="h-4 w-4 mr-2" />
-                           Compare ({comparedCalculations.length})
-                         </Button>
-                       </DialogTrigger>
-                       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                         <DialogHeader>
-                           <DialogTitle>Compare Calculations</DialogTitle>
-                           <DialogDescription>
-                             Compare multiple program calculations side by side
-                           </DialogDescription>
-                         </DialogHeader>
-                         <div className="grid gap-4 md:grid-cols-2">
-                           {comparedCalculations.map((entry) => (
-                             <Card key={entry.id} className="p-4">
-                               <div className="space-y-2">
-                                 <div>
-                                   <h4 className="font-semibold">{entry.programName}</h4>
-                                   <p className="text-xs text-muted-foreground">{entry.institutionName}</p>
-                                 </div>
-                                 <div className="grid grid-cols-2 gap-2 text-sm">
-                                   <div>
-                                     <span className="text-muted-foreground">UTME:</span> {entry.utme}
-                                   </div>
-                                   <div>
-                                     <span className="text-muted-foreground">Score:</span> {entry.result.compositeScore.toFixed(1)}
-                                   </div>
-                                   {entry.result.probability && (
-                                     <div className="col-span-2">
-                                       <span className="text-muted-foreground">Probability: </span>
-                                       {(entry.result.probability * 100).toFixed(0)}%
-                                     </div>
-                                   )}
-                                   <div className="col-span-2">
-                                     <Badge variant={entry.result.category === "safe" ? "default" : entry.result.category === "target" ? "secondary" : "destructive"}>
-                                       {entry.result.category}
-                                     </Badge>
-                                   </div>
-                                 </div>
-                                 <Button
-                                   variant="ghost"
-                                   size="sm"
-                                   onClick={() => toggleComparison(entry.id)}
-                                   className="w-full"
-                                 >
-                                   Remove from Comparison
-                                 </Button>
-                               </div>
-                             </Card>
-                           ))}
-                         </div>
-                       </DialogContent>
-                     </Dialog>
-                   )}
+                   <CalculatorHistory
+                     history={history}
+                     selectedForComparison={selectedForComparison}
+                     onLoadFromHistory={loadFromHistory}
+                     onClearHistory={clearHistory}
+                     onToggleComparison={toggleComparison}
+                     onShowComparison={() => setShowComparison(true)}
+                   />
                  </div>
                </div>
              </div>
@@ -644,60 +684,27 @@ export default function CalculatorPage() {
             </div>
           )}
 
-          {result && (
-            <div className="mt-6 space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Results</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Composite Score</p>
-                    <p className="text-2xl font-bold">{result.compositeScore}</p>
-                  </div>
-
-                  {result.probability !== undefined && (
-                    <div>
-                      <p className="text-sm text-muted-foreground">
-                        Admission Probability
-                      </p>
-                      <p className="text-2xl font-bold">
-                        {(result.probability * 100).toFixed(0)}%
-                      </p>
-                      {result.confidenceInterval && (
-                        <p className="text-xs text-muted-foreground">
-                          Confidence:{" "}
-                          {(result.confidenceInterval[0] * 100).toFixed(0)}% -{" "}
-                          {(result.confidenceInterval[1] * 100).toFixed(0)}%
-                        </p>
-                      )}
-                    </div>
-                  )}
-
-                  <div>
-                    <p className="text-sm text-muted-foreground">Category</p>
-                    <p className="text-lg font-semibold capitalize">{result.category}</p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm text-muted-foreground">Rationale</p>
-                    <p className="text-sm">{result.rationale}</p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm text-muted-foreground">Data Quality</p>
-                    <p className="text-xs capitalize">
-                      {result.dataQuality.cutoffConfidence}
-                      {result.dataQuality.historicalDataYears &&
-                        ` • ${result.dataQuality.historicalDataYears} years of data`}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
         </CardContent>
       </Card>
+
+      <CalculatorResults result={result} />
+
+      {result && (
+        <WhatIfScenarios
+          baseResult={result}
+          baseUtme={parseInt(utme) || 0}
+          baseOlevels={olevels}
+          programId={programId}
+          onCalculate={calculateEligibility}
+        />
+      )}
+
+      <CalculatorComparison
+        showComparison={showComparison}
+        onClose={() => setShowComparison(false)}
+        comparedCalculations={comparedCalculations}
+        onRemoveFromComparison={toggleComparison}
+      />
       </main>
       <Footer />
     </div>

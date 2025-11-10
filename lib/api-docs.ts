@@ -5,7 +5,18 @@
 
 import swaggerJsdoc from "swagger-jsdoc"
 
-const options: swaggerJsdoc.Options = {
+interface SwaggerOptions {
+  definition: {
+    openapi?: string
+    info?: any
+    servers?: any[]
+    components?: any
+    tags?: any[]
+  }
+  apis?: string[]
+}
+
+const options: SwaggerOptions = {
   definition: {
     openapi: "3.0.0",
     info: {

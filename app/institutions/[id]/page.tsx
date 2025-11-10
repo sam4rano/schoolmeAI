@@ -5,6 +5,12 @@ import { Badge } from "@/components/ui/badge"
 import { Navbar } from "@/components/ui/navbar"
 import { Footer } from "@/components/ui/footer"
 import { Separator } from "@/components/ui/separator"
+import { ReviewForm } from "@/components/reviews/review-form"
+import { ReviewList } from "@/components/reviews/review-list"
+import { InstitutionProgramsList } from "@/components/institutions/institution-programs-list"
+import { InstitutionStatistics } from "@/components/institutions/institution-statistics"
+import { InstitutionMap } from "@/components/institutions/institution-map"
+import { InstitutionContact } from "@/components/institutions/institution-contact"
 import Link from "next/link"
 import { DollarSign, Calendar, Info } from "lucide-react"
 
@@ -191,131 +197,175 @@ export default async function InstitutionDetailPage({
     notFound()
   }
 
+  const contact = institution.contact as any
+  const socialMedia = contact?.socialMedia || null
+
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar />
-      <main className="flex-1 container mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <div className="mb-8">
-        <Link href="/institutions">
-          <Button variant="ghost" size="sm">
-            ← Back to Institutions
-          </Button>
-        </Link>
+      <div className="no-print">
+        <Navbar />
       </div>
+      <main className="flex-1 container mx-auto py-8 px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <div className="mb-8 no-print">
+          <Link href="/institutions">
+            <Button variant="ghost" size="sm">
+              ← Back to Institutions
+            </Button>
+          </Link>
+        </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-3xl">{institution.name}</CardTitle>
-          <CardDescription>
-            {institution.type} • {institution.ownership} • {institution.state}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <h3 className="font-semibold mb-2">Location</h3>
-            <p className="text-muted-foreground">
-              {institution.city}, {institution.state}
-            </p>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-3xl">{institution.name}</CardTitle>
+                <CardDescription>
+                  {institution.type} • {institution.ownership} • {institution.state}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {institution.accreditationStatus && (
+                  <div>
+                    <h3 className="font-semibold mb-2">Accreditation Status</h3>
+                    <Badge
+                      variant={
+                        institution.accreditationStatus === "Full"
+                          ? "default"
+                          : institution.accreditationStatus === "Interim"
+                          ? "secondary"
+                          : "destructive"
+                      }
+                    >
+                      {institution.accreditationStatus}
+                    </Badge>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Programs List */}
+            <InstitutionProgramsList
+              institutionId={institution.id}
+              institutionName={institution.name}
+            />
+
+            {/* Statistics */}
+            <InstitutionStatistics institutionId={institution.id} />
           </div>
 
-          {institution.website && (
-            <div>
-              <h3 className="font-semibold mb-2">Website</h3>
-              <a
-                href={institution.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
-                {institution.website}
-              </a>
-            </div>
-          )}
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Contact Information */}
+            <InstitutionContact
+              name={institution.name}
+              website={institution.website}
+              email={contact?.email}
+              phone={contact?.phone}
+              address={contact?.address}
+              city={institution.city}
+              state={institution.state}
+              socialMedia={socialMedia}
+            />
 
-          {institution.accreditationStatus && (
-            <div>
-              <h3 className="font-semibold mb-2">Accreditation Status</h3>
-              <p className="text-muted-foreground">
-                {institution.accreditationStatus}
-              </p>
-            </div>
-          )}
+            {/* Map */}
+            <InstitutionMap
+              name={institution.name}
+              city={institution.city}
+              state={institution.state}
+              address={contact?.address}
+            />
+          </div>
+        </div>
 
-          {institution.programs && institution.programs.length > 0 && (
-            <div>
-              <h3 className="font-semibold mb-2">Programs</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                {institution.programs.map((program: any) => (
-                  <Link
-                    key={program.id}
-                    href={`/programs/${program.id}`}
-                    className="text-blue-600 hover:underline"
-                  >
-                    {program.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
+        {/* Fees Schedule Section */}
+        <div id="fees" className="mt-6">
+          {(institution.tuitionFees || institution.feesSchedule) ? (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <DollarSign className="h-5 w-5 text-primary" />
+                  <CardTitle>Tuition Fees Schedule</CardTitle>
+                </div>
+                <CardDescription>
+                  School fees and charges for {institution.name}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FeesScheduleDisplay 
+                  fees={institution.tuitionFees || institution.feesSchedule} 
+                  website={institution.website}
+                />
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <DollarSign className="h-5 w-5 text-muted-foreground" />
+                  <CardTitle>Tuition Fees Schedule</CardTitle>
+                </div>
+                <CardDescription>
+                  Fees information for {institution.name}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8 text-muted-foreground">
+                  <Info className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p>Fees schedule information is not available at this time.</p>
+                  {institution.website && (
+                    <p className="text-sm mt-2">
+                      Please check the{" "}
+                      <a
+                        href={institution.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                      >
+                        official website
+                      </a>{" "}
+                      for current fees information.
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           )}
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Fees Schedule Section */}
-      <div id="fees">
-        {(institution.tuitionFees || institution.feesSchedule) ? (
-          <Card className="mt-6">
+        {/* Reviews Section */}
+        <div className="mt-8 space-y-6 no-print">
+          <Card>
             <CardHeader>
-              <div className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-primary" />
-                <CardTitle>Tuition Fees Schedule</CardTitle>
-              </div>
+              <CardTitle>Write a Review</CardTitle>
               <CardDescription>
-                School fees and charges for {institution.name}
+                Share your experience with this institution
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <FeesScheduleDisplay 
-                fees={institution.tuitionFees || institution.feesSchedule} 
-                website={institution.website}
+              <ReviewForm
+                entityType="institution"
+                entityId={institution.id}
+                onSuccess={() => {
+                  // Refresh reviews list
+                  if (typeof window !== "undefined") {
+                    window.location.reload()
+                  }
+                }}
               />
             </CardContent>
           </Card>
-        ) : (
-          <Card className="mt-6">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-muted-foreground" />
-                <CardTitle>Tuition Fees Schedule</CardTitle>
-              </div>
-              <CardDescription>
-                Fees information for {institution.name}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <Info className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p>Fees schedule information is not available at this time.</p>
-                {institution.website && (
-                  <p className="text-sm mt-2">
-                    Please check the{" "}
-                    <a
-                      href={institution.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline"
-                    >
-                      official website
-                    </a>{" "}
-                    for current fees information.
-                  </p>
-                )}
-              </div>
+
+          <Card>
+            <CardContent className="pt-6">
+              <ReviewList entityType="institution" entityId={institution.id} />
             </CardContent>
           </Card>
-        )}
-      </div>
+        </div>
       </main>
-      <Footer />
+      <div className="no-print">
+        <Footer />
+      </div>
     </div>
   )
 }

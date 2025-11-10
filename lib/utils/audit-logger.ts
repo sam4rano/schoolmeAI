@@ -2,9 +2,9 @@ import { prisma } from "@/lib/prisma"
 
 interface LogAuditEventParams {
   userId: string
-  entityType: "institution" | "program"
+  entityType: "institution" | "program" | "settings" | "user"
   entityId: string
-  action: "create" | "update" | "delete"
+  action: "create" | "update" | "delete" | "read"
   institutionId?: string
   programId?: string
   metadata?: Record<string, any>

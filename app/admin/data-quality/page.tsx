@@ -174,7 +174,7 @@ export default function DataQualityPage() {
                 <p className="text-xs text-muted-foreground mt-1">
                   {coverage?.cutoff.withData || 0} / {coverage?.cutoff.total || 0} programs have cutoff data
                 </p>
-                {coverage?.cutoff.withoutData > 0 && (
+                {coverage?.cutoff?.withoutData && coverage.cutoff.withoutData > 0 && (
                   <p className="text-xs text-muted-foreground">
                     {coverage.cutoff.withoutData} programs missing cutoff data
                   </p>
@@ -200,7 +200,7 @@ export default function DataQualityPage() {
                 <p className="text-xs text-muted-foreground mt-1">
                   {coverage?.descriptions.withData || 0} / {coverage?.descriptions.total || 0} programs have descriptions
                 </p>
-                {coverage?.descriptions.withoutData > 0 && (
+                {coverage?.descriptions?.withoutData && coverage.descriptions.withoutData > 0 && (
                   <p className="text-xs text-muted-foreground">
                     {coverage.descriptions.withoutData} programs missing descriptions
                   </p>

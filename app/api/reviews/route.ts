@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { handleApiError } from "@/lib/utils/api-error-handler"
+import { requireAuth, getAuthenticatedSession } from "@/lib/middleware/auth"
 
 const createReviewSchema = z.object({
   entityType: z.enum(["institution", "program"]),
@@ -15,13 +14,11 @@ const createReviewSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized. Please sign in to submit a review." },
-        { status: 401 }
-      )
+    const authResult = await requireAuth()
+    if ("response" in authResult) {
+      return authResult.response
     }
+    const { session } = authResult
 
     const body = await request.json()
     const validatedData = createReviewSchema.parse(body)
@@ -130,8 +127,8 @@ export async function GET(request: NextRequest) {
       where.status = validatedData.status
     } else {
       // Default: only show approved reviews for non-admin users
-      const session = await getServerSession(authOptions)
-      const isAdmin = session?.user?.roles?.includes("admin")
+      const session = await getAuthenticatedSession()
+      const isAdmin = session?.user.roles?.includes("admin")
       if (!isAdmin) {
         where.status = "approved"
       }
@@ -154,13 +151,24 @@ export async function GET(request: NextRequest) {
     }
 
     const skip = (validatedData.page - 1) * validatedData.limit
-    const [reviews, total] = await Promise.all([
+    const [reviews, total, avgRating] = await Promise.all([
       prisma.review.findMany({
         where,
         orderBy,
         skip,
         take: validatedData.limit,
-        include: {
+        select: {
+          id: true,
+          userId: true,
+          institutionId: true,
+          programId: true,
+          rating: true,
+          title: true,
+          content: true,
+          status: true,
+          helpfulCount: true,
+          createdAt: true,
+          updatedAt: true,
           user: {
             select: {
               id: true,
@@ -171,18 +179,16 @@ export async function GET(request: NextRequest) {
         },
       }),
       prisma.review.count({ where }),
+      prisma.review.aggregate({
+        where: {
+          ...where,
+          status: "approved",
+        },
+        _avg: {
+          rating: true,
+        },
+      }),
     ])
-
-    // Calculate average rating
-    const avgRating = await prisma.review.aggregate({
-      where: {
-        ...where,
-        status: "approved",
-      },
-      _avg: {
-        rating: true,
-      },
-    })
 
     return NextResponse.json({
       data: reviews,

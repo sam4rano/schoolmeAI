@@ -12,24 +12,26 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Navbar } from "@/components/ui/navbar"
 import { Footer } from "@/components/ui/footer"
 import { ProtectedRoute } from "@/components/protected-route"
-import { User, Mail, Calendar, MapPin, Save } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
+import { User, Mail, Calendar, MapPin, Save, Loader2 } from "lucide-react"
+import { NotificationPreferences } from "@/components/profile/notification-preferences"
 
 export default function ProfilePage() {
   const sessionResult = useSession()
+  const { toast } = useToast()
   const [profile, setProfile] = useState({
     name: "",
     email: "",
     stateOfOrigin: "",
     dateOfBirth: "",
   })
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
   const { data: session, status } = sessionResult || { data: null, status: "loading" }
 
   useEffect(() => {
     if (status === "authenticated" && session?.user) {
-      // Fetch user profile
       fetchProfile()
     } else if (status === "unauthenticated") {
       setLoading(false)
@@ -38,16 +40,24 @@ export default function ProfilePage() {
   }, [session, status])
 
   const fetchProfile = async () => {
+    setLoading(true)
     try {
-      // In a real app, fetch from API
+      const response = await fetch("/api/profile")
+      if (!response.ok) throw new Error("Failed to fetch profile")
+      const data = await response.json()
       setProfile({
-        name: (session?.user as any)?.name || "",
-        email: session?.user?.email || "",
-        stateOfOrigin: "",
-        dateOfBirth: "",
+        name: data.data?.name || "",
+        email: data.data?.email || "",
+        stateOfOrigin: data.data?.stateOfOrigin || "",
+        dateOfBirth: data.data?.dateOfBirth || "",
       })
     } catch (error) {
       console.error("Error fetching profile:", error)
+      toast({
+        title: "Error",
+        description: "Failed to load profile",
+        variant: "destructive",
+      })
     } finally {
       setLoading(false)
     }
@@ -56,11 +66,29 @@ export default function ProfilePage() {
   const handleSave = async () => {
     setSaving(true)
     try {
-      // In a real app, save to API
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      // Show success message
+      const response = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: profile.name,
+          stateOfOrigin: profile.stateOfOrigin,
+          dateOfBirth: profile.dateOfBirth,
+        }),
+      })
+      if (!response.ok) throw new Error("Failed to save profile")
+      toast({
+        title: "Success",
+        description: "Profile updated successfully",
+      })
     } catch (error) {
       console.error("Error saving profile:", error)
+      toast({
+        title: "Error",
+        description: "Failed to save profile",
+        variant: "destructive",
+      })
     } finally {
       setSaving(false)
     }
@@ -97,6 +125,12 @@ export default function ProfilePage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {loading ? (
+                    <div className="flex items-center justify-center py-8">
+                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : (
+                    <>
                   <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
                     <div className="relative">
@@ -162,19 +196,21 @@ export default function ProfilePage() {
                     </div>
                   </div>
 
-                  <Button onClick={handleSave} disabled={saving} className="w-full sm:w-auto">
-                    {saving ? (
-                      <>
-                        <Save className="mr-2 h-4 w-4 animate-spin" />
-                        Saving...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="mr-2 h-4 w-4" />
-                        Save Changes
-                      </>
-                    )}
-                  </Button>
+                      <Button onClick={handleSave} disabled={saving} className="w-full sm:w-auto">
+                        {saving ? (
+                          <>
+                            <Save className="mr-2 h-4 w-4 animate-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="mr-2 h-4 w-4" />
+                            Save Changes
+                          </>
+                        )}
+                      </Button>
+                    </>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -196,19 +232,7 @@ export default function ProfilePage() {
             </TabsContent>
 
             <TabsContent value="preferences">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Preferences</CardTitle>
-                  <CardDescription>
-                    Configure your notification and application preferences
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground text-center py-8">
-                    Preferences management coming soon...
-                  </p>
-                </CardContent>
-              </Card>
+              <NotificationPreferences />
             </TabsContent>
           </Tabs>
         </main>

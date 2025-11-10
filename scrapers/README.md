@@ -9,6 +9,9 @@ scrapers/
 ├── nuc/              # National Universities Commission scraper
 ├── myschool/         # Myschool portal scraper
 ├── myschoolgist/     # MySchoolGist scraper
+├── ncce/             # National Commission for Colleges of Education scraper
+├── nbte/             # National Board for Technical Education scraper
+├── nmcn/             # Nursing and Midwifery Council of Nigeria scraper
 ├── shared/           # Shared utilities and base classes
 ├── requirements.txt  # Python dependencies
 └── docker-compose.yml # Scraper services configuration
@@ -37,6 +40,14 @@ python -m scrapers.run_all
 python -m scrapers.nuc.scraper
 python -m scrapers.myschool.scraper
 python -m scrapers.myschoolgist.scraper
+python -m scrapers.ncce.scraper
+python -m scrapers.nbte.scraper
+python -m scrapers.nmcn.scraper
+
+# Or use npm scripts
+npm run scrape:ncce
+npm run scrape:nbte
+npm run scrape:nmcn
 ```
 
 ## Docker Setup

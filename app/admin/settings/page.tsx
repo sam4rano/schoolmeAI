@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,38 +8,122 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { useToast } from "@/hooks/use-toast"
 import { Save, Loader2, Settings, Database, Key, Bell } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
+
+interface SystemSettings {
+  id: string
+  autoCalculateQualityScore: boolean
+  qualityScoreThreshold: number
+  enableAuditLogging: boolean
+  auditLogRetentionDays: number
+  enablePublicAPI: boolean
+  apiRateLimit: number
+  notifyOnDataQualityIssues: boolean
+  notifyOnBulkOperations: boolean
+  updatedBy?: string | null
+  createdAt: string
+  updatedAt: string
+}
 
 export default function AdminSettingsPage() {
   const { toast } = useToast()
+  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [settings, setSettings] = useState({
-    // Data Quality Settings
+  const [settings, setSettings] = useState<SystemSettings>({
+    id: "system",
     autoCalculateQualityScore: true,
     qualityScoreThreshold: 70,
-    
-    // Audit Settings
     enableAuditLogging: true,
     auditLogRetentionDays: 365,
-    
-    // API Settings
     enablePublicAPI: false,
     apiRateLimit: 100,
-    
-    // Notification Settings
     notifyOnDataQualityIssues: true,
     notifyOnBulkOperations: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   })
+
+  // Fetch settings on mount
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch("/api/admin/settings")
+        if (!response.ok) {
+          throw new Error("Failed to fetch settings")
+        }
+        const data = await response.json()
+        if (data.data) {
+          setSettings(data.data)
+        }
+      } catch (error) {
+        console.error("Error fetching settings:", error)
+        toast({
+          title: "Error",
+          description: "Failed to load settings. Using defaults.",
+          variant: "destructive",
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchSettings()
+  }, [toast])
 
   const handleSave = async () => {
     setSaving(true)
-    // TODO: Implement settings save API
-    setTimeout(() => {
-      setSaving(false)
+    try {
+      const response = await fetch("/api/admin/settings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(settings),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || "Failed to save settings")
+      }
+
+      const data = await response.json()
+      setSettings(data.data)
+
       toast({
         title: "Settings saved",
         description: "Your settings have been saved successfully",
       })
-    }, 1000)
+    } catch (error) {
+      console.error("Error saving settings:", error)
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to save settings",
+        variant: "destructive",
+      })
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <Skeleton className="h-10 w-64 mb-2" />
+          <Skeleton className="h-5 w-96" />
+        </div>
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-4 w-64 mt-2" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-20 w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (

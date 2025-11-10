@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { usePathname } from "next/navigation"
-import { Menu, X, User, LogOut, Shield, LayoutDashboard, ChevronDown, Building2, GraduationCap, Calculator, Sparkles, MessageSquare, BarChart3, DollarSign, TrendingUp } from "lucide-react"
+import { Menu, X, User, LogOut, Shield, LayoutDashboard, ChevronDown, Building2, GraduationCap, Calculator, Sparkles, MessageSquare, BarChart3, DollarSign, TrendingUp, Bell, Newspaper } from "lucide-react"
 import { useState } from "react"
 import { useSession, signOut } from "next-auth/react"
 import { SearchAutocomplete } from "@/components/search-autocomplete"
@@ -40,6 +40,8 @@ const navItems = [
     ],
   },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/community", label: "Community", icon: MessageSquare },
+  { href: "/news", label: "News", icon: Newspaper },
 ]
 
 export function Navbar() {
@@ -55,8 +57,12 @@ export function Navbar() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="text-2xl">🇳🇬</span>
+            <Link 
+              href="/" 
+              className="flex items-center gap-2"
+              aria-label="EduRepo-NG-AI Home"
+            >
+              <span className="text-2xl" aria-hidden="true">🇳🇬</span>
               <span className="text-xl font-bold">EduRepo-NG-AI</span>
             </Link>
           </div>
@@ -77,11 +83,13 @@ export function Navbar() {
                         ? "text-primary"
                         : "text-muted-foreground hover:text-primary"
                     )}
+                    aria-label={item.label}
+                    aria-current={active ? "page" : undefined}
                   >
-                    {item.icon && <item.icon className="h-4 w-4" />}
+                    {item.icon && <item.icon className="h-4 w-4" aria-hidden="true" />}
                     {item.label}
                     {active && (
-                      <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+                      <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" aria-hidden="true" />
                     )}
                   </Link>
                 )
@@ -99,11 +107,14 @@ export function Navbar() {
                             ? "text-primary"
                             : "text-muted-foreground hover:text-primary"
                         )}
+                        aria-label={`${item.label} menu`}
+                        aria-expanded="false"
+                        aria-haspopup="true"
                       >
                         {item.label}
-                        <ChevronDown className="h-4 w-4" />
+                        <ChevronDown className="h-4 w-4" aria-hidden="true" />
                         {hasActiveItem && (
-                          <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+                          <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" aria-hidden="true" />
                         )}
                       </Button>
                     </DropdownMenuTrigger>
@@ -191,6 +202,12 @@ export function Navbar() {
                         Profile
                       </Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/notifications" className="cursor-pointer">
+                        <Bell className="mr-2 h-4 w-4" />
+                        Notifications
+                      </Link>
+                    </DropdownMenuItem>
                     {isAdmin && (
                       <DropdownMenuItem asChild>
                         <Link href="/admin" className="cursor-pointer">
@@ -213,12 +230,21 @@ export function Navbar() {
             ) : (
               <>
                 <Link href="/calculator" className="hidden sm:block">
-                  <Button size="sm" className="hidden sm:inline-flex">
+                  <Button 
+                    size="sm" 
+                    className="hidden sm:inline-flex"
+                    aria-label="Get Started with Eligibility Calculator"
+                  >
                     Get Started
                   </Button>
                 </Link>
                 <Link href="/auth/signin">
-                  <Button size="sm" variant="outline" className="hidden sm:inline-flex">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="hidden sm:inline-flex"
+                    aria-label="Sign In to your account"
+                  >
                     Sign In
                   </Button>
                 </Link>
@@ -230,11 +256,14 @@ export function Navbar() {
               size="icon"
               className="md:hidden"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
             >
               {mobileMenuOpen ? (
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5" aria-hidden="true" />
               ) : (
-                <Menu className="h-5 w-5" />
+                <Menu className="h-5 w-5" aria-hidden="true" />
               )}
             </Button>
           </div>

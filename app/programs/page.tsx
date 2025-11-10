@@ -14,6 +14,7 @@ import { usePrograms } from "@/lib/hooks/use-programs"
 import { useInstitutions } from "@/lib/hooks/use-institutions"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useQuery } from "@tanstack/react-query"
+import { AdvancedSearch, SearchFilters } from "@/components/search/advanced-search"
 
 function ProgramCard({ program }: { program: any }) {
   const cutoffHistory = Array.isArray(program.cutoffHistory) ? program.cutoffHistory : []
@@ -172,51 +173,28 @@ function ProgramCard({ program }: { program: any }) {
 }
 
 export default function ProgramsPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCourse, setSelectedCourse] = useState("all")
-  const [degreeType, setDegreeType] = useState("all")
-  const [institutionId, setInstitutionId] = useState("all")
+  const [searchFilters, setSearchFilters] = useState<SearchFilters>({})
   const [currentPage, setCurrentPage] = useState(1)
-  const [debouncedQuery, setDebouncedQuery] = useState("")
-
-  // Debounce search query
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(searchQuery)
-    }, 300)
-    return () => clearTimeout(timer)
-  }, [searchQuery])
 
   // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1)
-  }, [selectedCourse, degreeType, institutionId, debouncedQuery])
-
-  // Fetch institutions for filter
-  const { data: institutionsData } = useInstitutions({ limit: 1000 })
-  const institutions = institutionsData?.data || []
-
-  // Fetch available courses for dropdown
-  const { data: coursesData } = useQuery<string[]>({
-    queryKey: ["courses"],
-    queryFn: async () => {
-      const response = await fetch("/api/programs/courses")
-      if (!response.ok) throw new Error("Failed to fetch courses")
-      const data = await response.json()
-      return data.data || []
-    },
-  })
-  const courses = coursesData || []
+  }, [searchFilters])
 
   // Fetch programs with filters
   const { data: programsData, isLoading } = usePrograms({
-    query: selectedCourse === "all" ? (debouncedQuery || undefined) : undefined,
-    course: selectedCourse !== "all" ? selectedCourse : undefined,
-    degreeType: degreeType !== "all" ? degreeType : undefined,
-    institution_id: institutionId !== "all" ? institutionId : undefined,
+    query: searchFilters.query,
+    course: searchFilters.course,
+    degreeType: searchFilters.degreeType,
+    institution_id: searchFilters.institutionId,
+    accreditationStatus: searchFilters.accreditationStatus,
+    cutoffMin: searchFilters.cutoffMin?.toString(),
+    cutoffMax: searchFilters.cutoffMax?.toString(),
+    feesMin: searchFilters.feesMin?.toString(),
+    feesMax: searchFilters.feesMax?.toString(),
     page: currentPage,
     limit: 18, // Show 18 per page (3 columns x 6 rows)
-    rankByDifficulty: selectedCourse !== "all", // Rank by difficulty when course is selected
+    rankByDifficulty: !!searchFilters.course, // Rank by difficulty when course is selected
   })
 
   const programs = programsData?.data || []
@@ -236,81 +214,105 @@ export default function ProgramsPage() {
           </p>
         </div>
 
-        {/* Search and Filters */}
-        <Card className="mb-4 sm:mb-6">
-          <CardContent className="pt-4 sm:pt-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search by institution (e.g., unilag, ui, oau)..."
-                  className="pl-10"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  disabled={selectedCourse !== "all"}
-                />
+        {/* Advanced Search */}
+        <div className="mb-4 sm:mb-6">
+          <AdvancedSearch
+            type="programs"
+            onSearch={(filters) => {
+              setSearchFilters(filters)
+              setCurrentPage(1)
+            }}
+            initialFilters={searchFilters}
+          />
+        </div>
+
+        {/* Active Filters Display */}
+        {Object.keys(searchFilters).length > 0 && (
+          <Card className="mb-4 sm:mb-6">
+            <CardContent className="pt-4 sm:pt-6">
+              <div className="flex flex-wrap gap-2">
+                {searchFilters.query && (
+                  <Badge variant="secondary" className="gap-2">
+                    Search: {searchFilters.query}
+                    <button
+                      onClick={() => {
+                        const newFilters = { ...searchFilters }
+                        delete newFilters.query
+                        setSearchFilters(newFilters)
+                      }}
+                      className="ml-1 hover:text-destructive"
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                )}
+                {searchFilters.degreeType && (
+                  <Badge variant="secondary" className="gap-2">
+                    Degree: {searchFilters.degreeType}
+                    <button
+                      onClick={() => {
+                        const newFilters = { ...searchFilters }
+                        delete newFilters.degreeType
+                        setSearchFilters(newFilters)
+                      }}
+                      className="ml-1 hover:text-destructive"
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                )}
+                {searchFilters.accreditationStatus && (
+                  <Badge variant="secondary" className="gap-2">
+                    Accreditation: {searchFilters.accreditationStatus}
+                    <button
+                      onClick={() => {
+                        const newFilters = { ...searchFilters }
+                        delete newFilters.accreditationStatus
+                        setSearchFilters(newFilters)
+                      }}
+                      className="ml-1 hover:text-destructive"
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                )}
+                {(searchFilters.cutoffMin !== undefined || searchFilters.cutoffMax !== undefined) && (
+                  <Badge variant="secondary" className="gap-2">
+                    Cutoff: {searchFilters.cutoffMin || 0} - {searchFilters.cutoffMax || "∞"}
+                    <button
+                      onClick={() => {
+                        const newFilters = { ...searchFilters }
+                        delete newFilters.cutoffMin
+                        delete newFilters.cutoffMax
+                        setSearchFilters(newFilters)
+                      }}
+                      className="ml-1 hover:text-destructive"
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                )}
+                {(searchFilters.feesMin !== undefined || searchFilters.feesMax !== undefined) && (
+                  <Badge variant="secondary" className="gap-2">
+                    Fees: ₦{searchFilters.feesMin?.toLocaleString() || 0} - ₦{searchFilters.feesMax?.toLocaleString() || "∞"}
+                    <button
+                      onClick={() => {
+                        const newFilters = { ...searchFilters }
+                        delete newFilters.feesMin
+                        delete newFilters.feesMax
+                        setSearchFilters(newFilters)
+                      }}
+                      className="ml-1 hover:text-destructive"
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                )}
               </div>
-              <Select value={selectedCourse} onValueChange={setSelectedCourse}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Course" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Courses</SelectItem>
-                  {courses.map((course: string) => (
-                    <SelectItem key={course} value={course}>
-                      {course}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={degreeType} onValueChange={setDegreeType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="All Degree Types" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Degree Types</SelectItem>
-                  <SelectItem value="BSc">BSc</SelectItem>
-                  <SelectItem value="BA">BA</SelectItem>
-                  <SelectItem value="BEng">BEng</SelectItem>
-                  <SelectItem value="BTech">BTech</SelectItem>
-                  <SelectItem value="BEd">BEd</SelectItem>
-                  <SelectItem value="MBBS">MBBS</SelectItem>
-                  <SelectItem value="LLB">LLB</SelectItem>
-                  <SelectItem value="BPharm">BPharm</SelectItem>
-                  <SelectItem value="BAgric">BAgric</SelectItem>
-                  <SelectItem value="BArch">BArch</SelectItem>
-                  <SelectItem value="ND">ND</SelectItem>
-                  <SelectItem value="HND">HND</SelectItem>
-                  <SelectItem value="NCE">NCE</SelectItem>
-                  <SelectItem value="OND">OND</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={institutionId} onValueChange={setInstitutionId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="All Institutions" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Institutions</SelectItem>
-                  {institutions.map((inst: any) => (
-                    <SelectItem key={inst.id} value={inst.id}>
-                      {inst.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            {selectedCourse !== "all" && (
-              <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-primary/5 rounded-md border border-primary/20">
-                <p className="text-xs sm:text-sm font-medium text-primary">
-                  Showing institutions offering <span className="font-bold">{selectedCourse}</span>, ranked by admission difficulty
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Institutions are ranked from most competitive (highest cutoffs) to less competitive
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
+
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -344,7 +346,7 @@ export default function ProgramsPage() {
               <GraduationCap className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">No programs found</p>
               <p className="text-sm text-muted-foreground mt-2">
-                {debouncedQuery || degreeType !== "all" || institutionId !== "all"
+                {Object.keys(searchFilters).length > 0
                   ? "Try adjusting your search or filters"
                   : "Programs will appear here once scraped from MySchoolGist"}
               </p>

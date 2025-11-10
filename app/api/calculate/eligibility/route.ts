@@ -8,6 +8,7 @@ import {
   type EligibilityInput,
   type EligibilityResult,
 } from "@/lib/eligibility"
+import { CALCULATOR, HTTP_STATUS } from "@/lib/constants"
 import { estimateProbabilityWithModel } from "@/lib/probability-model"
 import { logger } from "@/lib/utils/logger"
 
@@ -54,7 +55,7 @@ import { logger } from "@/lib/utils/logger"
  *         description: Internal server error
  */
 const eligibilitySchema = z.object({
-  utme: z.number().min(0).max(400),
+  utme: z.number().min(CALCULATOR.UTME_MIN_SCORE).max(CALCULATOR.UTME_MAX_SCORE),
   olevels: z.record(z.string(), z.string()),
   programId: z.string().uuid(),
   stateOfOrigin: z.string().optional(),
@@ -77,7 +78,7 @@ export async function POST(request: NextRequest) {
     if (!program) {
       return NextResponse.json(
         { error: "Program not found" },
-        { status: 404 }
+        { status: HTTP_STATUS.NOT_FOUND }
       )
     }
 
@@ -85,7 +86,7 @@ export async function POST(request: NextRequest) {
     const olevelPoints = convertGradesToPoints(validatedData.olevels)
 
     // Normalize UTME score (0-400) to 0-100 scale
-    const utmeNormalized = (validatedData.utme / 400) * 100
+    const utmeNormalized = (validatedData.utme / CALCULATOR.UTME_MAX_SCORE) * 100
 
     // Calculate composite score
     const compositeScore = calculateCompositeScore(
@@ -143,7 +144,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Invalid request data", details: error.errors },
-        { status: 400 }
+        { status: HTTP_STATUS.BAD_REQUEST }
       )
     }
 
@@ -153,7 +154,7 @@ export async function POST(request: NextRequest) {
     })
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
     )
   }
 }

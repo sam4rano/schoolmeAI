@@ -34,6 +34,11 @@ export function usePrograms(params?: {
   institution_id?: string
   institution_type?: string
   degreeType?: string
+  accreditationStatus?: string
+  cutoffMin?: string
+  cutoffMax?: string
+  feesMin?: string
+  feesMax?: string
   page?: number
   limit?: number
   rankByDifficulty?: boolean
@@ -46,6 +51,11 @@ export function usePrograms(params?: {
       params?.institution_id,
       params?.institution_type,
       params?.degreeType,
+      params?.accreditationStatus,
+      params?.cutoffMin,
+      params?.cutoffMax,
+      params?.feesMin,
+      params?.feesMax,
       params?.page,
       params?.limit,
       params?.rankByDifficulty,
@@ -57,6 +67,11 @@ export function usePrograms(params?: {
       if (params?.institution_id) searchParams.set("institution_id", params.institution_id)
       if (params?.institution_type) searchParams.set("institution_type", params.institution_type)
       if (params?.degreeType) searchParams.set("degreeType", params.degreeType)
+      if (params?.accreditationStatus) searchParams.set("accreditationStatus", params.accreditationStatus)
+      if (params?.cutoffMin) searchParams.set("cutoffMin", params.cutoffMin)
+      if (params?.cutoffMax) searchParams.set("cutoffMax", params.cutoffMax)
+      if (params?.feesMin) searchParams.set("feesMin", params.feesMin)
+      if (params?.feesMax) searchParams.set("feesMax", params.feesMax)
       if (params?.page) searchParams.set("page", params.page.toString())
       if (params?.limit) searchParams.set("limit", params.limit.toString())
       if (params?.rankByDifficulty) searchParams.set("rankByDifficulty", "true")

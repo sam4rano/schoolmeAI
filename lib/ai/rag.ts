@@ -6,6 +6,10 @@ interface RAGContext {
   programs?: any[]
   cutoffHistory?: any[]
   userProfile?: any
+  conversationHistory?: Array<{
+    role: "user" | "assistant"
+    content: string
+  }>
 }
 
 interface RAGResult {
@@ -18,6 +22,121 @@ interface RAGResult {
     similarity: number
   }>
   context: RAGContext
+}
+
+/**
+ * Fallback: Query database directly when embeddings aren't available
+ */
+async function queryDatabaseDirectly(
+  query: string,
+  options?: {
+    entityType?: string
+    limit?: number
+  }
+): Promise<RAGResult["sources"]> {
+  const limit = options?.limit || 5
+  const searchTerms = query.toLowerCase().split(/\s+/).filter(term => term.length > 2)
+  
+  if (searchTerms.length === 0) {
+    return []
+  }
+
+  const sources: RAGResult["sources"] = []
+
+  try {
+    // Search programs if entityType is "program" or "all" or undefined
+    if (!options?.entityType || options.entityType === "program" || options.entityType === "all") {
+      const programs = await prisma.program.findMany({
+        where: {
+          OR: [
+            { name: { contains: query, mode: "insensitive" } },
+            { faculty: { contains: query, mode: "insensitive" } },
+            { department: { contains: query, mode: "insensitive" } },
+            ...searchTerms.map(term => ({
+              name: { contains: term, mode: "insensitive" }
+            }))
+          ]
+        },
+        include: {
+          institution: {
+            select: {
+              name: true,
+              state: true,
+              city: true,
+              type: true,
+            }
+          }
+        },
+        take: limit,
+      })
+
+      for (const program of programs) {
+        const content = `Program: ${program.name}
+Institution: ${program.institution.name}
+Location: ${program.institution.city}, ${program.institution.state}
+Type: ${program.institution.type}
+${program.faculty ? `Faculty: ${program.faculty}` : ""}
+${program.degreeType ? `Degree Type: ${program.degreeType}` : ""}
+${program.utmeSubjects.length > 0 ? `Required UTME Subjects: ${program.utmeSubjects.join(", ")}` : ""}`
+
+        sources.push({
+          type: "program",
+          id: program.id,
+          title: `${program.name} at ${program.institution.name}`,
+          content,
+          similarity: 0.5, // Default similarity for direct queries
+        })
+      }
+    }
+
+    // Search institutions if entityType is "institution" or "all" or undefined
+    if (!options?.entityType || options.entityType === "institution" || options.entityType === "all") {
+      const institutions = await prisma.institution.findMany({
+        where: {
+          OR: [
+            { name: { contains: query, mode: "insensitive" } },
+            { state: { contains: query, mode: "insensitive" } },
+            { city: { contains: query, mode: "insensitive" } },
+            ...searchTerms.map(term => ({
+              name: { contains: term, mode: "insensitive" }
+            }))
+          ]
+        },
+        include: {
+          programs: {
+            select: {
+              name: true,
+            },
+            take: 10,
+          }
+        },
+        take: limit,
+      })
+
+      for (const institution of institutions) {
+        const programNames = institution.programs.map(p => p.name).join(", ")
+        const content = `Institution: ${institution.name}
+Type: ${institution.type}
+Ownership: ${institution.ownership}
+Location: ${institution.city}, ${institution.state}, Nigeria
+${institution.website ? `Website: ${institution.website}` : ""}
+${programNames ? `Offers programs: ${programNames}` : ""}`
+
+        sources.push({
+          type: "institution",
+          id: institution.id,
+          title: institution.name,
+          content,
+          similarity: 0.5, // Default similarity for direct queries
+        })
+      }
+    }
+
+    return sources.slice(0, limit)
+  } catch (error) {
+    console.error("Error in queryDatabaseDirectly:", error)
+    return []
+  }
 }
 
 /**
@@ -56,16 +175,27 @@ export async function retrieveContext(
         similarity: item.similarity,
       }))
 
+    // If no embeddings found, fall back to direct database query
+    if (sources.length === 0) {
+      console.log("No embeddings found, falling back to direct database query")
+      return await queryDatabaseDirectly(query, options)
+    }
+
     return sources
   } catch (error) {
     console.error("Error in retrieveContext:", error)
-    // If embeddings table doesn't exist or has issues, return empty sources
-    // The fallback answer generator will handle this gracefully
+    // If embeddings table doesn't exist or has issues, fall back to direct query
     if (error instanceof Error && (error.message.includes("relation") || error.message.includes("does not exist"))) {
-      console.warn("Embeddings table not found, returning empty sources")
+      console.warn("Embeddings table not found, falling back to direct database query")
+      return await queryDatabaseDirectly(query, options)
+    }
+    // For other errors, try direct query as fallback
+    try {
+      return await queryDatabaseDirectly(query, options)
+    } catch (fallbackError) {
+      console.error("Error in fallback query:", fallbackError)
       return []
     }
-    throw error
   }
 }
 
@@ -75,7 +205,12 @@ export async function retrieveContext(
 async function generateAnswerWithGemini(
   query: string,
   sources: RAGResult["sources"],
-  userContext?: RAGContext
+  userContext?: RAGContext & {
+    conversationHistory?: Array<{
+      role: "user" | "assistant"
+      content: string
+    }>
+  }
 ): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
@@ -90,6 +225,13 @@ async function generateAnswerWithGemini(
     ? `\n\nUser Context:\n- UTME Score: ${userContext.userProfile?.utme || "Not provided"}\n- O-Level Results: ${userContext.userProfile?.olevels ? "Available" : "Not provided"}\n- State of Origin: ${userContext.userProfile?.stateOfOrigin || "Not provided"}`
     : ""
 
+  const conversationHistoryText = userContext?.conversationHistory && userContext.conversationHistory.length > 0
+    ? `\n\nPrevious Conversation:\n${userContext.conversationHistory
+        .slice(-4)
+        .map((msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`)
+        .join("\n")}`
+    : ""
+
   const prompt = `You are an AI assistant helping Nigerian students with university admission guidance. 
 Use the provided context to answer questions accurately and helpfully. Even if the context is limited, 
 provide the best answer you can based on what's available. Always cite sources using [1], [2], etc. when referencing the context.
@@ -97,14 +239,18 @@ provide the best answer you can based on what's available. Always cite sources u
 IMPORTANT: If the context contains relevant information (even if partial), use it to provide a helpful answer. 
 Only say you don't have information if the context is completely empty or irrelevant.
 
+${conversationHistoryText ? "Use the conversation history to understand the context and provide more relevant answers." : ""}
+
 Context:
 ${contextText}
 ${userContextText}
+${conversationHistoryText}
 
 User Question: ${query}
 
 Provide a helpful answer based on the context above. If the context has relevant information, use it. 
-If the context is empty, suggest that the user check back later as the database is being updated.`
+If the context is empty, suggest that the user check back later as the database is being updated.
+${conversationHistoryText ? "Reference previous conversation when relevant to provide continuity." : ""}`
 
   const model = process.env.GEMINI_MODEL || "gemini-1.5-flash"
 
@@ -148,7 +294,12 @@ If the context is empty, suggest that the user check back later as the database 
 async function generateAnswerWithOpenAI(
   query: string,
   sources: RAGResult["sources"],
-  userContext?: RAGContext
+  userContext?: RAGContext & {
+    conversationHistory?: Array<{
+      role: "user" | "assistant"
+      content: string
+    }>
+  }
 ): Promise<string> {
   const apiKey = process.env.OPENAI_API_KEY
   if (!apiKey) {
@@ -163,6 +314,13 @@ async function generateAnswerWithOpenAI(
     ? `\n\nUser Context:\n- UTME Score: ${userContext.userProfile?.utme || "Not provided"}\n- O-Level Results: ${userContext.userProfile?.olevels ? "Available" : "Not provided"}\n- State of Origin: ${userContext.userProfile?.stateOfOrigin || "Not provided"}`
     : ""
 
+  const conversationHistoryText = userContext?.conversationHistory && userContext.conversationHistory.length > 0
+    ? `\n\nPrevious Conversation:\n${userContext.conversationHistory
+        .slice(-4)
+        .map((msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`)
+        .join("\n")}`
+    : ""
+
   const systemPrompt = `You are an AI assistant helping Nigerian students with university admission guidance. 
 Use the provided context to answer questions accurately and helpfully. Even if the context is limited, 
 provide the best answer you can based on what's available. Always cite sources using [1], [2], etc. when referencing the context.
@@ -170,9 +328,12 @@ provide the best answer you can based on what's available. Always cite sources u
 IMPORTANT: If the context contains relevant information (even if partial), use it to provide a helpful answer. 
 Only say you don't have information if the context is completely empty or irrelevant.
 
+${conversationHistoryText ? "Use the conversation history to understand the context and provide more relevant answers. Reference previous conversation when relevant to provide continuity." : ""}
+
 Context:
 ${contextText}
-${userContextText}`
+${userContextText}
+${conversationHistoryText}`
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -275,6 +436,10 @@ export async function ragPipeline(
     limit?: number
     minSimilarity?: number
     userContext?: RAGContext
+    conversationHistory?: Array<{
+      role: "user" | "assistant"
+      content: string
+    }>
   }
 ): Promise<RAGResult> {
   try {
@@ -284,7 +449,10 @@ export async function ragPipeline(
       minSimilarity: options?.minSimilarity,
     })
 
-    const answer = await generateAnswer(query, sources, options?.userContext)
+    const answer = await generateAnswer(query, sources, {
+      ...options?.userContext,
+      conversationHistory: options?.conversationHistory,
+    })
 
     const context: RAGContext = {}
 

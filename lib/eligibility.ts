@@ -1,20 +1,11 @@
 import { z } from "zod"
+import { O_LEVEL_GRADES, VALID_O_LEVEL_GRADES } from "@/lib/constants"
 
 // O-level grade to points mapping (default)
-const DEFAULT_GRADE_POINTS: Record<string, number> = {
-  A1: 6,
-  B2: 5,
-  B3: 4,
-  C4: 3,
-  C5: 2,
-  C6: 1,
-  D7: 0,
-  E8: 0,
-  F9: 0,
-}
+const DEFAULT_GRADE_POINTS: Record<string, number> = O_LEVEL_GRADES
 
 // O-level grade validation schema
-const gradeSchema = z.enum(["A1", "B2", "B3", "C4", "C5", "C6", "D7", "E8", "F9"])
+const gradeSchema = z.enum(["A1", "B2", "B3", "C4", "C5", "C6", "D7", "E8", "F9"] as [string, ...string[]])
 
 export interface EligibilityInput {
   utme: number // 0-400

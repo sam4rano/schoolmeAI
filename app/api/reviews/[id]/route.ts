@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { handleApiError } from "@/lib/utils/api-error-handler"
+import { requireAuth, canAccess } from "@/lib/middleware/auth"
 import { requireAdmin } from "@/lib/middleware/admin"
 import { logAuditEvent } from "@/lib/utils/audit-logger"
 
@@ -18,13 +17,11 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
+    const authResult = await requireAuth()
+    if ("response" in authResult) {
+      return authResult.response
     }
+    const { session } = authResult
 
     const body = await request.json()
     const validatedData = updateReviewSchema.parse(body)
@@ -42,8 +39,8 @@ export async function PATCH(
     }
 
     // Check if user owns the review or is admin
-    const isAdmin = session.user.roles?.includes("admin")
-    if (review.userId !== session.user.id && !isAdmin) {
+    const userIsAdmin = canAccess(session, review.userId)
+    if (!userIsAdmin) {
       return NextResponse.json(
         { error: "Forbidden. You can only update your own reviews." },
         { status: 403 }
@@ -55,7 +52,7 @@ export async function PATCH(
       where: { id: params.id },
       data: {
         ...validatedData,
-        status: isAdmin ? review.status : "pending", // Re-moderate if user updates
+        status: userIsAdmin && session.user.roles?.includes("admin") ? review.status : "pending", // Re-moderate if user updates
       },
       include: {
         user: {
@@ -69,7 +66,7 @@ export async function PATCH(
     })
 
     // Log audit event
-    if (isAdmin) {
+    if (session.user.roles?.includes("admin")) {
       await logAuditEvent({
         entityType: "program", // Use program as entity type for audit
         entityId: review.programId || review.institutionId || params.id,
@@ -98,13 +95,11 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
+    const authResult = await requireAuth()
+    if ("response" in authResult) {
+      return authResult.response
     }
+    const { session } = authResult
 
     const review = await prisma.review.findUnique({
       where: { id: params.id },
@@ -118,8 +113,7 @@ export async function DELETE(
     }
 
     // Check if user owns the review or is admin
-    const isAdmin = session.user.roles?.includes("admin")
-    if (review.userId !== session.user.id && !isAdmin) {
+    if (!canAccess(session, review.userId)) {
       return NextResponse.json(
         { error: "Forbidden. You can only delete your own reviews." },
         { status: 403 }
@@ -131,7 +125,7 @@ export async function DELETE(
     })
 
     // Log audit event
-    if (isAdmin) {
+    if (session.user.roles?.includes("admin")) {
       await logAuditEvent({
         entityType: review.programId ? "program" : "institution",
         entityId: review.programId || review.institutionId || params.id,

@@ -124,9 +124,12 @@ export function SearchAutocomplete({
   }
 
   return (
-    <div ref={searchRef} className={`relative ${className}`}>
+    <div ref={searchRef} className={`relative ${className}`} role="search">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Search 
+          className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" 
+          aria-hidden="true"
+        />
         <Input
           type="text"
           placeholder={placeholder}
@@ -140,25 +143,40 @@ export function SearchAutocomplete({
             }
           }}
           className="pl-10 pr-10"
+          aria-label="Search institutions, programs, or courses"
+          aria-autocomplete="list"
+          aria-controls={showDropdown && suggestions.length > 0 ? "search-results" : undefined}
+          aria-expanded={showDropdown && suggestions.length > 0}
+          aria-activedescendant={focusedIndex >= 0 ? `search-result-${focusedIndex}` : undefined}
+          role="combobox"
         />
         {query && (
           <button
             onClick={handleSearch}
             className="absolute right-2 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            aria-label="Search"
+            type="button"
           >
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </button>
         )}
       </div>
 
       {showDropdown && query && showResults && (
-        <div className="absolute z-50 w-full mt-1 bg-popover border rounded-md shadow-lg max-h-96 overflow-auto">
+        <div
+          id="search-results"
+          className="absolute z-50 w-full mt-1 bg-popover border rounded-md shadow-lg max-h-96 overflow-auto"
+          role="listbox"
+          aria-label="Search suggestions"
+        >
           {suggestions.length === 0 ? (
             <div className="p-4 text-center text-sm text-muted-foreground">
               <p>No results found for &quot;{query}&quot;</p>
               <button
                 onClick={handleSearch}
                 className="mt-2 text-primary hover:underline"
+                aria-label={`View all search results for ${query}`}
+                type="button"
               >
                 View all search results →
               </button>
@@ -168,6 +186,7 @@ export function SearchAutocomplete({
               {suggestions.map((item: any, index: number) => (
                 <button
                   key={`${item.type}-${item.id}`}
+                  id={`search-result-${index}`}
                   onClick={() => handleSelect(item)}
                   onMouseEnter={() => setFocusedIndex(index)}
                   className={`w-full text-left p-3 rounded-sm transition-colors ${
@@ -175,6 +194,10 @@ export function SearchAutocomplete({
                       ? "bg-accent text-accent-foreground"
                       : "hover:bg-accent hover:text-accent-foreground"
                   }`}
+                  role="option"
+                  aria-selected={focusedIndex === index}
+                  tabIndex={-1}
+                  type="button"
                 >
                   <div className="flex items-start gap-2">
                     {item.type === "institution" ? (

@@ -4,17 +4,71 @@ import { authOptions } from "@/lib/auth"
 import { ragPipeline } from "@/lib/ai/rag"
 import { z } from "zod"
 import { logger } from "@/lib/utils/logger"
+import { AI, HTTP_STATUS } from "@/lib/constants"
 
+/**
+ * @swagger
+ * /api/ai/chat:
+ *   post:
+ *     summary: Chat with AI assistant
+ *     tags: [AI Chat]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - message
+ *             properties:
+ *               message:
+ *                 type: string
+ *                 minLength: 1
+ *                 maxLength: 1000
+ *               entityType:
+ *                 type: string
+ *                 enum: [institution, program, all]
+ *               limit:
+ *                 type: integer
+ *                 minimum: 1
+ *                 maximum: 10
+ *               userContext:
+ *                 type: object
+ *                 properties:
+ *                   utme:
+ *                     type: number
+ *                   olevels:
+ *                     type: object
+ *                   stateOfOrigin:
+ *                     type: string
+ *     responses:
+ *       200:
+ *         description: AI response
+ *       401:
+ *         description: Unauthorized (guest access allowed with limitations)
+ *       500:
+ *         description: Internal server error
+ */
 const chatSchema = z.object({
-  message: z.string().min(1).max(1000),
+  message: z.string().min(1).max(AI.MAX_MESSAGE_LENGTH),
   entityType: z.enum(["institution", "program", "all"]).optional(),
-  limit: z.number().min(1).max(10).optional(),
+  limit: z.number().min(1).max(AI.MAX_LIMIT).optional(),
   userContext: z
     .object({
       utme: z.number().optional(),
       olevels: z.record(z.string()).optional(),
       stateOfOrigin: z.string().optional(),
     })
+    .optional(),
+  conversationHistory: z
+    .array(
+      z.object({
+        role: z.enum(["user", "assistant"]),
+        content: z.string(),
+      })
+    )
     .optional(),
 })
 
@@ -31,7 +85,7 @@ export async function POST(request: NextRequest) {
       })
       return NextResponse.json(
         { error: "Authentication error. Please sign in again." },
-        { status: 401 }
+        { status: HTTP_STATUS.UNAUTHORIZED }
       )
     }
 
@@ -43,17 +97,18 @@ export async function POST(request: NextRequest) {
     const validatedData = chatSchema.parse(body)
 
     // For guest users, limit the number of results and context
-    const limit = isGuest ? Math.min(validatedData.limit || 3, 3) : (validatedData.limit || 5)
+    const limit = isGuest ? Math.min(validatedData.limit || AI.GUEST_LIMIT, AI.GUEST_LIMIT) : (validatedData.limit || AI.DEFAULT_LIMIT)
 
     const result = await ragPipeline(validatedData.message, {
       entityType: validatedData.entityType === "all" ? undefined : validatedData.entityType,
       limit,
-      minSimilarity: 0.3, // Lower threshold to get more results when embeddings are sparse
+      minSimilarity: AI.MIN_SIMILARITY_THRESHOLD, // Lower threshold to get more results when embeddings are sparse
       userContext: validatedData.userContext
         ? {
             userProfile: validatedData.userContext,
           }
         : undefined,
+      conversationHistory: validatedData.conversationHistory,
     })
 
     return NextResponse.json({
@@ -67,7 +122,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Invalid request data", details: error.errors },
-        { status: 400 }
+        { status: HTTP_STATUS.BAD_REQUEST }
       )
     }
 
@@ -86,7 +141,7 @@ export async function POST(request: NextRequest) {
           error: "AI service configuration error. Please configure GEMINI_API_KEY or OPENAI_API_KEY in your environment variables.",
           details: errorMessage
         },
-        { status: 500 }
+        { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
       )
     }
     
@@ -96,7 +151,7 @@ export async function POST(request: NextRequest) {
           error: "Database configuration error. The embeddings table may not exist. Please run database migrations.",
           details: errorMessage
         },
-        { status: 500 }
+        { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
       )
     }
     

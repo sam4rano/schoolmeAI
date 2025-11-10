@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { handleApiError } from "@/lib/utils/api-error-handler"
+import { requireAuth } from "@/lib/middleware/auth"
 
 const getNotificationsSchema = z.object({
   status: z.enum(["unread", "read", "archived"]).optional(),
@@ -14,13 +13,11 @@ const getNotificationsSchema = z.object({
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
+    const authResult = await requireAuth()
+    if ("response" in authResult) {
+      return authResult.response
     }
+    const { session } = authResult
 
     const { searchParams } = new URL(request.url)
     const validatedData = getNotificationsSchema.parse({
@@ -87,13 +84,11 @@ const createNotificationSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
+    const authResult = await requireAuth()
+    if ("response" in authResult) {
+      return authResult.response
     }
+    const { session } = authResult
 
     // Only admins can create notifications for other users
     const isAdmin = session.user.roles?.includes("admin")

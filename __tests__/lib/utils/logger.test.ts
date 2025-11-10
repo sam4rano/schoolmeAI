@@ -16,7 +16,11 @@ describe("Logger", () => {
     it("should log debug messages in development", () => {
       // Set NODE_ENV to development before importing logger
       const originalEnv = process.env.NODE_ENV
-      process.env.NODE_ENV = "development"
+      Object.defineProperty(process.env, "NODE_ENV", {
+        value: "development",
+        writable: true,
+        configurable: true,
+      })
       
       // Clear module cache to force re-import
       jest.resetModules()
@@ -32,12 +36,20 @@ describe("Logger", () => {
       expect(call).toContain("Test debug message")
       
       consoleSpy.mockRestore()
-      process.env.NODE_ENV = originalEnv
+      Object.defineProperty(process.env, "NODE_ENV", {
+        value: originalEnv,
+        writable: true,
+        configurable: true,
+      })
       jest.resetModules()
     })
 
     it("should not log debug messages in production", () => {
-      process.env.NODE_ENV = "production"
+      Object.defineProperty(process.env, "NODE_ENV", {
+        value: "production",
+        writable: true,
+        configurable: true,
+      })
       const consoleSpy = jest.spyOn(console, "debug").mockImplementation()
       
       logger.debug("Test debug message")

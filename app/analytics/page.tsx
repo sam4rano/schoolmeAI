@@ -5,7 +5,8 @@ import { Footer } from "@/components/ui/footer"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Building2, GraduationCap, TrendingUp, Download, BarChart3 } from "lucide-react"
+import { Building2, GraduationCap, TrendingUp, Download, BarChart3, Sparkles, AlertCircle } from "lucide-react"
+import { TrendChart } from "@/components/analytics/trend-chart"
 
 async function getAnalytics() {
   try {
@@ -38,7 +39,23 @@ async function getAnalytics() {
   }
 }
 
-function TrendChart({ data, title }: { data: any[]; title: string }) {
+async function getTrendAnalytics() {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/analytics/trends?limit=5`, {
+      cache: "no-store",
+    })
+    if (response.ok) {
+      const data = await response.json()
+      return data.data || []
+    }
+    return []
+  } catch (error) {
+    console.error("Error fetching trend analytics:", error)
+    return []
+  }
+}
+
+function SimpleTrendChart({ data, title }: { data: any[]; title: string }) {
   if (!data || data.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
@@ -77,6 +94,7 @@ function TrendChart({ data, title }: { data: any[]; title: string }) {
 
 export default async function AnalyticsPage() {
   const { institutions, programs, institutionsData, programsData } = await getAnalytics()
+  const trendAnalytics = await getTrendAnalytics()
 
   // Calculate statistics
   const institutionsByType = institutionsData.reduce((acc: any, inst: any) => {
@@ -239,12 +257,97 @@ export default async function AnalyticsPage() {
         </Card>
       </div>
 
+      {/* Predictive Analytics Section */}
+      {trendAnalytics.length > 0 && (
+        <Card className="mb-8 hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkles className="h-5 w-5" />
+                  Predictive Analytics
+                </CardTitle>
+                <CardDescription>AI-powered predictions and insights based on historical trends</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-8">
+              {trendAnalytics.map((trend: any) => {
+                if (!trend.historical || trend.historical.length === 0) return null
+
+                return (
+                  <div key={trend.program.id} className="border-b pb-6 last:border-0 last:pb-0">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <h3 className="font-semibold text-lg">{trend.program.name}</h3>
+                          <Badge
+                            variant={
+                              trend.trend.direction === "increasing"
+                                ? "destructive"
+                                : trend.trend.direction === "decreasing"
+                                ? "default"
+                                : "secondary"
+                            }
+                            className="text-xs"
+                          >
+                            {trend.trend.direction === "increasing" ? "↑" : trend.trend.direction === "decreasing" ? "↓" : "→"} {trend.trend.direction}
+                          </Badge>
+                          {trend.prediction && (
+                            <Badge variant="outline" className="text-xs">
+                              <Sparkles className="h-3 w-3 mr-1" />
+                              Next: {trend.prediction}
+                            </Badge>
+                          )}
+                          <Badge variant="secondary" className="text-xs">
+                            {trend.trend.confidence} confidence
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-2">
+                          {trend.program.institution}
+                        </p>
+                        {trend.insights && trend.insights.length > 0 && (
+                          <div className="mt-3 p-3 bg-muted/50 rounded-lg">
+                            <div className="flex items-start gap-2 mb-2">
+                              <AlertCircle className="h-4 w-4 text-primary mt-0.5" />
+                              <p className="text-xs font-semibold">Insights:</p>
+                            </div>
+                            <ul className="text-xs text-muted-foreground space-y-1 ml-6">
+                              {trend.insights.map((insight: string, idx: number) => (
+                                <li key={idx}>• {insight}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                      <Link href={`/programs/${trend.program.id}`}>
+                        <Button variant="outline" size="sm">
+                          View Details
+                        </Button>
+                      </Link>
+                    </div>
+                    <TrendChart 
+                      data={trend.historical} 
+                      title={trend.program.name}
+                      showPrediction={trend.futurePredictions && trend.futurePredictions.length > 0}
+                      predictedData={trend.futurePredictions || []}
+                    />
+                  </div>
+                )
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Historical Trends Section */}
       {programsWithHistory.length > 0 && (
         <Card className="mb-8 hover:shadow-lg transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5" />
-              Cutoff Trends
+              Historical Trends
             </CardTitle>
             <CardDescription>Historical cutoff data for top programs</CardDescription>
           </CardHeader>
@@ -305,7 +408,7 @@ export default async function AnalyticsPage() {
                         </Button>
                       </Link>
                     </div>
-                    <TrendChart data={history} title={program.name} />
+                    <SimpleTrendChart data={history} title={program.name} />
                   </div>
                 )
               })}

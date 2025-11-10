@@ -8,6 +8,9 @@ import { Separator } from "@/components/ui/separator"
 import { WatchlistButton } from "@/components/watchlist-button"
 import { ReviewForm } from "@/components/reviews/review-form"
 import { ReviewList } from "@/components/reviews/review-list"
+import { RelatedPrograms } from "@/components/programs/related-programs"
+import { SimilarPrograms } from "@/components/programs/similar-programs"
+import { SharePrintActions } from "@/components/programs/share-print-actions"
 import Link from "next/link"
 import {
   GraduationCap,
@@ -20,6 +23,7 @@ import {
   CheckCircle2,
   AlertCircle,
   Calendar,
+  GitCompare,
 } from "lucide-react"
 
 async function getProgram(id: string) {
@@ -57,15 +61,30 @@ export default async function ProgramDetailPage({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar />
+      <div className="no-print">
+        <Navbar />
+      </div>
       <main className="flex-1 container mx-auto py-8 px-4 sm:px-6 lg:px-8 max-w-5xl">
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 flex items-center justify-between flex-wrap gap-4 no-print">
           <Link href="/programs">
             <Button variant="ghost" size="sm">
               ← Back to Programs
             </Button>
           </Link>
-          <WatchlistButton programId={program.id} />
+          <div className="flex items-center gap-2">
+            <SharePrintActions
+              programId={program.id}
+              programName={program.name}
+              institutionName={program.institution?.name || ""}
+            />
+            <Link href={`/comparison?programs=${program.id}`}>
+              <Button variant="outline" size="sm">
+                <GitCompare className="h-4 w-4 mr-2" />
+                Compare
+              </Button>
+            </Link>
+            <WatchlistButton programId={program.id} />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -325,7 +344,7 @@ export default async function ProgramDetailPage({
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-6 no-print">
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Quick Actions</CardTitle>
@@ -339,8 +358,33 @@ export default async function ProgramDetailPage({
                     Add to Watchlist
                   </Button>
                 </Link>
+                <Link href={`/comparison?programs=${program.id}`} className="w-full">
+                  <Button variant="outline" className="w-full">
+                    <GitCompare className="h-4 w-4 mr-2" />
+                    Compare Programs
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
+
+            {/* Related Programs */}
+            {program.institution?.id && (
+              <RelatedPrograms
+                programId={program.id}
+                programName={program.name}
+                institutionId={program.institution.id}
+                degreeType={program.degreeType}
+              />
+            )}
+
+            {/* Similar Programs */}
+            {program.degreeType && (
+              <SimilarPrograms
+                programId={program.id}
+                programName={program.name}
+                degreeType={program.degreeType}
+              />
+            )}
 
             {program.accreditationStatus && (
               <Card>
@@ -395,7 +439,7 @@ export default async function ProgramDetailPage({
         </div>
 
         {/* Reviews Section */}
-        <div className="mt-8 space-y-6">
+        <div className="mt-8 space-y-6 no-print">
           <Card>
             <CardHeader>
               <CardTitle>Write a Review</CardTitle>
@@ -422,7 +466,9 @@ export default async function ProgramDetailPage({
           </Card>
         </div>
       </main>
-      <Footer />
+      <div className="no-print">
+        <Footer />
+      </div>
     </div>
   )
 }
