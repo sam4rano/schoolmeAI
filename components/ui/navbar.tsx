@@ -35,13 +35,18 @@ const navItems = [
       { href: "/calculator", label: "Eligibility Calculator", icon: Calculator },
       { href: "/calculator/fees", label: "Fee Calculator", icon: DollarSign },
       { href: "/calculator/post-utme", label: "Post-UTME Calculator", icon: TrendingUp },
-      { href: "/recommendations", label: "Recommendations", icon: Sparkles },
+      { href: "/recommendations", label: "AI Recommendations", icon: Sparkles },
       { href: "/ai", label: "AI Assistant", icon: MessageSquare },
     ],
   },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/community", label: "Community", icon: MessageSquare },
-  { href: "/news", label: "News", icon: Newspaper },
+  {
+    label: "More",
+    items: [
+      { href: "/community", label: "Community", icon: MessageSquare },
+      { href: "/news", label: "News", icon: Newspaper },
+    ],
+  },
 ]
 
 export function Navbar() {
@@ -55,20 +60,21 @@ export function Navbar() {
   return (
     <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="flex h-16 items-center justify-between gap-4">
+          {/* Logo */}
+          <div className="flex items-center gap-2 flex-shrink-0">
             <Link 
               href="/" 
-              className="flex items-center gap-2"
-              aria-label="EduRepo-NG-AI Home"
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              aria-label="edurepoAI.xyz Home"
             >
               <span className="text-2xl" aria-hidden="true">🇳🇬</span>
-              <span className="text-xl font-bold">EduRepo-NG-AI</span>
+              <span className="text-lg sm:text-xl font-bold whitespace-nowrap">edurepoAI.xyz</span>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden lg:flex items-center gap-1 flex-1 justify-center max-w-2xl">
             {navItems.map((item) => {
               if ("href" in item && item.href) {
                 // Direct link
@@ -78,19 +84,16 @@ export function Navbar() {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors relative",
+                      "flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-colors relative rounded-md",
                       active
-                        ? "text-primary"
-                        : "text-muted-foreground hover:text-primary"
+                        ? "text-black"
+                        : "text-muted-foreground hover:text-white hover:bg-accent"
                     )}
                     aria-label={item.label}
                     aria-current={active ? "page" : undefined}
                   >
                     {item.icon && <item.icon className="h-4 w-4" aria-hidden="true" />}
                     {item.label}
-                    {active && (
-                      <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" aria-hidden="true" />
-                    )}
                   </Link>
                 )
               } else if ("items" in item && item.items) {
@@ -102,23 +105,18 @@ export function Navbar() {
                       <Button
                         variant="ghost"
                         className={cn(
-                          "flex items-center gap-1 px-3 py-2 text-sm font-medium h-auto",
+                          "flex items-center gap-1.5 px-3 py-2 text-sm font-medium h-auto rounded-md",
                           hasActiveItem
-                            ? "text-primary"
-                            : "text-muted-foreground hover:text-primary"
+                            ? "text-black hover:text-white"
+                            : "text-muted-foreground hover:text-white hover:bg-accent"
                         )}
                         aria-label={`${item.label} menu`}
-                        aria-expanded="false"
-                        aria-haspopup="true"
                       >
                         {item.label}
-                        <ChevronDown className="h-4 w-4" aria-hidden="true" />
-                        {hasActiveItem && (
-                          <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" aria-hidden="true" />
-                        )}
+                        <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-48">
+                    <DropdownMenuContent align="start" className="w-56">
                       {item.items.map((subItem) => {
                         const SubIcon = subItem.icon
                         return (
@@ -127,7 +125,7 @@ export function Navbar() {
                               href={subItem.href}
                               className={cn(
                                 "flex items-center gap-2 cursor-pointer",
-                                isActive(subItem.href) && "bg-accent"
+                                isActive(subItem.href) && "bg-accent font-medium"
                               )}
                             >
                               {SubIcon && <SubIcon className="h-4 w-4" />}
@@ -143,10 +141,20 @@ export function Navbar() {
             })}
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-4">
-            <div className="hidden lg:block w-64">
+          {/* Right Side Actions */}
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            {/* Search - Medium screens and up */}
+            <div className="hidden md:block lg:hidden w-48">
               <SearchAutocomplete
                 placeholder="Search..."
+                showResults={true}
+                className="w-full"
+              />
+            </div>
+            {/* Search - Large screens */}
+            <div className="hidden lg:block w-56">
+              <SearchAutocomplete
+                placeholder="Search institutions, programs..."
                 showResults={true}
                 className="w-full"
               />
@@ -155,25 +163,25 @@ export function Navbar() {
             {status === "authenticated" && session?.user ? (
               <>
                 <NotificationBell />
-                <Link href={isAdmin ? "/admin" : "/dashboard"} className="hidden sm:block">
-                  <Button size="sm" variant="outline" className="gap-2">
+                <Link href={isAdmin ? "/admin" : "/dashboard"} className="hidden xl:block">
+                  <Button size="sm" variant="outline" className="gap-1.5">
                     <LayoutDashboard className="h-4 w-4" />
-                    {isAdmin ? "Admin" : "Dashboard"}
+                    <span className="hidden 2xl:inline">{isAdmin ? "Admin" : "Dashboard"}</span>
                   </Button>
                 </Link>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="gap-2">
+                    <Button variant="ghost" size="sm" className="gap-2 h-9 px-2 sm:px-3">
                       <Avatar className="h-7 w-7">
-                        <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                        <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
                           {session.user.email?.charAt(0).toUpperCase() || "U"}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="hidden sm:inline-block text-sm font-medium max-w-[120px] truncate">
-                        {session.user.email}
+                      <span className="hidden xl:inline-block text-sm font-medium max-w-[100px] truncate">
+                        {session.user.email?.split("@")[0] || "User"}
                       </span>
                       {isAdmin && (
-                        <Badge variant="default" className="hidden sm:inline-flex text-xs px-1.5 py-0">
+                        <Badge variant="default" className="hidden xl:inline-flex text-xs px-1.5 py-0">
                           <Shield className="h-3 w-3 mr-1" />
                           Admin
                         </Badge>
@@ -183,7 +191,7 @@ export function Navbar() {
                   <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuLabel>
                       <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">{session.user.email}</p>
+                        <p className="text-sm font-medium leading-none truncate">{session.user.email}</p>
                         {isAdmin && (
                           <p className="text-xs text-muted-foreground">Administrator</p>
                         )}
@@ -232,8 +240,8 @@ export function Navbar() {
                 <Link href="/calculator" className="hidden sm:block">
                   <Button 
                     size="sm" 
-                    className="hidden sm:inline-flex"
-                    aria-label="Get Started with Eligibility Calculator"
+                    className="gap-1.5"
+                    aria-label="Get Started"
                   >
                     Get Started
                   </Button>
@@ -242,8 +250,8 @@ export function Navbar() {
                   <Button 
                     size="sm" 
                     variant="outline" 
-                    className="hidden sm:inline-flex"
-                    aria-label="Sign In to your account"
+                    className="gap-1.5"
+                    aria-label="Sign In"
                   >
                     Sign In
                   </Button>
@@ -251,10 +259,11 @@ export function Navbar() {
               </>
             )}
             
+            {/* Mobile Menu Button */}
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden"
+              className="lg:hidden"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileMenuOpen}
@@ -270,95 +279,140 @@ export function Navbar() {
 
           {/* Mobile Menu */}
           {mobileMenuOpen && (
-            <div className="absolute top-16 left-0 right-0 bg-background border-b md:hidden z-50">
-              <div className="container mx-auto px-4 py-4 space-y-2">
+            <div className="absolute top-16 left-0 right-0 bg-background border-b lg:hidden z-50 shadow-lg">
+              <div className="container mx-auto px-4 py-4 space-y-1 max-h-[calc(100vh-4rem)] overflow-y-auto">
+                {/* Mobile Search */}
+                <div className="mb-4 pb-4 border-b">
+                  <SearchAutocomplete
+                    placeholder="Search..."
+                    showResults={true}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Navigation Items */}
                 {navItems.map((item) => {
                   if ("href" in item) {
+                    const active = isActive(item.href || "")
                     return (
                       <Link
                         key={item.href}
                         href={item.href || "#"}
                         onClick={() => setMobileMenuOpen(false)}
-                        className={`block px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                          item.href && isActive(item.href)
+                        className={cn(
+                          "flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition-colors",
+                          active
                             ? "bg-primary text-primary-foreground"
                             : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                        }`}
+                        )}
                       >
+                        {item.icon && <item.icon className="h-4 w-4" />}
                         {item.label}
                       </Link>
                     )
                   } else {
                     return (
                       <div key={item.label} className="space-y-1">
-                        <div className="px-4 py-2 text-sm font-semibold text-muted-foreground">
+                        <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                           {item.label}
                         </div>
-                        {item.items.map((subItem) => (
-                          <Link
-                            key={subItem.href}
-                            href={subItem.href}
-                            onClick={() => setMobileMenuOpen(false)}
-                            className={`block px-6 py-2 rounded-md text-sm font-medium transition-colors ${
-                              isActive(subItem.href)
-                                ? "bg-primary text-primary-foreground"
-                                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                            }`}
-                          >
-                            {subItem.label}
-                          </Link>
-                        ))}
+                        {item.items.map((subItem) => {
+                          const active = isActive(subItem.href)
+                          const SubIcon = subItem.icon
+                          return (
+                            <Link
+                              key={subItem.href}
+                              href={subItem.href}
+                              onClick={() => setMobileMenuOpen(false)}
+                              className={cn(
+                                "flex items-center gap-2 px-6 py-2 rounded-md text-sm font-medium transition-colors",
+                                active
+                                  ? "bg-primary/10 text-primary font-semibold"
+                                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                              )}
+                            >
+                              {SubIcon && <SubIcon className="h-4 w-4" />}
+                              {subItem.label}
+                            </Link>
+                          )
+                        })}
                       </div>
                     )
                   }
                 })}
+
+                {/* User Actions */}
                 {status === "authenticated" && session?.user && (
                   <>
-                    <div className="border-t my-2"></div>
-                    <Link
-                      href={isAdmin ? "/admin" : "/dashboard"}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                    >
-                      {isAdmin ? "Admin Dashboard" : "Student Dashboard"}
-                    </Link>
-                    <Link
-                      href="/profile"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                    >
-                      Profile
-                    </Link>
-                    {isAdmin && (
+                    <div className="border-t my-3 pt-3">
+                      <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Account
+                      </div>
                       <Link
-                        href="/admin"
+                        href={isAdmin ? "/admin" : "/dashboard"}
                         onClick={() => setMobileMenuOpen(false)}
-                        className="block px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                        className="flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                       >
-                        Admin Panel
+                        <LayoutDashboard className="h-4 w-4" />
+                        {isAdmin ? "Admin Dashboard" : "Student Dashboard"}
                       </Link>
-                    )}
-                    <button
-                      onClick={() => {
-                        setMobileMenuOpen(false)
-                        signOut({ callbackUrl: "/" })
-                      }}
-                      className="block w-full text-left px-4 py-2 rounded-md text-sm font-medium text-destructive hover:bg-accent"
-                    >
-                      Sign Out
-                    </button>
+                      <Link
+                        href="/profile"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                      >
+                        <User className="h-4 w-4" />
+                        Profile
+                      </Link>
+                      <Link
+                        href="/notifications"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                      >
+                        <Bell className="h-4 w-4" />
+                        Notifications
+                      </Link>
+                      {isAdmin && (
+                        <Link
+                          href="/admin"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                        >
+                          <Shield className="h-4 w-4" />
+                          Admin Panel
+                        </Link>
+                      )}
+                      <button
+                        onClick={() => {
+                          setMobileMenuOpen(false)
+                          signOut({ callbackUrl: "/" })
+                        }}
+                        className="flex items-center gap-2 w-full text-left px-4 py-2.5 rounded-md text-sm font-medium text-destructive hover:bg-destructive/10"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Sign Out
+                      </button>
+                    </div>
                   </>
                 )}
                 {status !== "authenticated" && (
                   <>
-                    <div className="border-t my-2"></div>
-                    <Link
-                      href="/auth/signin"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block px-4 py-2 rounded-md text-sm font-medium text-primary hover:bg-accent"
-                    >
-                      Sign In
-                    </Link>
+                    <div className="border-t my-3 pt-3 space-y-2">
+                      <Link
+                        href="/calculator"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="block w-full text-center px-4 py-2.5 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90"
+                      >
+                        Get Started
+                      </Link>
+                      <Link
+                        href="/auth/signin"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="block w-full text-center px-4 py-2.5 rounded-md text-sm font-medium border border-border hover:bg-accent"
+                      >
+                        Sign In
+                      </Link>
+                    </div>
                   </>
                 )}
               </div>

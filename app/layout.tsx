@@ -6,10 +6,10 @@ import { Providers } from "@/lib/providers"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "EduRepo-NG-AI | Nigerian Tertiary Admissions Guide",
+  title: "edurepoAI.xyz | Nigerian Tertiary Admissions Guide",
   description: "AI-powered educational repository and guidance system for Nigerian tertiary admissions",
   keywords: ["Nigerian universities", "admission calculator", "JAMB", "UTME", "tertiary education"],
-  authors: [{ name: "EduRepo-NG-AI Initiative" }],
+  authors: [{ name: "edurepoAI.xyz" }],
 }
 
 export default function RootLayout({

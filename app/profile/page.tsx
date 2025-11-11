@@ -15,6 +15,8 @@ import { ProtectedRoute } from "@/components/protected-route"
 import { useToast } from "@/hooks/use-toast"
 import { User, Mail, Calendar, MapPin, Save, Loader2 } from "lucide-react"
 import { NotificationPreferences } from "@/components/profile/notification-preferences"
+import { ScoresManagement } from "@/components/profile/scores-management"
+import { SessionManagement } from "@/components/profile/session-management"
 
 export default function ProfilePage() {
   const sessionResult = useSession()
@@ -24,7 +26,9 @@ export default function ProfilePage() {
     email: "",
     stateOfOrigin: "",
     dateOfBirth: "",
+    jambScore: null as number | null,
   })
+  const [oLevels, setOLevels] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
@@ -50,7 +54,9 @@ export default function ProfilePage() {
         email: data.data?.email || "",
         stateOfOrigin: data.data?.stateOfOrigin || "",
         dateOfBirth: data.data?.dateOfBirth || "",
+        jambScore: data.data?.jambScore || null,
       })
+      setOLevels(data.data?.oLevels || [])
     } catch (error) {
       console.error("Error fetching profile:", error)
       toast({
@@ -113,6 +119,7 @@ export default function ProfilePage() {
             <TabsList>
               <TabsTrigger value="profile">Profile</TabsTrigger>
               <TabsTrigger value="scores">Scores</TabsTrigger>
+              <TabsTrigger value="sessions">Sessions</TabsTrigger>
               <TabsTrigger value="preferences">Preferences</TabsTrigger>
             </TabsList>
 
@@ -216,19 +223,16 @@ export default function ProfilePage() {
             </TabsContent>
 
             <TabsContent value="scores">
-              <Card>
-                <CardHeader>
-                  <CardTitle>O-Level Results</CardTitle>
-                  <CardDescription>
-                    Manage your O-level results
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground text-center py-8">
-                    O-level results management coming soon...
-                  </p>
-                </CardContent>
-              </Card>
+              <ScoresManagement
+                jambScore={profile.jambScore}
+                oLevels={oLevels}
+                onJambScoreUpdate={(score) => setProfile({ ...profile, jambScore: score })}
+                onOLevelsUpdate={fetchProfile}
+              />
+            </TabsContent>
+
+            <TabsContent value="sessions">
+              <SessionManagement />
             </TabsContent>
 
             <TabsContent value="preferences">

@@ -2,7 +2,7 @@
 
 ## Legal Disclaimer
 
-**EduRepo-NG-AI** provides educational information and AI-assisted guidance for Nigerian tertiary admissions. This platform is provided "as is" without warranties of any kind.
+**edurepoAI.com** provides educational information and AI-assisted guidance for Nigerian tertiary admissions. This platform is provided "as is" without warranties of any kind.
 
 ### Important Disclaimers
 
@@ -108,7 +108,7 @@ See [Privacy Policy](#privacy-policy) for details.
 ### Attribution
 
 When using our dataset, please attribute:
-- "Data sourced from EduRepo-NG-AI (https://edurepo.ng)"
+- "Data sourced from edurepoAI.com (https://edurepoAI.com)"
 - Include source links when available
 
 ## Terms of Service
@@ -169,7 +169,7 @@ You have the right to:
 
 ### Our Content
 
-- **Platform Code**: Copyright © 2025 EduRepo-NG-AI Initiative (MIT License)
+- **Platform Code**: Copyright © 2025 edurepoAI.com (MIT License)
 - **Dataset**: CC-BY or ODbL (depending on source licenses)
 - **Documentation**: CC-BY
 
@@ -199,8 +199,8 @@ We may update this policy from time to time. Significant changes will be:
 
 For legal inquiries, data removal requests, or copyright concerns:
 
-- **Email**: legal@edurepo.ng
-- **GitHub Issues**: [GitHub Issues](https://github.com/your-org/edurepo-ng-ai/issues)
+- **Email**: legal@edurepoAI.com
+- **GitHub Issues**: [GitHub Issues](https://github.com/your-org/edurepoAI/issues)
 
 ---
 

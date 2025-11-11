@@ -1,4 +1,4 @@
-# 🇳🇬 EduRepo-NG-AI
+# 🇳🇬 edurepoAI.com
 
 AI-powered educational repository and guidance system for Nigerian tertiary admissions — integrating **institutional metadata**, **JAMB/O-level calculators**, and **AI-driven school recommendations**.
 
@@ -9,7 +9,7 @@ AI-powered educational repository and guidance system for Nigerian tertiary admi
 
 ## ✨ Overview
 
-EduRepo-NG-AI centralizes all **Nigerian higher institutions** (universities, polytechnics, colleges, nursing schools, military academies, etc.) and provides:
+edurepoAI.com centralizes all **Nigerian higher institutions** (universities, polytechnics, colleges, nursing schools, military academies, etc.) and provides:
 
 - 🧠 **AI-driven guidance** for UTME candidates with explainable recommendations
 - 🏫 **Canonical dataset** of accredited institutions and programs with data quality scoring
@@ -117,8 +117,8 @@ See [docs/FINAL_DATA_AUDIT.md](./docs/FINAL_DATA_AUDIT.md) for detailed audit re
 
 1. **Clone the repository:**
 ```bash
-git clone https://github.com/your-org/edurepo-ng-ai.git
-cd edurepo-ng-ai
+git clone https://github.com/your-org/edurepoAI.git
+cd edurepoAI
 ```
 
 2. **Install dependencies:**
@@ -201,7 +201,7 @@ npm run dev
 ## 📖 API Documentation
 
 Interactive API documentation available at:
-- **Swagger/OpenAPI**: http://localhost:3000/api/docs
+- **Swagger/OpenAPI**: https://edurepoAI.com/api/docs (or http://localhost:3000/api/docs for local development)
 
 ### Key Endpoints
 

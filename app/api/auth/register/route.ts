@@ -3,6 +3,9 @@ import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import bcrypt from "bcryptjs"
 import { logger } from "@/lib/utils/logger"
+import { generateToken, generateTokenExpiry } from "@/lib/utils/tokens"
+import { sendEmail, getVerificationEmailHtml } from "@/lib/email"
+import { authRateLimits } from "@/lib/utils/rate-limit"
 
 /**
  * @swagger
@@ -52,6 +55,26 @@ const registerSchema = z.object({
 })
 
 export async function POST(request: NextRequest) {
+  // Rate limiting
+  const rateLimitResult = await authRateLimits.register(request)
+  if (!rateLimitResult.success) {
+    return NextResponse.json(
+      {
+        error: "Too many registration attempts. Please try again later.",
+        retryAfter: rateLimitResult.reset - Math.floor(Date.now() / 1000),
+      },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(rateLimitResult.reset - Math.floor(Date.now() / 1000)),
+          "X-RateLimit-Limit": String(rateLimitResult.limit),
+          "X-RateLimit-Remaining": String(rateLimitResult.remaining),
+          "X-RateLimit-Reset": String(rateLimitResult.reset),
+        },
+      }
+    )
+  }
+
   try {
     const body = await request.json()
     const validatedData = registerSchema.parse(body)
@@ -71,17 +94,22 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(validatedData.password, 10)
 
-    // Create user
+    // Generate verification token
+    const verificationToken = generateToken()
+    const tokenExpires = generateTokenExpiry(24)
+
+    // Create user with pending verification status
     const user = await prisma.user.create({
       data: {
         email: validatedData.email,
         hashedPassword,
+        status: "pending_verification",
         profile: validatedData.name
           ? ({
               name: validatedData.name,
             } as any)
           : undefined,
-      },
+      } as any,
       select: {
         id: true,
         email: true,
@@ -90,9 +118,26 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    // Create verification token
+    await prisma.verificationToken.create({
+      data: {
+        identifier: validatedData.email,
+        token: verificationToken,
+        expires: tokenExpires,
+        type: "email",
+      } as any,
+    })
+
+    // Send verification email
+    await sendEmail({
+      to: validatedData.email,
+      subject: "Verify your email - edurepoai.xyz",
+      html: getVerificationEmailHtml(verificationToken, validatedData.name),
+    })
+
     return NextResponse.json(
       {
-        message: "User created successfully",
+        message: "User created successfully. Please check your email to verify your account.",
         user,
       },
       { status: 201 }
@@ -105,10 +150,29 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Log detailed error for debugging
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    const errorStack = error instanceof Error ? error.stack : undefined
+    
     logger.error("Error registering user", error, {
       endpoint: "/api/auth/register",
       method: "POST",
+      errorMessage,
+      errorStack,
     })
+
+    // In development, return more details
+    if (process.env.NODE_ENV === "development") {
+      return NextResponse.json(
+        { 
+          error: "Internal server error",
+          message: errorMessage,
+          ...(errorStack && { stack: errorStack }),
+        },
+        { status: 500 }
+      )
+    }
+
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -8,6 +8,7 @@ const updateProfileSchema = z.object({
   name: z.string().min(1).max(200).optional(),
   stateOfOrigin: z.string().max(100).optional(),
   dateOfBirth: z.string().optional(),
+  jambScore: z.number().min(0).max(400).optional(),
 })
 
 export async function GET(request: NextRequest) {
@@ -37,6 +38,13 @@ export async function GET(request: NextRequest) {
     }
 
     const profile = user.profile as any || {}
+    
+    // Get O-level results
+    const oLevels = await prisma.oLevel.findMany({
+      where: { userId: session.user.id },
+      orderBy: { year: 'desc' },
+    })
+
     return NextResponse.json({
       data: {
         id: user.id,
@@ -44,6 +52,15 @@ export async function GET(request: NextRequest) {
         name: profile.name || "",
         stateOfOrigin: profile.stateOfOrigin || "",
         dateOfBirth: profile.dateOfBirth || "",
+        jambScore: profile.jambScore || null,
+        oLevels: oLevels.map(olevel => ({
+          id: olevel.id,
+          examBody: olevel.examBody,
+          year: olevel.year,
+          grades: olevel.grades,
+          computedPoints: olevel.computedPoints,
+          computedSummary: olevel.computedSummary,
+        })),
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       },
@@ -75,6 +92,7 @@ export async function PATCH(request: NextRequest) {
       ...(validatedData.name !== undefined && { name: validatedData.name }),
       ...(validatedData.stateOfOrigin !== undefined && { stateOfOrigin: validatedData.stateOfOrigin }),
       ...(validatedData.dateOfBirth !== undefined && { dateOfBirth: validatedData.dateOfBirth }),
+      ...(validatedData.jambScore !== undefined && { jambScore: validatedData.jambScore }),
     }
 
     const user = await prisma.user.update({
@@ -98,6 +116,7 @@ export async function PATCH(request: NextRequest) {
         name: profile.name || "",
         stateOfOrigin: profile.stateOfOrigin || "",
         dateOfBirth: profile.dateOfBirth || "",
+        jambScore: profile.jambScore || null,
         updatedAt: user.updatedAt,
       },
       message: "Profile updated successfully",

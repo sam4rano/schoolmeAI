@@ -11,9 +11,10 @@ interface WatchlistNotesProps {
   watchlistItemId: string
   currentNotes?: string | null
   onUpdate: () => void
+  isInstitution?: boolean
 }
 
-export function WatchlistNotes({ watchlistItemId, currentNotes, onUpdate }: WatchlistNotesProps) {
+export function WatchlistNotes({ watchlistItemId, currentNotes, onUpdate, isInstitution = false }: WatchlistNotesProps) {
   const { toast } = useToast()
   const [notes, setNotes] = useState(currentNotes || "")
   const [open, setOpen] = useState(false)
@@ -22,7 +23,10 @@ export function WatchlistNotes({ watchlistItemId, currentNotes, onUpdate }: Watc
   const handleSave = async () => {
     setSaving(true)
     try {
-      const response = await fetch(`/api/watchlist/${watchlistItemId}`, {
+      const endpoint = isInstitution 
+        ? `/api/watchlist/institutions/${watchlistItemId}`
+        : `/api/watchlist/${watchlistItemId}`
+      const response = await fetch(endpoint, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ notes }),
@@ -59,7 +63,7 @@ export function WatchlistNotes({ watchlistItemId, currentNotes, onUpdate }: Watc
         <DialogHeader>
           <DialogTitle>Watchlist Notes</DialogTitle>
           <DialogDescription>
-            Add personal notes or annotations for this program
+            Add personal notes or annotations for this {isInstitution ? "institution" : "program"}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">

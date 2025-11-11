@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { Prisma } from "@prisma/client"
 import { generateEmbedding, findSimilarEmbeddings } from "./embeddings"
 
 interface RAGContext {
@@ -49,11 +50,11 @@ async function queryDatabaseDirectly(
       const programs = await prisma.program.findMany({
         where: {
           OR: [
-            { name: { contains: query, mode: "insensitive" } },
-            { faculty: { contains: query, mode: "insensitive" } },
-            { department: { contains: query, mode: "insensitive" } },
+            { name: { contains: query, mode: Prisma.QueryMode.insensitive } },
+            { faculty: { contains: query, mode: Prisma.QueryMode.insensitive } },
+            { department: { contains: query, mode: Prisma.QueryMode.insensitive } },
             ...searchTerms.map(term => ({
-              name: { contains: term, mode: "insensitive" }
+              name: { contains: term, mode: Prisma.QueryMode.insensitive }
             }))
           ]
         },
@@ -94,11 +95,11 @@ ${program.utmeSubjects.length > 0 ? `Required UTME Subjects: ${program.utmeSubje
       const institutions = await prisma.institution.findMany({
         where: {
           OR: [
-            { name: { contains: query, mode: "insensitive" } },
-            { state: { contains: query, mode: "insensitive" } },
-            { city: { contains: query, mode: "insensitive" } },
+            { name: { contains: query, mode: Prisma.QueryMode.insensitive } },
+            { state: { contains: query, mode: Prisma.QueryMode.insensitive } },
+            { city: { contains: query, mode: Prisma.QueryMode.insensitive } },
             ...searchTerms.map(term => ({
-              name: { contains: term, mode: "insensitive" }
+              name: { contains: term, mode: Prisma.QueryMode.insensitive }
             }))
           ]
         },

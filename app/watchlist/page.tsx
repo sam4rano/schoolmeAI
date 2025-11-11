@@ -13,8 +13,10 @@ import { Navbar } from "@/components/ui/navbar"
 import { Footer } from "@/components/ui/footer"
 import { ProtectedRoute } from "@/components/protected-route"
 import { usePrograms } from "@/lib/hooks/use-programs"
+import { useInstitutions } from "@/lib/hooks/use-institutions"
 import Link from "next/link"
 import { Trash2, Plus, Bookmark, GraduationCap, Search, Building2, X, GitCompare, Calendar, Download, FileText, Share2, Bell, CheckSquare } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useRouter } from "next/navigation"
 import { Skeleton } from "@/components/ui/skeleton"
 import { WatchlistNotes } from "@/components/watchlist/watchlist-notes"
@@ -41,11 +43,28 @@ interface WatchlistItem {
   createdAt: string
 }
 
+interface InstitutionWatchlistItem {
+  id: string
+  institution: {
+    id: string
+    name: string
+    type: string
+    ownership: string
+    state: string
+    city: string
+  }
+  priority: string | null
+  notes: string | null
+  createdAt: string
+}
+
 export default function WatchlistPage() {
   const sessionResult = useSession()
   const router = useRouter()
   const { toast } = useToast()
   const [watchlist, setWatchlist] = useState<WatchlistItem[]>([])
+  const [institutionWatchlist, setInstitutionWatchlist] = useState<InstitutionWatchlistItem[]>([])
+  const [activeTab, setActiveTab] = useState<"programs" | "institutions">("programs")
   const [loading, setLoading] = useState(true)
   const [programId, setProgramId] = useState("")
   const [selectedProgram, setSelectedProgram] = useState<any>(null)
@@ -56,8 +75,18 @@ export default function WatchlistPage() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [bulkDialogOpen, setBulkDialogOpen] = useState(false)
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set())
+  const [selectedInstitutionItems, setSelectedInstitutionItems] = useState<Set<string>>(new Set())
   const [bulkPrograms, setBulkPrograms] = useState<any[]>([])
   const programDropdownRef = useRef<HTMLDivElement>(null)
+  
+  // Institution watchlist state
+  const [institutionId, setInstitutionId] = useState("")
+  const [selectedInstitution, setSelectedInstitution] = useState<any>(null)
+  const [institutionSearch, setInstitutionSearch] = useState("")
+  const [debouncedInstitutionSearch, setDebouncedInstitutionSearch] = useState("")
+  const [showInstitutionDropdown, setShowInstitutionDropdown] = useState(false)
+  const [institutionDialogOpen, setInstitutionDialogOpen] = useState(false)
+  const institutionDropdownRef = useRef<HTMLDivElement>(null)
 
   // Debounce program search
   useEffect(() => {
@@ -67,15 +96,30 @@ export default function WatchlistPage() {
     return () => clearTimeout(timer)
   }, [programSearch])
 
+  // Debounce institution search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedInstitutionSearch(institutionSearch)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [institutionSearch])
+
   // Fetch programs based on search
   const { data: programsData, isLoading: programsLoading } = usePrograms({
     query: debouncedSearch || undefined,
     limit: 10,
   })
 
-  const programs = programsData?.data || []
+  // Fetch institutions based on search
+  const { data: institutionsData, isLoading: institutionsLoading } = useInstitutions({
+    query: debouncedInstitutionSearch || undefined,
+    limit: 10,
+  })
 
-  // Close dropdown when clicking outside
+  const programs = programsData?.data || []
+  const institutions = institutionsData?.data || []
+
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -83,6 +127,12 @@ export default function WatchlistPage() {
         !programDropdownRef.current.contains(event.target as Node)
       ) {
         setShowProgramDropdown(false)
+      }
+      if (
+        institutionDropdownRef.current &&
+        !institutionDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowInstitutionDropdown(false)
       }
     }
 
@@ -103,6 +153,19 @@ export default function WatchlistPage() {
     setProgramSearch("")
   }
 
+  const handleSelectInstitution = (institution: any) => {
+    setSelectedInstitution(institution)
+    setInstitutionId(institution.id)
+    setInstitutionSearch(institution.name)
+    setShowInstitutionDropdown(false)
+  }
+
+  const handleClearInstitution = () => {
+    setSelectedInstitution(null)
+    setInstitutionId("")
+    setInstitutionSearch("")
+  }
+
   const { data: session, status } = sessionResult || { data: null, status: "loading" }
 
   useEffect(() => {
@@ -115,10 +178,19 @@ export default function WatchlistPage() {
 
   const fetchWatchlist = async () => {
     try {
-      const response = await fetch("/api/watchlist")
-      if (response.ok) {
-        const data = await response.json()
+      const [programsRes, institutionsRes] = await Promise.all([
+        fetch("/api/watchlist"),
+        fetch("/api/watchlist/institutions"),
+      ])
+      
+      if (programsRes.ok) {
+        const data = await programsRes.json()
         setWatchlist(data.data || [])
+      }
+      
+      if (institutionsRes.ok) {
+        const data = await institutionsRes.json()
+        setInstitutionWatchlist(data.data || [])
       }
     } catch (error) {
       console.error("Error fetching watchlist:", error)
@@ -298,6 +370,110 @@ export default function WatchlistPage() {
     }
   }
 
+  const handleAddInstitution = async () => {
+    if (!institutionId) return
+
+    try {
+      const response = await fetch("/api/watchlist/institutions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ institutionId, priority }),
+      })
+
+      if (response.ok) {
+        handleClearInstitution()
+        setPriority("medium")
+        setInstitutionDialogOpen(false)
+        fetchWatchlist()
+        toast({
+          title: "Success",
+          description: "Institution added to watchlist",
+        })
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add institution to watchlist",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleDeleteInstitution = async (id: string) => {
+    try {
+      const response = await fetch(`/api/watchlist/institutions/${id}`, {
+        method: "DELETE",
+      })
+
+      if (response.ok) {
+        fetchWatchlist()
+        toast({
+          title: "Success",
+          description: "Institution removed from watchlist",
+        })
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to remove institution from watchlist",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleToggleSelectInstitution = (id: string) => {
+    const newSelected = new Set(selectedInstitutionItems)
+    if (newSelected.has(id)) {
+      newSelected.delete(id)
+    } else {
+      newSelected.add(id)
+    }
+    setSelectedInstitutionItems(newSelected)
+  }
+
+  const handleSelectAllInstitutions = () => {
+    if (selectedInstitutionItems.size === institutionWatchlist.length) {
+      setSelectedInstitutionItems(new Set())
+    } else {
+      setSelectedInstitutionItems(new Set(institutionWatchlist.map((item) => item.id)))
+    }
+  }
+
+  const handleBulkDeleteInstitutions = async () => {
+    if (selectedInstitutionItems.size === 0) {
+      toast({
+        title: "Error",
+        description: "Please select at least one item",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!confirm(`Are you sure you want to delete ${selectedInstitutionItems.size} item(s)?`)) {
+      return
+    }
+
+    try {
+      await Promise.all(
+        Array.from(selectedInstitutionItems).map((id) =>
+          fetch(`/api/watchlist/institutions/${id}`, { method: "DELETE" })
+        )
+      )
+      toast({
+        title: "Success",
+        description: `Deleted ${selectedInstitutionItems.size} item(s) from watchlist`,
+      })
+      setSelectedInstitutionItems(new Set())
+      fetchWatchlist()
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete items",
+        variant: "destructive",
+      })
+    }
+  }
+
   return (
     <ProtectedRoute>
       <div className="flex min-h-screen flex-col">
@@ -310,41 +486,56 @@ export default function WatchlistPage() {
                 My Watchlist
               </h1>
               <p className="text-muted-foreground">
-                Track programs you&apos;re interested in
+                Track programs and institutions you&apos;re interested in
               </p>
             </div>
-            <div className="flex gap-2 flex-wrap">
-              {watchlist.length >= 2 && (
-                <Button
-                  variant="outline"
-                  onClick={handleCompareSelected}
-                >
-                  <GitCompare className="mr-2 h-4 w-4" />
-                  Compare Programs
-                </Button>
-              )}
-              {watchlist.length > 0 && (
-                <>
-                  <WatchlistShare watchlistItems={watchlist} />
+          </div>
+
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "programs" | "institutions")} className="space-y-6">
+            <TabsList>
+              <TabsTrigger value="programs">
+                <GraduationCap className="mr-2 h-4 w-4" />
+                Programs ({watchlist.length})
+              </TabsTrigger>
+              <TabsTrigger value="institutions">
+                <Building2 className="mr-2 h-4 w-4" />
+                Institutions ({institutionWatchlist.length})
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="programs" className="space-y-6">
+              <div className="flex gap-2 flex-wrap justify-end">
+                {watchlist.length >= 2 && (
                   <Button
                     variant="outline"
-                    onClick={handleExportWatchlist}
+                    onClick={handleCompareSelected}
                   >
-                    <Download className="mr-2 h-4 w-4" />
-                    Export CSV
+                    <GitCompare className="mr-2 h-4 w-4" />
+                    Compare Programs
                   </Button>
-                </>
-              )}
-              {selectedItems.size > 0 && (
-                <Button
-                  variant="destructive"
-                  onClick={handleBulkDelete}
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete Selected ({selectedItems.size})
-                </Button>
-              )}
-              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                )}
+                {watchlist.length > 0 && (
+                  <>
+                    <WatchlistShare watchlistItems={watchlist} />
+                    <Button
+                      variant="outline"
+                      onClick={handleExportWatchlist}
+                    >
+                      <Download className="mr-2 h-4 w-4" />
+                      Export CSV
+                    </Button>
+                  </>
+                )}
+                {selectedItems.size > 0 && (
+                  <Button
+                    variant="destructive"
+                    onClick={handleBulkDelete}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete Selected ({selectedItems.size})
+                  </Button>
+                )}
+                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
                 <Button>
                   <Plus className="mr-2 h-4 w-4" />
@@ -602,8 +793,7 @@ export default function WatchlistPage() {
                 </div>
               </DialogContent>
             </Dialog>
-            </div>
-          </div>
+              </div>
 
           {loading ? (
             <Card>
@@ -806,6 +996,300 @@ export default function WatchlistPage() {
             </Card>
             </>
           )}
+            </TabsContent>
+
+            <TabsContent value="institutions" className="space-y-6">
+              <div className="flex gap-2 flex-wrap justify-end">
+                {selectedInstitutionItems.size > 0 && (
+                  <Button
+                    variant="destructive"
+                    onClick={handleBulkDeleteInstitutions}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete Selected ({selectedInstitutionItems.size})
+                  </Button>
+                )}
+                <Dialog open={institutionDialogOpen} onOpenChange={setInstitutionDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Institution
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Add Institution to Watchlist</DialogTitle>
+                      <DialogDescription>
+                        Search and add an institution to track
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-2 relative" ref={institutionDropdownRef}>
+                        <label className="text-sm font-medium">Select Institution</label>
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            type="text"
+                            value={institutionSearch}
+                            onChange={(e) => {
+                              setInstitutionSearch(e.target.value)
+                              setShowInstitutionDropdown(true)
+                              if (!e.target.value) {
+                                handleClearInstitution()
+                              }
+                            }}
+                            onFocus={() => setShowInstitutionDropdown(true)}
+                            placeholder="Search for an institution (e.g., University of Lagos, UNN...)"
+                            className="pl-10 pr-10"
+                          />
+                          {selectedInstitution && (
+                            <button
+                              onClick={handleClearInstitution}
+                              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+
+                        {showInstitutionDropdown && institutionSearch && (
+                          <div className="absolute z-50 w-full mt-1 bg-popover border rounded-md shadow-lg max-h-60 overflow-auto">
+                            {institutionsLoading ? (
+                              <div className="p-4 text-center text-sm text-muted-foreground">
+                                Searching...
+                              </div>
+                            ) : institutions.length === 0 ? (
+                              <div className="p-4 text-center text-sm text-muted-foreground">
+                                No institutions found. Try a different search term.
+                              </div>
+                            ) : (
+                              <div className="p-1">
+                                {institutions.map((institution: any) => (
+                                  <button
+                                    key={institution.id}
+                                    onClick={() => handleSelectInstitution(institution)}
+                                    className="w-full text-left p-3 rounded-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+                                  >
+                                    <div className="flex items-start gap-2">
+                                      <Building2 className="h-4 w-4 mt-0.5 text-primary flex-shrink-0" />
+                                      <div className="flex-1 min-w-0">
+                                        <p className="font-medium text-sm truncate">{institution.name}</p>
+                                        <div className="flex items-center gap-2 mt-1">
+                                          <Badge variant="outline" className="text-xs">
+                                            {institution.type}
+                                          </Badge>
+                                          <Badge variant="outline" className="text-xs">
+                                            {institution.ownership}
+                                          </Badge>
+                                          <p className="text-xs text-muted-foreground truncate">
+                                            {institution.state}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {selectedInstitution && (
+                          <div className="mt-2 p-3 bg-muted/50 rounded-md border">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <p className="font-medium text-sm">{selectedInstitution.name}</p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {selectedInstitution.type} • {selectedInstitution.ownership} • {selectedInstitution.state}
+                                </p>
+                              </div>
+                              <Link
+                                href={`/institutions/${selectedInstitution.id}`}
+                                className="text-xs text-primary hover:underline"
+                              >
+                                View Details
+                              </Link>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Priority</label>
+                        <Select value={priority} onValueChange={setPriority}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="high">High</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="low">Low</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <Button onClick={handleAddInstitution} disabled={!institutionId} className="w-full">
+                        Add to Watchlist
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+
+              {loading ? (
+                <Card>
+                  <CardHeader>
+                    <Skeleton className="h-6 w-48 mb-2" />
+                    <Skeleton className="h-4 w-64" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <Skeleton className="h-12 w-full" />
+                      <Skeleton className="h-12 w-full" />
+                      <Skeleton className="h-12 w-full" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : institutionWatchlist.length === 0 ? (
+                <Card>
+                  <CardContent className="py-12 text-center">
+                    <Building2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">No institutions in watchlist</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Start tracking institutions you&apos;re interested in
+                    </p>
+                    <Button onClick={() => setInstitutionDialogOpen(true)}>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Institution
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle>Tracked Institutions ({institutionWatchlist.length})</CardTitle>
+                        <CardDescription>
+                          Institutions you&apos;re monitoring
+                        </CardDescription>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleSelectAllInstitutions}
+                        >
+                          <CheckSquare className="h-4 w-4 mr-2" />
+                          {selectedInstitutionItems.size === institutionWatchlist.length ? "Deselect All" : "Select All"}
+                        </Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-12">
+                            <Checkbox
+                              checked={selectedInstitutionItems.size === institutionWatchlist.length && institutionWatchlist.length > 0}
+                              onCheckedChange={handleSelectAllInstitutions}
+                            />
+                          </TableHead>
+                          <TableHead>Institution</TableHead>
+                          <TableHead>Type</TableHead>
+                          <TableHead>Ownership</TableHead>
+                          <TableHead>Location</TableHead>
+                          <TableHead>Priority</TableHead>
+                          <TableHead>Notes</TableHead>
+                          <TableHead>Added</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {institutionWatchlist.map((item) => (
+                          <TableRow key={item.id}>
+                            <TableCell>
+                              <Checkbox
+                                checked={selectedInstitutionItems.has(item.id)}
+                                onCheckedChange={() => handleToggleSelectInstitution(item.id)}
+                              />
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              <Link
+                                href={`/institutions/${item.institution.id}`}
+                                className="text-primary hover:underline"
+                              >
+                                {item.institution.name}
+                              </Link>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline">
+                                {item.institution.type}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="secondary">
+                                {item.institution.ownership}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline">
+                                {item.institution.state}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant={
+                                  item.priority === "high"
+                                    ? "destructive"
+                                    : item.priority === "medium"
+                                    ? "default"
+                                    : "secondary"
+                                }
+                              >
+                                {item.priority || "medium"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              {item.notes ? (
+                                <div className="max-w-xs">
+                                  <p className="text-sm text-muted-foreground line-clamp-2">
+                                    {item.notes}
+                                  </p>
+                                </div>
+                              ) : (
+                                <span className="text-muted-foreground text-sm">—</span>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-muted-foreground">
+                              {new Date(item.createdAt).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                <WatchlistNotes
+                                  watchlistItemId={item.id}
+                                  currentNotes={item.notes}
+                                  onUpdate={fetchWatchlist}
+                                  isInstitution={true}
+                                />
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handleDeleteInstitution(item.id)}
+                                >
+                                  <Trash2 className="h-4 w-4 text-destructive" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+          </Tabs>
         </main>
         <Footer />
       </div>

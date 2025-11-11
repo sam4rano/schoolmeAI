@@ -8,7 +8,7 @@ export function Footer() {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <span className="text-2xl">🇳🇬</span>
-              <span className="text-lg font-bold">EduRepo-NG-AI</span>
+              <span className="text-lg font-bold">edurepoAI.xyz</span>
             </div>
             <p className="text-sm text-muted-foreground">
               AI-powered educational repository and guidance system for Nigerian tertiary admissions.
@@ -62,7 +62,7 @@ export function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 <a
-                  href="https://github.com/your-org/edurepo-ng-ai"
+                  href="https://github.com/sam4rano/edurepoAI"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-muted-foreground hover:text-primary"
@@ -72,7 +72,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="https://github.com/your-org/edurepo-ng-ai/issues"
+                  href="https://github.com/sam4rano/edurepoAI/issues"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-muted-foreground hover:text-primary"
@@ -85,7 +85,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-          <p>© 2025 EduRepo-NG-AI Initiative. Built with ❤️ for Nigerian students.</p>
+          <p>© 2025 edurepoAI.xyz. Built with ❤️ for Nigerian students.</p>
         </div>
       </div>
     </footer>

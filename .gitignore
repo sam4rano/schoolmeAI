@@ -12,10 +12,10 @@ __tests__/
 /out/
 .swc
 .cursor
-docs
 
 # Production
 /build
+docs
 
 # Misc
 .DS_Store
@@ -30,6 +30,7 @@ yarn-error.log*
 .env
 .env*.local
 .env.local
+sendgrid.env
 
 # Vercel
 .vercel
@@ -53,3 +54,36 @@ test-output.css
 .DS_Store
 Thumbs.db
 
+# Python (scrapers)
+scrapers/venv/
+scrapers/__pycache__/
+scrapers/**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Temporary/Test Documentation (keep main docs)
+*_TEST_RESULTS.md
+*_TROUBLESHOOTING.md
+*_SETUP_STATUS.md
+*_ENDPOINT_FIX.md
+EMAIL_TEST_RESULTS.md
+*_UPDATE_SUMMARY.md
+*_DEPLOYMENT_STATUS.md
+
+# Sensitive Documentation
+PRODUCTION_SECRET.md
+DNS_SETUP_GUIDE.md
+AUTHENTICATION_SETUP.md
+IMPLEMENTATION_SUMMARY.md
+PRODUCTION_READINESS.md
+
+# Data files
+csv_folder/
+scrapers/*.json
+scrapers/scraped_*.json
+scrapers/website_matches.json
+
+# Test endpoints (should be removed or protected in production)
+# app/api/test-email/

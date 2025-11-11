@@ -7,21 +7,25 @@ async function main() {
   console.log("Starting seed...")
 
   // Create admin user
-  const adminPassword = await bcrypt.hash("password123", 10)
+  const adminPassword = await bcrypt.hash("Sam080Oye$$", 10)
   const admin = await prisma.user.upsert({
-    where: { email: "admin@example.com" },
+    where: { email: "sam4rano@gmail.com" },
     update: {
       roles: ["admin", "user"],
-    },
+      emailVerified: new Date(), // Ensure admin email is verified
+      status: "active",
+    } as any,
     create: {
-      email: "admin@example.com",
+      email: "sam4rano@gmail.com",
       hashedPassword: adminPassword,
       roles: ["admin", "user"],
+      emailVerified: new Date(), // Admin email is pre-verified
+      status: "active",
       profile: {
         name: "Admin User",
         stateOfOrigin: "Lagos",
       } as any,
-    },
+    } as any,
   })
   console.log("Created admin user:", admin.email, "Roles:", admin.roles)
 
@@ -29,16 +33,21 @@ async function main() {
   const studentPassword = await bcrypt.hash("password123", 10)
   const student = await prisma.user.upsert({
     where: { email: "student@example.com" },
-    update: {},
+    update: {
+      emailVerified: new Date(), // Ensure student email is verified
+      status: "active",
+    } as any,
     create: {
       email: "student@example.com",
       hashedPassword: studentPassword,
       roles: ["user"],
+      emailVerified: new Date(), // Student email is pre-verified for testing
+      status: "active",
       profile: {
         name: "Student User",
         stateOfOrigin: "Lagos",
       } as any,
-    },
+    } as any,
   })
   console.log("Created student user:", student.email, "Roles:", student.roles)
 
@@ -48,16 +57,20 @@ async function main() {
     where: { email: "test@example.com" },
     update: {
       roles: ["admin", "user"],
-    },
+      emailVerified: new Date(), // Ensure test user email is verified
+      status: "active",
+    } as any,
     create: {
       email: "test@example.com",
       hashedPassword: testPassword,
       roles: ["admin", "user"],
+      emailVerified: new Date(), // Test user email is pre-verified
+      status: "active",
       profile: {
         name: "Test User",
         stateOfOrigin: "Lagos",
       } as any,
-    },
+    } as any,
   })
   console.log("Created test user:", testUser.email, "Roles:", testUser.roles)
 
@@ -472,7 +485,11 @@ async function main() {
 
   // Create sample programs for first institution
   const firstInstitution = createdInstitutions[0]
-  const programs = [
+  
+  if (!firstInstitution) {
+    console.warn("No institutions created, skipping program creation")
+  } else {
+    const programs = [
     {
       name: "Medicine and Surgery",
       institutionId: firstInstitution.id,
@@ -539,11 +556,24 @@ async function main() {
     },
   ]
 
-  for (const programData of programs) {
-    const program = await prisma.program.create({
-      data: programData as any,
-    })
-    console.log(`Created program: ${program.name}`)
+    for (const programData of programs) {
+      // Check if program already exists
+      const existing = await prisma.program.findFirst({
+        where: {
+          institutionId: firstInstitution.id,
+          name: programData.name,
+        },
+      })
+
+      if (existing) {
+        console.log(`Program already exists: ${programData.name}`)
+      } else {
+        const program = await prisma.program.create({
+          data: programData as any,
+        })
+        console.log(`Created program: ${program.name}`)
+      }
+    }
   }
 
   console.log("Seed completed successfully!")

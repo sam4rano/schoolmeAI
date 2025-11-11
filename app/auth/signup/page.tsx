@@ -43,7 +43,7 @@ export default function SignUpPage() {
       if (!response.ok) {
         setError(data.error || "Failed to create account")
       } else {
-        router.push("/auth/signin?registered=true")
+        router.push("/auth/signin?registered=true&email=" + encodeURIComponent(email))
       }
     } catch (err) {
       setError("An error occurred. Please try again.")

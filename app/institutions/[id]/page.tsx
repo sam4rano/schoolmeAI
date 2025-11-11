@@ -11,6 +11,7 @@ import { InstitutionProgramsList } from "@/components/institutions/institution-p
 import { InstitutionStatistics } from "@/components/institutions/institution-statistics"
 import { InstitutionMap } from "@/components/institutions/institution-map"
 import { InstitutionContact } from "@/components/institutions/institution-contact"
+import { InstitutionWatchlistButton } from "@/components/institution-watchlist-button"
 import Link from "next/link"
 import { DollarSign, Calendar, Info } from "lucide-react"
 
@@ -219,10 +220,15 @@ export default async function InstitutionDetailPage({
           <div className="lg:col-span-2 space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="text-3xl">{institution.name}</CardTitle>
-                <CardDescription>
-                  {institution.type} • {institution.ownership} • {institution.state}
-                </CardDescription>
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <CardTitle className="text-3xl">{institution.name}</CardTitle>
+                    <CardDescription>
+                      {institution.type} • {institution.ownership} • {institution.state}
+                    </CardDescription>
+                  </div>
+                  <InstitutionWatchlistButton institutionId={institution.id} />
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 {institution.accreditationStatus && (

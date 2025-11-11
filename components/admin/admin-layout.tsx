@@ -12,6 +12,7 @@ import { useSession } from "next-auth/react"
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const { data: session } = useSession()
   const { isLoading, isAuthenticated, isAdmin, isAuthorized, status } = useAuthGuard({
     requireAuth: true,
     requireAdmin: true,
@@ -81,8 +82,6 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       </div>
     )
   }
-
-  const { data: session } = useSession()
 
   return (
     <div className="flex min-h-screen flex-col" style={{ isolation: "isolate" }}>

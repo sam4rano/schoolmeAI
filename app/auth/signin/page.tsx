@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { signIn, useSession } from "next-auth/react"
-import { useRouter, usePathname } from "next/navigation"
+import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,16 +11,18 @@ import { Navbar } from "@/components/ui/navbar"
 import { Footer } from "@/components/ui/footer"
 import Link from "next/link"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2 } from "lucide-react"
+import { Loader2, Mail } from "lucide-react"
 
 export default function SignInPage() {
   const router = useRouter()
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const { data: session, status } = useSession()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showEmailWarning, setShowEmailWarning] = useState(false)
   const hasRedirected = useRef(false)
   const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -58,7 +60,14 @@ export default function SignInPage() {
       })
 
       if (result?.error) {
-        setError("Invalid email or password")
+        if (result.error.includes("verify your email")) {
+          setShowEmailWarning(true)
+          setError(result.error)
+        } else if (result.error.includes("suspended") || result.error.includes("banned")) {
+          setError(result.error)
+        } else {
+          setError("Invalid email or password")
+        }
         setLoading(false)
       } else {
         // Success - the useEffect will handle redirect when status becomes "authenticated"
@@ -112,9 +121,65 @@ export default function SignInPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {searchParams.get("registered") === "true" && (
+                <Alert>
+                  <Mail className="h-4 w-4" />
+                  <AlertDescription>
+                    Account created! Please check your email to verify your account before signing in.
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {searchParams.get("verified") === "true" && (
+                <Alert>
+                  <AlertDescription>
+                    Email verified successfully! You can now sign in.
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {searchParams.get("reset") === "true" && (
+                <Alert>
+                  <AlertDescription>
+                    Password reset successfully! Please sign in with your new password.
+                  </AlertDescription>
+                </Alert>
+              )}
+
               {error && (
                 <Alert variant="destructive">
                   <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
+              {showEmailWarning && (
+                <Alert>
+                  <Mail className="h-4 w-4" />
+                  <AlertDescription>
+                    Your email is not verified.{" "}
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          const response = await fetch("/api/auth/resend-verification", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ email }),
+                          })
+                          if (response.ok) {
+                            setError(null)
+                            setShowEmailWarning(false)
+                            alert("Verification email sent! Please check your inbox.")
+                          }
+                        } catch (err) {
+                          alert("Failed to resend verification email")
+                        }
+                      }}
+                      className="underline font-medium hover:no-underline"
+                    >
+                      Resend verification email
+                    </button>
+                  </AlertDescription>
                 </Alert>
               )}
 
@@ -132,7 +197,12 @@ export default function SignInPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Password</Label>
+                  <Link href="/auth/forgot-password" className="text-xs text-primary hover:underline">
+                    Forgot password?
+                  </Link>
+                </div>
                 <Input
                   id="password"
                   type="password"
