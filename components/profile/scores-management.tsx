@@ -358,7 +358,7 @@ export function ScoresManagement({ jambScore, oLevels, onJambScoreUpdate, onOLev
                       ))}
                       {Object.keys(formData.grades).length === 0 && (
                         <p className="text-sm text-muted-foreground text-center py-4">
-                          No subjects added. Click "Add Subject" to get started.
+                          No subjects added. Click &quot;Add Subject&quot; to get started.
                         </p>
                       )}
                     </div>
@@ -394,7 +394,7 @@ export function ScoresManagement({ jambScore, oLevels, onJambScoreUpdate, onOLev
             </div>
           ) : oLevels.length === 0 ? (
             <p className="text-muted-foreground text-center py-8">
-              No O-level results added yet. Click "Add O-Level" to get started.
+              No O-level results added yet. Click &quot;Add O-Level&quot; to get started.
             </p>
           ) : (
             <div className="space-y-4">

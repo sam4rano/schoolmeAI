@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, Eye, User } from "lucide-react"
@@ -78,10 +79,11 @@ export function NewsCard({
       <Card className={cn("h-full transition-all hover:shadow-lg", featured && "border-primary")}>
         {imageUrl && (
           <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
-            <img
+            <Image
               src={imageUrl}
               alt={title}
-              className="h-full w-full object-cover transition-transform hover:scale-105"
+              fill
+              className="object-cover transition-transform hover:scale-105"
             />
             {featured && (
               <Badge className="absolute top-2 right-2" variant="default">

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -39,11 +39,7 @@ export function ForumList() {
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
 
-  useEffect(() => {
-    fetchPosts()
-  }, [page])
-
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/community/forums?page=${page}&limit=20`)
@@ -57,7 +53,11 @@ export function ForumList() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [page])
+
+  useEffect(() => {
+    fetchPosts()
+  }, [fetchPosts])
 
   if (loading && posts.length === 0) {
     return (

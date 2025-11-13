@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
@@ -32,18 +32,7 @@ export function SessionManagement() {
   const [showTimeoutWarning, setShowTimeoutWarning] = useState(false)
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null)
 
-  useEffect(() => {
-    fetchSessions()
-    
-    // Check for session timeout
-    const checkInterval = setInterval(() => {
-      checkSessionTimeout()
-    }, SESSION_CHECK_INTERVAL)
-
-    return () => clearInterval(checkInterval)
-  }, [session])
-
-  const fetchSessions = async () => {
+  const fetchSessions = useCallback(async () => {
     try {
       const response = await fetch("/api/auth/sessions")
       if (response.ok) {
@@ -55,9 +44,9 @@ export function SessionManagement() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const checkSessionTimeout = () => {
+  const checkSessionTimeout = useCallback(() => {
     if (!session?.expires) return
 
     const expiresAt = new Date(session.expires).getTime()
@@ -78,7 +67,18 @@ export function SessionManagement() {
     } else {
       setShowTimeoutWarning(false)
     }
-  }
+  }, [session, toast])
+
+  useEffect(() => {
+    fetchSessions()
+    
+    // Check for session timeout
+    const checkInterval = setInterval(() => {
+      checkSessionTimeout()
+    }, SESSION_CHECK_INTERVAL)
+
+    return () => clearInterval(checkInterval)
+  }, [session, fetchSessions, checkSessionTimeout])
 
   const handleSignOut = async (sessionId?: string) => {
     if (sessionId) {

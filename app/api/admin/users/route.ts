@@ -4,6 +4,8 @@ import { requireAdmin } from "@/lib/middleware/admin"
 import { z } from "zod"
 import { handleApiError } from "@/lib/utils/api-error-handler"
 
+export const dynamic = 'force-dynamic'
+
 const getUsersSchema = z.object({
   page: z.coerce.number().min(1).optional().default(1),
   limit: z.coerce.number().min(1).max(100).optional().default(20),

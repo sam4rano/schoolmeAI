@@ -5,6 +5,8 @@ import { logger } from "@/lib/utils/logger"
 import { PAGINATION, HTTP_STATUS } from "@/lib/constants"
 import { getCached, generateCacheKey, CACHE_CONFIG, CACHE_TAGS } from "@/lib/cache"
 
+export const dynamic = 'force-dynamic'
+
 /**
  * @swagger
  * /api/programs:

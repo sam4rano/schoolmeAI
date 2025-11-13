@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -39,11 +39,7 @@ export function StoriesList() {
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
 
-  useEffect(() => {
-    fetchStories()
-  }, [page])
-
-  const fetchStories = async () => {
+  const fetchStories = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/community/stories?page=${page}&limit=20`)
@@ -57,7 +53,11 @@ export function StoriesList() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [page])
+
+  useEffect(() => {
+    fetchStories()
+  }, [fetchStories])
 
   if (loading && stories.length === 0) {
     return (

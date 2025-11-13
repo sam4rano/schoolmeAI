@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -18,16 +18,7 @@ export default function VerifyEmailPage() {
   const [status, setStatus] = useState<"loading" | "success" | "error" | "idle">("idle")
   const [message, setMessage] = useState<string>("")
 
-  useEffect(() => {
-    if (token) {
-      verifyEmail(token)
-    } else {
-      setStatus("error")
-      setMessage("No verification token provided")
-    }
-  }, [token])
-
-  const verifyEmail = async (verificationToken: string) => {
+  const verifyEmail = useCallback(async (verificationToken: string) => {
     setStatus("loading")
     try {
       const response = await fetch("/api/auth/verify-email", {
@@ -54,7 +45,16 @@ export default function VerifyEmailPage() {
       setStatus("error")
       setMessage("An error occurred. Please try again.")
     }
-  }
+  }, [router])
+
+  useEffect(() => {
+    if (token) {
+      verifyEmail(token)
+    } else {
+      setStatus("error")
+      setMessage("No verification token provided")
+    }
+  }, [token, verifyEmail])
 
   const resendVerification = async () => {
     if (!token) return

@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/middleware/admin"
 import { handleApiError } from "@/lib/utils/api-error-handler"
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   try {
     await requireAdmin()

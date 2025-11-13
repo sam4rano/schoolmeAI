@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -42,11 +42,7 @@ export function QuestionsList() {
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
 
-  useEffect(() => {
-    fetchQuestions()
-  }, [page])
-
-  const fetchQuestions = async () => {
+  const fetchQuestions = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/community/questions?page=${page}&limit=20`)
@@ -60,7 +56,11 @@ export function QuestionsList() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [page])
+
+  useEffect(() => {
+    fetchQuestions()
+  }, [fetchQuestions])
 
   if (loading && questions.length === 0) {
     return (

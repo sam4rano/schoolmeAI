@@ -4,6 +4,8 @@ import { logger } from "@/lib/utils/logger"
 import { HTTP_STATUS } from "@/lib/constants"
 import { predictNextCutoff, predictFutureCutoffs, calculateTrend, getInsights } from "@/lib/utils/predictions"
 
+export const dynamic = 'force-dynamic'
+
 /**
  * @swagger
  * /api/analytics/trends:

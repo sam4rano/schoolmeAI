@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -93,6 +93,36 @@ export default function CalculatorPage() {
   const [syncing, setSyncing] = useState(false)
   const programDropdownRef = useRef<HTMLDivElement>(null)
 
+  // Sync localStorage calculations to database
+  const syncLocalToDatabase = useCallback(async (localData: CalculationHistory[]) => {
+    if (!session?.user || localData.length === 0) return
+
+    setSyncing(true)
+    try {
+      const response = await fetch("/api/calculations/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ calculations: localData }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.data.synced > 0) {
+          toast({
+            title: "History synced",
+            description: `Synced ${data.data.synced} calculation(s) to your account`,
+          })
+          // Clear localStorage after successful sync
+          localStorage.removeItem("calculator-history")
+        }
+      }
+    } catch (error) {
+      console.error("Failed to sync calculations", error)
+    } finally {
+      setSyncing(false)
+    }
+  }, [session?.user, toast])
+
   // Load history from database for signed-in users, or localStorage for guests
   useEffect(() => {
     const loadHistory = async () => {
@@ -159,37 +189,7 @@ export default function CalculatorPage() {
     }
 
     loadHistory()
-  }, [session])
-
-  // Sync localStorage calculations to database
-  const syncLocalToDatabase = async (localData: CalculationHistory[]) => {
-    if (!session?.user || localData.length === 0) return
-
-    setSyncing(true)
-    try {
-      const response = await fetch("/api/calculations/sync", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ calculations: localData }),
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        if (data.data.synced > 0) {
-          toast({
-            title: "History synced",
-            description: `Synced ${data.data.synced} calculation(s) to your account`,
-          })
-          // Clear localStorage after successful sync
-          localStorage.removeItem("calculator-history")
-        }
-      }
-    } catch (error) {
-      console.error("Failed to sync calculations", error)
-    } finally {
-      setSyncing(false)
-    }
-  }
+  }, [session, syncLocalToDatabase])
 
   // Save history to localStorage for guests, or database for signed-in users
   useEffect(() => {

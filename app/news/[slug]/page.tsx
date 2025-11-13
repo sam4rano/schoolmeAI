@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
+import Image from "next/image"
 import { NewsCard } from "@/components/news/news-card"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -67,11 +68,7 @@ export default function NewsDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [relatedNews, setRelatedNews] = useState<NewsArticle[]>([])
 
-  useEffect(() => {
-    fetchArticle()
-  }, [slug])
-
-  const fetchArticle = async () => {
+  const fetchArticle = useCallback(async () => {
     setLoading(true)
     setError(null)
 
@@ -104,7 +101,11 @@ export default function NewsDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [slug])
+
+  useEffect(() => {
+    fetchArticle()
+  }, [fetchArticle])
 
   if (loading) {
     return (
@@ -201,11 +202,12 @@ export default function NewsDetailPage() {
 
           {/* Featured Image */}
           {article.imageUrl && (
-            <div className="mb-8">
-              <img
+            <div className="mb-8 relative w-full h-96 rounded-lg overflow-hidden">
+              <Image
                 src={article.imageUrl}
                 alt={article.title}
-                className="w-full h-auto rounded-lg"
+                fill
+                className="object-cover rounded-lg"
               />
             </div>
           )}

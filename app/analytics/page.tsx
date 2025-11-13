@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge"
 import { Building2, GraduationCap, TrendingUp, Download, BarChart3, Sparkles, AlertCircle } from "lucide-react"
 import { TrendChart } from "@/components/analytics/trend-chart"
 
+export const dynamic = 'force-dynamic'
+
 async function getAnalytics() {
   try {
     const [institutionsRes, programsRes] = await Promise.all([

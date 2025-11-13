@@ -5,6 +5,8 @@ import { logger } from "@/lib/utils/logger"
 import { HTTP_STATUS, PAGINATION } from "@/lib/constants"
 import { getCached, generateCacheKey, CACHE_CONFIG, CACHE_TAGS } from "@/lib/cache"
 
+export const dynamic = 'force-dynamic'
+
 const newsQuerySchema = z.object({
   category: z.enum(["jamb", "post_utme", "nursing_schools", "admission", "nysc", "general", "scholarships", "cutoff_updates", "accreditation"]).optional(),
   status: z.enum(["draft", "published", "archived"]).optional().default("published"),

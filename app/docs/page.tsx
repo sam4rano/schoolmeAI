@@ -1,8 +1,19 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import SwaggerUI from "swagger-ui-react"
+import dynamic from "next/dynamic"
+// Import SwaggerUI CSS at top level
 import "swagger-ui-react/swagger-ui.css"
+
+// Dynamically import SwaggerUI to avoid SSR issues
+const SwaggerUI = dynamic(() => import("swagger-ui-react"), {
+  ssr: false,
+  loading: () => (
+    <div className="text-center py-8">
+      <p className="text-muted-foreground">Loading API documentation...</p>
+    </div>
+  ),
+})
 
 export default function ApiDocsPage() {
   const [spec, setSpec] = useState<any>(null)
@@ -50,7 +61,7 @@ export default function ApiDocsPage() {
           Complete API documentation for SchoolMe platform
         </p>
       </div>
-      <SwaggerUI spec={spec} />
+      {spec && <SwaggerUI spec={spec} />}
     </div>
   )
 }

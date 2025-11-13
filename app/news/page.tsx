@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { NewsCard } from "@/components/news/news-card"
 import { Button } from "@/components/ui/button"
@@ -54,11 +54,7 @@ export default function NewsPage() {
   const [category, setCategory] = useState(searchParams.get("category") || "all")
   const [featured, setFeatured] = useState(searchParams.get("featured") === "true")
 
-  useEffect(() => {
-    fetchNews()
-  }, [page, category, search, featured])
-
-  const fetchNews = async () => {
+  const fetchNews = useCallback(async () => {
     setLoading(true)
     setError(null)
 
@@ -83,7 +79,11 @@ export default function NewsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [page, category, search, featured])
+
+  useEffect(() => {
+    fetchNews()
+  }, [fetchNews])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
