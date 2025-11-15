@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { sendDeadlineReminderEmail, sendWatchlistUpdateEmail } from "@/lib/email/notifications"
 
 interface CreateNotificationParams {
   userId: string
@@ -110,18 +111,53 @@ export async function checkDeadlineReminders() {
               institutionId: program.institutionId,
               deadline: program.applicationDeadline.toISOString(),
               daysUntilDeadline,
+              programName: program.name,
+              institutionName: program.institution.name,
+              userEmail: watchlistItem.user.email,
+              userName: (watchlistItem.user.profile as any)?.name,
             },
           })
         }
       }
     }
 
-    // Create all notifications
+    // Create all notifications and send emails
+    let emailsSent = 0
     for (const notification of notifications) {
       await createNotification(notification)
+      
+      // Send email if user has email notifications enabled
+      const metadata = notification.metadata as any
+      if (metadata?.userEmail && metadata?.programName) {
+        const user = await prisma.user.findUnique({
+          where: { id: notification.userId },
+          select: { profile: true },
+        })
+        
+        const profile = (user?.profile as any) || {}
+        const preferences = profile.notificationPreferences || {}
+        
+        if (preferences.email !== false && preferences.deadlineReminders !== false) {
+          try {
+            const program = programsWithDeadlines.find(p => p.id === metadata.programId)
+            if (program && program.applicationDeadline) {
+              await sendDeadlineReminderEmail({
+                to: metadata.userEmail,
+                name: metadata.userName,
+                programName: metadata.programName,
+                deadline: new Date(program.applicationDeadline),
+                institutionName: metadata.institutionName,
+              })
+              emailsSent++
+            }
+          } catch (error) {
+            console.error("Failed to send deadline reminder email", error)
+          }
+        }
+      }
     }
 
-    return { created: notifications.length }
+    return { created: notifications.length, emailsSent }
   } catch (error) {
     console.error("Error checking deadline reminders:", error)
     return { created: 0, error }

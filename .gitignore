@@ -87,3 +87,14 @@ scrapers/website_matches.json
 
 # Test endpoints (should be removed or protected in production)
 # app/api/test-email/
+
+# Old/duplicate files
+docker-entrypoint2.sh
+Dockerfile2
+*.bak
+*.old
+*.tmp
+
+# Excel exports (one-time files)
+*.xlsx
+*.xls

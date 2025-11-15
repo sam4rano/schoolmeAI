@@ -7,16 +7,17 @@ const institutionSchema = z.object({
   name: z.string().min(1),
   type: z.enum(["university", "polytechnic", "college", "nursing", "military"]),
   ownership: z.enum(["federal", "state", "private"]),
-  state: z.string().min(1).or(z.literal("")),
-  city: z.string().min(1).or(z.literal("")),
-  website: z.string().url().optional().nullable(),
+  state: z.string().optional().nullable().transform((val) => val || "Unknown"),
+  city: z.string().optional().nullable().transform((val) => val || "Unknown"),
+  website: z.union([z.string().url(), z.string().length(0), z.null()]).optional().nullable(),
   contact: z
     .object({
       email: z.string().email().optional(),
       phone: z.string().optional(),
       address: z.string().optional(),
     })
-    .optional(),
+    .optional()
+    .nullable(),
   accreditationStatus: z.string().optional().nullable(),
   year_established: z.number().int().min(1800).max(2100).optional().nullable(),
   courses_url: z
@@ -24,9 +25,10 @@ const institutionSchema = z.object({
     .optional()
     .nullable(),
   source_url: z
-    .union([z.string().url(), z.string().length(0)])
-    .optional(),
-  license: z.string().optional(),
+    .union([z.string().url(), z.string().length(0), z.null()])
+    .optional()
+    .nullable(),
+  license: z.string().optional().nullable(),
 })
 
 const importSchema = z.object({
@@ -47,7 +49,7 @@ export async function POST(request: NextRequest) {
 
     for (const instData of validatedData.institutions) {
       try {
-        // Check if institution already exists
+        // Check if institution already exists (using select to avoid non-existent fields)
         const existing = await prisma.institution.findFirst({
           where: {
             name: {
@@ -55,6 +57,18 @@ export async function POST(request: NextRequest) {
               mode: "insensitive",
             },
             state: instData.state,
+          },
+          select: {
+            id: true,
+            name: true,
+            type: true,
+            ownership: true,
+            state: true,
+            city: true,
+            website: true,
+            contact: true,
+            accreditationStatus: true,
+            provenance: true,
           },
         })
 

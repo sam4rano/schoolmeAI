@@ -47,8 +47,8 @@ model Institution {
   contact             Json? // {email, phone, address}
   accreditationStatus String?
   courses             Json? // Array of program objects
-  tuitionFees         Json? // {schedule: [{program, level, amount, currency, per_year, breakdown}], lastUpdated, source}
-  feesSchedule        Json? // Alias for tuitionFees for backward compatibility
+  // tuitionFees         Json? // {schedule: [{program, level, amount, currency, per_year, breakdown}], lastUpdated, source} - Not in DB yet
+  // feesSchedule        Json? // Alias for tuitionFees for backward compatibility - Not in DB yet
   provenance          Json? // {source_url, fetched_at, license}
   lastVerifiedAt      DateTime?
   dataQualityScore    Int?            @default(0) @db.SmallInt // 0-100
@@ -94,7 +94,7 @@ model Program {
   officialUrl               String?   @db.Text // Link to official program page
   contact                   Json? // {email, phone, department_contact}
   accreditationStatus       String? // Program accreditation status (Full, Interim, Denied, Unknown)
-  accreditationMaturityDate Int? // Year when accreditation expires (e.g., 2024, 2026, 2028)
+  accreditationMaturityDate  Int? // Year when accreditation expires (e.g., 2024, 2026, 2028)
   accreditationLastUpdated  DateTime? // When accreditation data was last updated
   isActive                  Boolean   @default(true) // Whether program is still offered
   lastVerifiedAt            DateTime?

@@ -60,8 +60,9 @@ export async function POST(request: NextRequest) {
             id: true,
             name: true,
             type: true,
-            tuitionFees: true,
-            feesSchedule: true,
+            // tuitionFees and feesSchedule fields not in database yet - can be added later via admin
+            // tuitionFees: true,
+            // feesSchedule: true,
           },
         },
       },
@@ -78,47 +79,49 @@ export async function POST(request: NextRequest) {
 
     for (const program of programs) {
       const programDuration = duration || parseInt(program.duration?.match(/\d+/)?.[0] || "4")
-      const fees = (program.tuitionFees as any) || null
-      const institutionFees = (program.institution.tuitionFees as any) || (program.institution.feesSchedule as any) || null
+      // tuitionFees and feesSchedule fields not in database yet - can be added later via admin
+      const fees = null // Will be implemented when tuitionFees field is added
+      const institutionFees = null // Will be implemented when tuitionFees field is added
 
-      // Get fee data from program or institution
-      const feeData = fees || institutionFees
-      const hasFeeData = !!feeData
-      const hasAccommodationData = !!feeData?.accommodation
+      // Get fee data from program or institution (tuitionFees field not in database yet)
+      const feeData = null // Will be implemented when tuitionFees field is added
+      const hasFeeData = false // Will be implemented when tuitionFees field is added
+      const hasAccommodationData = false // Will be implemented when tuitionFees field is added
 
-      // Calculate tuition fees
+      // Calculate tuition fees (tuitionFees field not in database yet - will return 0 for now)
       let tuition = 0
-      if (feeData?.amount) {
-        tuition = feeData.per_year ? feeData.amount * programDuration : feeData.amount
-      } else if (feeData?.schedule && Array.isArray(feeData.schedule)) {
-        // Calculate from schedule
-        const programFee = feeData.schedule.find(
-          (item: any) => item.program === program.name || item.program === program.id
-        )
-        if (programFee) {
-          tuition = programFee.per_year ? programFee.amount * programDuration : programFee.amount
-        }
-      }
+      // TODO: Implement when tuitionFees field is added to database
+      // if (feeData?.amount) {
+      //   tuition = feeData.per_year ? feeData.amount * programDuration : feeData.amount
+      // } else if (feeData?.schedule && Array.isArray(feeData.schedule)) {
+      //   const programFee = feeData.schedule.find(
+      //     (item: any) => item.program === program.name || item.program === program.id
+      //   )
+      //   if (programFee) {
+      //     tuition = programFee.per_year ? programFee.amount * programDuration : programFee.amount
+      //   }
+      // }
 
-      // Calculate accommodation costs
+      // Calculate accommodation costs (tuitionFees field not in database yet - will return 0 for now)
       let accommodationCost = 0
-      if (accommodation && feeData?.accommodation) {
-        const accData = feeData.accommodation
-        if (accommodationType === "on_campus" && accData.on_campus) {
-          accommodationCost = accData.on_campus.per_year 
-            ? accData.on_campus.amount * programDuration 
-            : accData.on_campus.amount
-        } else if (accommodationType === "off_campus" && accData.off_campus) {
-          accommodationCost = accData.off_campus.per_year 
-            ? accData.off_campus.amount * programDuration 
-            : accData.off_campus.amount
-        } else if (accData.amount) {
-          // Fallback to general accommodation amount
-          accommodationCost = accData.per_year 
-            ? accData.amount * programDuration 
-            : accData.amount
-        }
-      }
+      // TODO: Implement when tuitionFees field is added to database
+      // if (accommodation && feeData?.accommodation) {
+      //   const accData = feeData.accommodation
+      //   if (accommodationType === "on_campus" && accData.on_campus) {
+      //     accommodationCost = accData.on_campus.per_year 
+      //       ? accData.on_campus.amount * programDuration 
+      //       : accData.on_campus.amount
+      //   } else if (accommodationType === "off_campus" && accData.off_campus) {
+      //     accommodationCost = accData.off_campus.per_year 
+      //       ? accData.off_campus.amount * programDuration 
+      //       : accData.off_campus.amount
+      //   } else if (accData.amount) {
+      //     // Fallback to general accommodation amount
+      //     accommodationCost = accData.per_year 
+      //       ? accData.amount * programDuration 
+      //       : accData.amount
+      //   }
+      // }
 
       // Calculate other expenses
       const books = (otherExpenses?.books || 0) * programDuration
@@ -149,7 +152,7 @@ export async function POST(request: NextRequest) {
         institutionType: program.institution.type,
         duration: programDuration,
         breakdown,
-        currency: feeData?.currency || "NGN",
+        currency: "NGN", // Will use feeData?.currency when tuitionFees field is added
         hasFeeData,
         hasAccommodationData,
       })

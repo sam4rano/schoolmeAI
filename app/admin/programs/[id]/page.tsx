@@ -42,6 +42,9 @@ export default function EditProgramPage({ params }: { params: Promise<{ id: stri
     cutoffHistory: [] as CutoffEntry[],
     applicationDeadline: "",
     careerProspects: [] as string[],
+    accreditationStatus: "",
+    accreditationMaturityDate: "",
+    isActive: true,
   })
   const [newUtmeSubject, setNewUtmeSubject] = useState("")
   const [newOlevelSubject, setNewOlevelSubject] = useState("")
@@ -103,6 +106,9 @@ export default function EditProgramPage({ params }: { params: Promise<{ id: stri
           ? new Date(data.applicationDeadline).toISOString().split("T")[0]
           : "",
         careerProspects: Array.isArray(data.careerProspects) ? data.careerProspects : [],
+        accreditationStatus: data.accreditationStatus || "",
+        accreditationMaturityDate: data.accreditationMaturityDate?.toString() || "",
+        isActive: data.isActive !== undefined ? data.isActive : true,
       })
     }
   }, [data])
@@ -115,6 +121,9 @@ export default function EditProgramPage({ params }: { params: Promise<{ id: stri
         body: JSON.stringify({
           ...data,
           applicationDeadline: data.applicationDeadline || undefined,
+          accreditationMaturityDate: data.accreditationMaturityDate
+            ? parseInt(data.accreditationMaturityDate)
+            : undefined,
         }),
       })
       if (!response.ok) {
@@ -327,6 +336,88 @@ export default function EditProgramPage({ params }: { params: Promise<{ id: stri
                 rows={4}
               />
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Accreditation Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Accreditation Information</CardTitle>
+            <CardDescription>
+              Program accreditation status and expiration. Critical for students to verify program validity.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="accreditationStatus">Accreditation Status *</Label>
+                <Select
+                  value={formData.accreditationStatus}
+                  onValueChange={(value) => setFormData({ ...formData, accreditationStatus: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Full">Full Accreditation</SelectItem>
+                    <SelectItem value="Interim">Interim Accreditation</SelectItem>
+                    <SelectItem value="Denied">Denied</SelectItem>
+                    <SelectItem value="Unknown">Unknown</SelectItem>
+                    <SelectItem value="Pending">Pending</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="accreditationMaturityDate">Accreditation Expiry Year</Label>
+                <Input
+                  id="accreditationMaturityDate"
+                  type="number"
+                  min="2000"
+                  max="2100"
+                  value={formData.accreditationMaturityDate}
+                  onChange={(e) => setFormData({ ...formData, accreditationMaturityDate: e.target.value })}
+                  placeholder="e.g., 2026, 2028"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Year when accreditation expires (e.g., 2024, 2026, 2028)
+                </p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="isActive"
+                  checked={formData.isActive}
+                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                  className="h-4 w-4 rounded border-gray-300"
+                />
+                <Label htmlFor="isActive" className="cursor-pointer">
+                  Program is currently active and being offered
+                </Label>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Uncheck if the program is no longer offered or has been discontinued
+              </p>
+            </div>
+            {formData.accreditationMaturityDate && (
+              <div className="p-3 rounded-md bg-muted">
+                <p className="text-sm font-medium">Accreditation Status:</p>
+                {parseInt(formData.accreditationMaturityDate) < new Date().getFullYear() ? (
+                  <p className="text-sm text-destructive font-medium mt-1">
+                    ⚠️ Accreditation expired in {formData.accreditationMaturityDate}
+                  </p>
+                ) : parseInt(formData.accreditationMaturityDate) <= new Date().getFullYear() + 1 ? (
+                  <p className="text-sm text-yellow-600 font-medium mt-1">
+                    ⚠️ Accreditation expires soon ({formData.accreditationMaturityDate})
+                  </p>
+                ) : (
+                  <p className="text-sm text-green-600 font-medium mt-1">
+                    ✓ Accreditation valid until {formData.accreditationMaturityDate}
+                  </p>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
 

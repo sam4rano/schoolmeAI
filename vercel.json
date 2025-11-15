@@ -9,7 +9,8 @@
   },
   "build": {
     "env": {
-      "NEXT_PUBLIC_APP_URL": "https://edurepoai.xyz"
+      "NEXT_PUBLIC_APP_URL": "https://edurepoai.xyz",
+      "NEXTAUTH_URL": "https://edurepoai.xyz"
     }
   }
 }

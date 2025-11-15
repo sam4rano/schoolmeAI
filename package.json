@@ -112,5 +112,8 @@
     "typescript": "^5.5.0",
     "undici": "^7.16.0",
     "xlsx": "^0.18.5"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }

@@ -20,6 +20,10 @@ const updateProgramSchema = z.object({
   applicationDeadline: z.string().datetime().optional().or(z.literal("")),
   careerProspects: z.array(z.string()).optional(),
   courseCurriculum: z.record(z.any()).optional(),
+  accreditationStatus: z.string().optional(),
+  accreditationMaturityDate: z.number().int().min(2000).max(2100).optional().nullable(),
+  accreditationLastUpdated: z.string().datetime().optional().nullable(),
+  isActive: z.boolean().optional(),
 })
 
 export async function GET(
@@ -84,6 +88,17 @@ export async function PUT(
       applicationDeadline = data.applicationDeadline ? new Date(data.applicationDeadline) : null
     }
 
+    // Parse accreditation last updated
+    let accreditationLastUpdated: Date | null | undefined = undefined
+    if (data.accreditationLastUpdated !== undefined) {
+      accreditationLastUpdated = data.accreditationLastUpdated
+        ? new Date(data.accreditationLastUpdated)
+        : null
+    } else if (data.accreditationStatus !== undefined || data.accreditationMaturityDate !== undefined) {
+      // Auto-update accreditationLastUpdated when accreditation fields change
+      accreditationLastUpdated = new Date()
+    }
+
     // Track changes
     const changes: Record<string, { old: any; new: any }> = {}
     Object.keys(data).forEach((key) => {
@@ -106,6 +121,7 @@ export async function PUT(
       data: {
         ...data,
         ...(applicationDeadline !== undefined && { applicationDeadline }),
+        ...(accreditationLastUpdated !== undefined && { accreditationLastUpdated }),
       },
     })
     await logAuditEvent({

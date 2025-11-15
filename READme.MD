@@ -201,7 +201,7 @@ npm run dev
 ## 📖 API Documentation
 
 Interactive API documentation available at:
-- **Swagger/OpenAPI**: https://edurepoAI.com/api/docs (or http://localhost:3000/api/docs for local development)
+- **Swagger/OpenAPI**: https://edurepoai.xyz/api/docs (or http://localhost:3000/api/docs for local development)
 
 ### Key Endpoints
 

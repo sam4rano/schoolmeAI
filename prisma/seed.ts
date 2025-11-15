@@ -29,6 +29,9 @@ async function main() {
   })
   console.log("Created admin user:", admin.email, "Roles:", admin.roles)
 
+  // NOTE: Other test users (student, test) are disabled to seed only admin user
+  // Uncomment below if you need test users for development
+  /*
   // Create sample student user
   const studentPassword = await bcrypt.hash("password123", 10)
   const student = await prisma.user.upsert({
@@ -73,7 +76,11 @@ async function main() {
     } as any,
   })
   console.log("Created test user:", testUser.email, "Roles:", testUser.roles)
+  */
 
+  // NOTE: Institutions and programs seeding is disabled to prevent overriding existing data
+  // If you need to seed sample data, uncomment the sections below
+  /*
   // Sample institutions (20 major Nigerian institutions)
   const institutions = [
     {
@@ -575,8 +582,9 @@ async function main() {
       }
     }
   }
+  */
 
-  console.log("Seed completed successfully!")
+  console.log("Seed completed successfully! (Admin user only)")
 }
 
 main()

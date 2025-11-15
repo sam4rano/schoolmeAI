@@ -44,7 +44,8 @@ export async function POST(request: NextRequest) {
           await prisma.program.update({
             where: { id: item.id },
             data: {
-              tuitionFees: item.tuitionFees || null,
+              // tuitionFees field not in database yet - can be added later via admin
+              // tuitionFees: item.tuitionFees || null,
             },
           })
 
@@ -71,8 +72,9 @@ export async function POST(request: NextRequest) {
           await prisma.institution.update({
             where: { id: item.id },
             data: {
-              tuitionFees: item.tuitionFees || item.feesSchedule || null,
-              feesSchedule: item.feesSchedule || item.tuitionFees || null,
+              // tuitionFees and feesSchedule fields not in database yet - can be added later via admin
+              // tuitionFees: item.tuitionFees || item.feesSchedule || null,
+              // feesSchedule: item.feesSchedule || item.tuitionFees || null,
             },
           })
 

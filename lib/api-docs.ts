@@ -20,12 +20,12 @@ const options: SwaggerOptions = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "SchoolMe API",
+      title: "edurepoAI API",
       version: "1.0.0",
-      description: "API documentation for SchoolMe - Nigerian University Admission Guidance Platform",
+      description: "API documentation for edurepoAI.xyz - Nigerian University Admission Guidance Platform",
       contact: {
-        name: "SchoolMe Support",
-        email: "support@schoolme.ng",
+        name: "edurepoAI Support",
+        email: "support@edurepoai.xyz",
       },
     },
     servers: [
@@ -34,7 +34,7 @@ const options: SwaggerOptions = {
         description: "Development server",
       },
       {
-        url: "https://api.schoolme.ng",
+        url: "https://edurepoai.xyz",
         description: "Production server",
       },
     ],
@@ -98,6 +98,40 @@ const options: SwaggerOptions = {
             totalPages: { type: "integer" },
           },
         },
+        Backup: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            filePath: { type: "string", nullable: true },
+            size: { type: "integer", nullable: true },
+            error: { type: "string", nullable: true },
+            timestamp: { type: "string", format: "date-time" },
+          },
+        },
+        ScheduledTask: {
+          type: "object",
+          properties: {
+            id: { type: "string" },
+            name: { type: "string" },
+            schedule: { type: "string" },
+            enabled: { type: "boolean" },
+            lastRun: { type: "string", format: "date-time", nullable: true },
+            nextRun: { type: "string", format: "date-time", nullable: true },
+          },
+        },
+        Report: {
+          type: "object",
+          properties: {
+            period: {
+              type: "object",
+              properties: {
+                start: { type: "string", format: "date-time" },
+                end: { type: "string", format: "date-time" },
+              },
+            },
+            data: { type: "object" },
+          },
+        },
       },
     },
     tags: [
@@ -111,6 +145,10 @@ const options: SwaggerOptions = {
       { name: "Notifications", description: "Notification endpoints" },
       { name: "Auth", description: "Authentication endpoints" },
       { name: "Admin", description: "Admin management endpoints" },
+      { name: "Backup", description: "Database backup and restore endpoints" },
+      { name: "Reports", description: "Analytics and reporting endpoints" },
+      { name: "Cron", description: "Scheduled task management endpoints" },
+      { name: "Documentation", description: "API documentation endpoints" },
     ],
   },
   apis: [

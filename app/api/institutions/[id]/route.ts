@@ -75,8 +75,9 @@ export async function PATCH(
           : institution.contact,
         accreditationStatus:
           validatedData.accreditationStatus ?? institution.accreditationStatus,
-        tuitionFees: (validatedData.tuitionFees ?? institution.tuitionFees) as any,
-        feesSchedule: (validatedData.feesSchedule ?? institution.feesSchedule) as any,
+        // tuitionFees and feesSchedule fields not in database yet - can be added later via admin
+        // tuitionFees: (validatedData.tuitionFees ?? institution.tuitionFees) as any,
+        // feesSchedule: (validatedData.feesSchedule ?? institution.feesSchedule) as any,
         lastVerifiedAt: new Date(),
         updatedAt: new Date(),
       },

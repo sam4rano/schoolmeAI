@@ -20,6 +20,8 @@ import {
   Sparkles,
   Globe,
   Users,
+  Clock,
+  Database,
 } from "lucide-react"
 
 const navItems = [
@@ -97,6 +99,26 @@ const navItems = [
     title: "Users",
     href: "/admin/users",
     icon: Users,
+  },
+  {
+    title: "Scheduled Tasks",
+    href: "/admin/cron",
+    icon: Clock,
+  },
+  {
+    title: "Backups",
+    href: "/admin/backup",
+    icon: Database,
+  },
+  {
+    title: "Reports",
+    href: "/admin/reports",
+    icon: BarChart3,
+  },
+  {
+    title: "Data Validation",
+    href: "/admin/data-validation",
+    icon: FileText,
   },
   {
     title: "Settings",

@@ -37,24 +37,11 @@ export async function GET(request: NextRequest) {
       return cutoffHistory.length > 0 && cutoffHistory.some((c: any) => c.cutoff && c.year)
     }).length
 
-    // Get institutions with fee data
-    const institutionsWithFees = await prisma.institution.count({
-      where: {
-        OR: [
-          { tuitionFees: { not: null as any } },
-          { feesSchedule: { not: null as any } },
-        ],
-      },
-    })
+    // Get institutions with fee data (tuitionFees field not in database yet - can be added later via admin)
+    const institutionsWithFees = 0 // Will be implemented when tuitionFees field is added
 
-    // Get programs with fee data
-    const programsWithFees = await prisma.program.count({
-      where: {
-        tuitionFees: {
-          not: null as any,
-        },
-      },
-    })
+    // Get programs with fee data (tuitionFees field not in database yet - can be added later via admin)
+    const programsWithFees = 0 // Will be implemented when tuitionFees field is added
 
     // Get programs with descriptions
     const programsWithDescription = await prisma.program.count({

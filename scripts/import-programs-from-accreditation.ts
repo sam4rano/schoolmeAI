@@ -95,7 +95,7 @@ async function importProgramsFromAccreditation() {
   try {
     console.log("Reading accreditation_results.csv...")
     
-    const csvPath = path.join(process.cwd(), "..", "practice_project", "accreditation_results.csv")
+    const csvPath = path.join(process.cwd(), "csv_folder", "accreditation_results.csv")
     const csvContent = fs.readFileSync(csvPath, "utf-8")
     const csvData = parseCSV(csvContent)
 
@@ -186,6 +186,14 @@ async function importProgramsFromAccreditation() {
             },
             institutionId: institutionId,
           },
+          select: {
+            id: true,
+            name: true,
+            faculty: true,
+            accreditationStatus: true,
+            lastVerifiedAt: true,
+            provenance: true,
+          },
         })
 
         // Determine if re-accredited (maturity year >= 2024)
@@ -204,9 +212,9 @@ async function importProgramsFromAccreditation() {
             where: { id: existing.id },
             data: {
               accreditationStatus: status,
-              accreditationMaturityDate: maturityYear,
+              accreditationMaturityDate: maturityYear > 0 ? maturityYear : null,
               accreditationLastUpdated: updateDate,
-              isActive: true,
+              isActive: true, // Programs in accreditation list are active
               faculty: faculty || existing.faculty,
               lastVerifiedAt: updateDate,
               provenance: {
@@ -225,9 +233,9 @@ async function importProgramsFromAccreditation() {
               name: programName,
               faculty: faculty,
               accreditationStatus: status,
-              accreditationMaturityDate: maturityYear,
+              accreditationMaturityDate: maturityYear > 0 ? maturityYear : null,
               accreditationLastUpdated: updateDate,
-              isActive: true,
+              isActive: true, // Programs in accreditation list are active
               lastVerifiedAt: updateDate,
               dataQualityScore: 70,
               utmeSubjects: [],

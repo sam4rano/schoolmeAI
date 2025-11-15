@@ -386,18 +386,78 @@ export default async function ProgramDetailPage({
               />
             )}
 
-            {program.accreditationStatus && (
+            {/* Accreditation Information */}
+            {(program.accreditationStatus || program.accreditationMaturityDate !== undefined || program.isActive !== undefined) && (
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
                     <CheckCircle2 className="h-5 w-5 text-green-600" />
-                    Accreditation
+                    Accreditation Status
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <Badge variant="default" className="text-sm">
-                    {program.accreditationStatus}
-                  </Badge>
+                <CardContent className="space-y-3">
+                  {program.accreditationStatus && (
+                    <div>
+                      <Badge
+                        variant={
+                          program.accreditationStatus === "Full"
+                            ? "default"
+                            : program.accreditationStatus === "Interim"
+                            ? "secondary"
+                            : "destructive"
+                        }
+                        className="text-sm"
+                      >
+                        {program.accreditationStatus}
+                      </Badge>
+                    </div>
+                  )}
+                  
+                  {program.accreditationMaturityDate && (
+                    <div className="p-3 rounded-md bg-muted">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">Accreditation Expiry:</span>
+                        <span className="text-sm font-bold">
+                          {program.accreditationMaturityDate}
+                        </span>
+                      </div>
+                      {program.accreditationMaturityDate < new Date().getFullYear() ? (
+                        <p className="text-sm text-destructive font-medium">
+                          ⚠️ Accreditation expired in {program.accreditationMaturityDate}
+                        </p>
+                      ) : program.accreditationMaturityDate <= new Date().getFullYear() + 1 ? (
+                        <p className="text-sm text-yellow-600 dark:text-yellow-400 font-medium">
+                          ⚠️ Accreditation expires soon
+                        </p>
+                      ) : (
+                        <p className="text-sm text-green-600 dark:text-green-400 font-medium">
+                          ✓ Accreditation valid until {program.accreditationMaturityDate}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  
+                  {program.isActive !== undefined && (
+                    <div className="flex items-center gap-2">
+                      {program.isActive ? (
+                        <Badge variant="default" className="bg-green-600">
+                          <CheckCircle2 className="h-3 w-3 mr-1" />
+                          Program Active
+                        </Badge>
+                      ) : (
+                        <Badge variant="destructive">
+                          <AlertCircle className="h-3 w-3 mr-1" />
+                          Program Discontinued
+                        </Badge>
+                      )}
+                    </div>
+                  )}
+                  
+                  {program.accreditationLastUpdated && (
+                    <p className="text-xs text-muted-foreground">
+                      Last updated: {new Date(program.accreditationLastUpdated).toLocaleDateString()}
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             )}

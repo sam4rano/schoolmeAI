@@ -128,7 +128,6 @@ export async function GET(request: NextRequest) {
               contact: true,
               accreditationStatus: true,
               courses: true,
-              feesSchedule: true, // Use feesSchedule instead of tuitionFees if it exists
               provenance: true,
               lastVerifiedAt: true,
               dataQualityScore: true,
